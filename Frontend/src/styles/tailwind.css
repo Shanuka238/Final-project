@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary Colors */
+    --color-primary: #8B5FBF; /* Sophisticated purple - purple-600 */
+    --color-primary-50: #F8F5FF; /* Lightest purple tint - purple-50 */
+    --color-primary-100: #F4F1FF; /* Soft purple tint - purple-100 */
+    --color-primary-200: #E9E1FF; /* Light purple - purple-200 */
+    --color-primary-300: #D4C2FF; /* Medium light purple - purple-300 */
+    --color-primary-400: #B491E5; /* Medium purple - purple-400 */
+    --color-primary-500: #9B6FD4; /* Medium purple - purple-500 */
+    --color-primary-600: #8B5FBF; /* Primary sophisticated purple - purple-600 */
+    --color-primary-700: #7A4FA8; /* Dark purple - purple-700 */
+    --color-primary-800: #693F91; /* Darker purple - purple-800 */
+    --color-primary-900: #2D1B3D; /* Deepest purple for text - purple-900 */
+
+    /* Secondary Colors */
+    --color-secondary: #F4F1FF; /* Soft purple tint - purple-100 */
+    --color-secondary-50: #FEFEFE; /* Warm white background - gray-50 */
+    --color-secondary-100: #F4F1FF; /* Soft purple tint - purple-100 */
+    --color-secondary-200: #E9E1FF; /* Light purple secondary - purple-200 */
+
+    /* Accent Colors */
+    --color-accent: #D4AF37; /* Classic gold accent - yellow-600 */
+    --color-accent-50: #FFFBEB; /* Light gold tint - yellow-50 */
+    --color-accent-100: #FEF3C7; /* Soft gold - yellow-100 */
+    --color-accent-200: #FDE68A; /* Light gold - yellow-200 */
+    --color-accent-300: #FCD34D; /* Medium light gold - yellow-300 */
+    --color-accent-400: #FBBF24; /* Medium gold - yellow-400 */
+    --color-accent-500: #F59E0B; /* Warm amber - yellow-500 */
+    --color-accent-600: #D4AF37; /* Classic gold accent - yellow-600 */
+    --color-accent-700: #B45309; /* Dark gold - yellow-700 */
+    --color-accent-800: #92400E; /* Darker gold - yellow-800 */
+
+    /* Background Colors */
+    --color-background: #FEFEFE; /* Warm white background - gray-50 */
+    --color-surface: #FFFFFF; /* Pure white surface - white */
+    --color-surface-secondary: #F4F1FF; /* Soft purple surface - purple-100 */
+
+    /* Text Colors */
+    --color-text-primary: #2D1B3D; /* Deep purple-tinted dark - gray-900 */
+    --color-text-secondary: #6B5B73; /* Muted purple-gray - gray-600 */
+    --color-text-tertiary: #9CA3AF; /* Light gray text - gray-400 */
+    --color-text-inverse: #FFFFFF; /* White text for dark backgrounds - white */
+
+    /* Status Colors */
+    --color-success: #10B981; /* Fresh green - emerald-500 */
+    --color-success-50: #ECFDF5; /* Light success background - emerald-50 */
+    --color-success-100: #D1FAE5; /* Soft success - emerald-100 */
+    --color-success-600: #10B981; /* Success green - emerald-500 */
+    --color-success-700: #047857; /* Dark success - emerald-700 */
+
+    --color-warning: #F59E0B; /* Warm amber - amber-500 */
+    --color-warning-50: #FFFBEB; /* Light warning background - amber-50 */
+    --color-warning-100: #FEF3C7; /* Soft warning - amber-100 */
+    --color-warning-500: #F59E0B; /* Warning amber - amber-500 */
+    --color-warning-600: #D97706; /* Dark warning - amber-600 */
+
+    --color-error: #EF4444; /* Clear red - red-500 */
+    --color-error-50: #FEF2F2; /* Light error background - red-50 */
+    --color-error-100: #FEE2E2; /* Soft error - red-100 */
+    --color-error-500: #EF4444; /* Error red - red-500 */
+    --color-error-600: #DC2626; /* Dark error - red-600 */
+
+    /* Border Colors */
+    --color-border: #F4F1FF; /* Soft purple border - purple-100 */
+    --color-border-secondary: #E9E1FF; /* Light purple border - purple-200 */
+    --color-border-accent: linear-gradient(135deg, #8B5FBF, #D4AF37); /* Purple to gold gradient */
+
+    /* Shadow Colors */
+    --shadow-primary: 0 4px 20px rgba(139, 95, 191, 0.08); /* Soft purple-tinted shadow */
+    --shadow-secondary: 0 2px 10px rgba(139, 95, 191, 0.05); /* Lighter purple shadow */
+    --shadow-accent: 0 8px 32px rgba(139, 95, 191, 0.12); /* Prominent purple shadow */
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .font-heading {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-primary border border-primary px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-surface rounded-xl shadow-lg border border-border p-6 transition-all duration-300 hover:shadow-xl;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-border rounded-lg bg-surface text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200;
+  }
+
+  .nav-link {
+    @apply text-text-secondary hover:text-primary transition-colors duration-200 font-medium;
+  }
+
+  .nav-link-active {
+    @apply text-primary font-semibold;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shadow-primary {
+    box-shadow: var(--shadow-primary);
+  }
+
+  .shadow-secondary {
+    box-shadow: var(--shadow-secondary);
+  }
+
+  .shadow-accent {
+    box-shadow: var(--shadow-accent);
+  }
+
+  .border-gradient {
+    border-image: var(--color-border-accent) 1;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
