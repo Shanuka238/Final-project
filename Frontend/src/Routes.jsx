@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Routes as RouterRoutes, Route, useNavigate } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import Header from "components/ui/Header";
@@ -9,6 +9,19 @@ import EventPackages from "pages/event-packages";
 import UserDashboard from "pages/user-dashboard";
 import ContactPage from "pages/contact-page";
 import Login from "pages/login";
+import { useAuth } from '@clerk/clerk-react';
+
+// SSO Callback handler with redirect
+const SsoCallback = () => {
+  const { isSignedIn, isLoaded } = useAuth();
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      navigate('/user-dashboard', { replace: true });
+    }
+  }, [isLoaded, isSignedIn, navigate]);
+  return <div />;
+};
 
 const Routes = () => {
   return (
@@ -24,6 +37,7 @@ const Routes = () => {
           <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/contact-page" element={<ContactPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/login/sso-callback" element={<SsoCallback />} />
         </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>

@@ -15,7 +15,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <div className="max-w-md w-full card p-8">
-        <SignIn routing="path" path="/login" />
+        <SignIn routing="path" path="/login" afterSignInUrl="/user-dashboard" />
       </div>
     </div>
   );
