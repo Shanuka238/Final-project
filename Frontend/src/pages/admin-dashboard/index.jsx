@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchClerkUsers, createClerkUser, deleteClerkUser } from 'api/admin';
 
+const SERVICE_PROVIDER_ROLE = 'service_provider';
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState(SERVICE_PROVIDER_ROLE);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -20,10 +23,11 @@ const AdminDashboard = () => {
     e.preventDefault();
     setError('');
     try {
-      await createClerkUser(email, password, username);
+      await createClerkUser(email, password, username, role);
       setEmail('');
       setPassword('');
       setUsername('');
+      setRole(SERVICE_PROVIDER_ROLE);
       const updated = await fetchClerkUsers();
       setUsers(updated);
     } catch (err) {
@@ -52,6 +56,14 @@ const AdminDashboard = () => {
     return '';
   };
 
+  // Helper to get role from Clerk user object
+  const getRole = (user) => {
+    return user.publicMetadata?.role || user.public_metadata?.role || '';
+  };
+
+  // Only show service providers
+  const serviceProviders = users.filter(u => getRole(u) === SERVICE_PROVIDER_ROLE);
+
   return (
     <div className="max-w-3xl mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
@@ -59,6 +71,9 @@ const AdminDashboard = () => {
         <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="border p-2 rounded" />
         <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" required className="border p-2 rounded" />
         <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="border p-2 rounded" />
+        <select value={role} onChange={e => setRole(e.target.value)} className="border p-2 rounded">
+          <option value={SERVICE_PROVIDER_ROLE}>Service Provider</option>
+        </select>
         <button type="submit" className="btn-primary">Add User</button>
       </form>
       {error && <div className="text-red-500 mb-4">{error}</div>}
@@ -72,7 +87,7 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            {serviceProviders.map(user => (
               <tr key={user.id} className="border-t">
                 <td className="p-2 align-middle">{user.username}</td>
                 <td className="p-2 align-middle">{getEmail(user)}</td>

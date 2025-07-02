@@ -7,8 +7,8 @@ export const fetchClerkUsers = async () => {
   return res.data;
 };
 
-export const createClerkUser = async (email, password, username) => {
-  const res = await axios.post(`${API_BASE}/users`, { email, password, username });
+export const createClerkUser = async (email, password, username, role) => {
+  const res = await axios.post(`${API_BASE}/users`, { email, password, username, role });
   return res.data;
 };
 

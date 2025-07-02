@@ -24,11 +24,19 @@ router.get('/users', async (req, res) => {
 // Create user
 router.post('/users', async (req, res) => {
   try {
-    const { email, password, username } = req.body;
+    const { email, password, username, role } = req.body;
     const finalUsername = username || email.split('@')[0];
+    const payload = {
+      email_address: [email],
+      password,
+      username: finalUsername
+    };
+    if (role) {
+      payload.public_metadata = { role };
+    }
     const response = await axios.post(
       `${CLERK_API_BASE}/users`,
-      { email_address: [email], password, username: finalUsername },
+      payload,
       { headers: clerkHeaders }
     );
     res.json(response.data);
