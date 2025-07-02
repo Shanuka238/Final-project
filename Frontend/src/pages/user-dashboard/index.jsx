@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 import Icon from 'components/AppIcon';
+import { fetchUserEvents, fetchUserBookings, fetchUserFavorites } from 'api/dashboard';
 
 import WelcomeSection from './components/WelcomeSection';
 import UpcomingEvents from './components/UpcomingEvents';
@@ -11,28 +13,36 @@ import RecentActivity from './components/RecentActivity';
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoaded } = useUser();
+  const [stats, setStats] = useState({ events: 0, bookings: 0, favorites: 0 });
 
-  // Mock user data
-  const mockUser = {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    joinDate: "2024-01-15",
-    totalBookings: 8,
-    upcomingEvents: 3,
-    savedPackages: 12,
-    membershipTier: "Premium"
-  };
+  useEffect(() => {
+    if (isLoaded && user) {
+      Promise.all([
+        fetchUserEvents(user.id),
+        fetchUserBookings(user.id),
+        fetchUserFavorites(user.id)
+      ]).then(([events, bookings, favorites]) => {
+        setStats({
+          events: events.length,
+          bookings: bookings.length,
+          favorites: favorites.length
+        });
+        setIsLoading(false);
+      }).catch(() => {
+        setStats({ events: 0, bookings: 0, favorites: 0 });
+        setIsLoading(false);
+      });
+    }
+  }, [isLoaded, user]);
 
   // Mock dashboard stats
   const dashboardStats = [
     {
       id: 1,
       label: "Upcoming Events",
-      value: 3,
+      value: stats.events,
       icon: "Calendar",
       color: "text-primary",
       bgColor: "bg-primary-50"
@@ -40,7 +50,7 @@ const UserDashboard = () => {
     {
       id: 2,
       label: "Total Bookings",
-      value: 8,
+      value: stats.bookings,
       icon: "CheckCircle",
       color: "text-success",
       bgColor: "bg-success-50"
@@ -48,7 +58,7 @@ const UserDashboard = () => {
     {
       id: 3,
       label: "Saved Packages",
-      value: 12,
+      value: stats.favorites,
       icon: "Heart",
       color: "text-accent",
       bgColor: "bg-accent-50"
@@ -56,7 +66,7 @@ const UserDashboard = () => {
     {
       id: 4,
       label: "Messages",
-      value: 5,
+      value: 0, // Replace with real data if you add messaging
       icon: "MessageCircle",
       color: "text-warning",
       bgColor: "bg-warning-50"
@@ -71,15 +81,24 @@ const UserDashboard = () => {
     { id: 'messages', label: 'Messages', icon: 'MessageCircle' }
   ];
 
-  useEffect(() => {
-    // Simulate loading user data
-    const timer = setTimeout(() => {
-      setUser(mockUser);
-      setIsLoading(false);
-    }, 1000);
+  // Prepare user data for dashboard
+  const dashboardUser = user
+    ? {
+        id: user.id,
+        name: user.fullName || user.username || user.firstName || 'User',
+        email: user.emailAddresses?.[0]?.emailAddress || '',
+        avatar: user.imageUrl,
+        joinDate: user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : '',
+        totalBookings: 0, // Replace with real data if available
+        upcomingEvents: 0, // Replace with real data if available
+        savedPackages: 0, // Replace with real data if available
+        membershipTier: 'Member', // Replace with real data if available
+      }
+    : null;
 
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    if (isLoaded) setIsLoading(false);
+  }, [isLoaded]);
 
   if (isLoading) {
     return (
@@ -97,7 +116,7 @@ const UserDashboard = () => {
       case 'overview':
         return (
           <div className="space-y-8">
-            <WelcomeSection user={user} stats={dashboardStats} />
+            <WelcomeSection user={dashboardUser} stats={dashboardStats} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <UpcomingEvents />
@@ -146,7 +165,7 @@ const UserDashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="mb-4 sm:mb-0">
               <h1 className="font-heading text-3xl font-bold text-text-primary">
-                Welcome back, {user?.name}!
+                Welcome back, {dashboardUser?.name}!
               </h1>
               <p className="text-text-secondary mt-1">
                 Manage your events and bookings from your personal dashboard

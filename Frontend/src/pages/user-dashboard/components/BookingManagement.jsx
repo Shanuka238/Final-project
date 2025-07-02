@@ -1,77 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
+import { useUser } from '@clerk/clerk-react';
+import { fetchUserBookings } from 'api/dashboard';
 
 const BookingManagement = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+  const { user } = useUser();
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const mockBookings = [
-    {
-      id: "BK001",
-      eventTitle: "Sarah & Michael\'s Wedding",
-      package: "Premium Wedding Package",
-      totalAmount: 15000,
-      paidAmount: 7500,
-      dueAmount: 7500,
-      status: "active",
-      bookingDate: "2024-02-15",
-      eventDate: "2024-06-15",
-      paymentSchedule: [
-        { id: 1, description: "Booking Deposit", amount: 3000, dueDate: "2024-02-15", status: "paid" },
-        { id: 2, description: "Second Payment", amount: 4500, dueDate: "2024-04-15", status: "paid" },
-        { id: 3, description: "Final Payment", amount: 7500, dueDate: "2024-06-01", status: "pending" }
-      ],
-      documents: [
-        { id: 1, name: "Contract Agreement", status: "signed", uploadDate: "2024-02-15" },
-        { id: 2, name: "Venue Requirements", status: "pending", uploadDate: null },
-        { id: 3, name: "Guest List", status: "uploaded", uploadDate: "2024-03-10" }
-      ]
-    },
-    {
-      id: "BK002",
-      eventTitle: "Corporate Annual Gala",
-      package: "Corporate Elite Package",
-      totalAmount: 25000,
-      paidAmount: 10000,
-      dueAmount: 15000,
-      status: "active",
-      bookingDate: "2024-03-01",
-      eventDate: "2024-05-20",
-      paymentSchedule: [
-        { id: 1, description: "Booking Deposit", amount: 5000, dueDate: "2024-03-01", status: "paid" },
-        { id: 2, description: "Second Payment", amount: 5000, dueDate: "2024-04-01", status: "paid" },
-        { id: 3, description: "Final Payment", amount: 15000, dueDate: "2024-05-10", status: "pending" }
-      ],
-      documents: [
-        { id: 1, name: "Corporate Contract", status: "signed", uploadDate: "2024-03-01" },
-        { id: 2, name: "Catering Requirements", status: "uploaded", uploadDate: "2024-03-15" }
-      ]
-    },
-    {
-      id: "BK003",
-      eventTitle: "Emma\'s 25th Birthday",
-      package: "Birthday Celebration Package",
-      totalAmount: 3500,
-      paidAmount: 1000,
-      dueAmount: 2500,
-      status: "requires_action",
-      bookingDate: "2024-03-20",
-      eventDate: "2024-04-28",
-      paymentSchedule: [
-        { id: 1, description: "Booking Deposit", amount: 1000, dueDate: "2024-03-20", status: "paid" },
-        { id: 2, description: "Final Payment", amount: 2500, dueDate: "2024-04-20", status: "overdue" }
-      ],
-      documents: [
-        { id: 1, name: "Event Contract", status: "signed", uploadDate: "2024-03-20" },
-        { id: 2, name: "Guest List", status: "pending", uploadDate: null }
-      ]
+  useEffect(() => {
+    if (user) {
+      fetchUserBookings(user.id)
+        .then((data) => setBookings(data))
+        .catch(() => setBookings([]))
+        .finally(() => setLoading(false));
     }
-  ];
+  }, [user]);
 
   const filterOptions = [
-    { id: 'all', label: 'All Bookings', count: mockBookings.length },
-    { id: 'active', label: 'Active', count: mockBookings.filter(b => b.status === 'active').length },
-    { id: 'requires_action', label: 'Requires Action', count: mockBookings.filter(b => b.status === 'requires_action').length },
-    { id: 'completed', label: 'Completed', count: 0 }
+    { id: 'all', label: 'All Bookings', count: bookings.length },
+    { id: 'active', label: 'Active', count: bookings.filter(b => b.status === 'active').length },
+    { id: 'requires_action', label: 'Requires Action', count: bookings.filter(b => b.status === 'requires_action').length },
+    { id: 'completed', label: 'Completed', count: bookings.filter(b => b.status === 'completed').length }
   ];
 
   const getStatusColor = (status) => {
@@ -110,9 +61,13 @@ const BookingManagement = () => {
     }
   };
 
-  const filteredBookings = activeFilter === 'all' 
-    ? mockBookings 
-    : mockBookings.filter(booking => booking.status === activeFilter);
+  if (loading) {
+    return <div className="text-center py-12">Loading bookings...</div>;
+  }
+
+  const filteredBookings = activeFilter === 'all'
+    ? bookings
+    : bookings.filter(booking => booking.status === activeFilter);
 
   return (
     <div className="space-y-6">
@@ -135,7 +90,6 @@ const BookingManagement = () => {
           </div>
         </div>
       </div>
-
       {/* Filter Tabs */}
       <div className="card">
         <div className="flex flex-wrap gap-2">
@@ -159,11 +113,10 @@ const BookingManagement = () => {
           ))}
         </div>
       </div>
-
       {/* Bookings List */}
       <div className="space-y-6">
         {filteredBookings.map((booking) => (
-          <div key={booking.id} className="card">
+          <div key={booking._id} className="card">
             {/* Booking Header */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
               <div>
@@ -172,11 +125,11 @@ const BookingManagement = () => {
                     {booking.eventTitle}
                   </h4>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)}`}>
-                    {booking.status.replace('_', ' ').toUpperCase()}
+                    {booking.status?.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
                 <div className="flex items-center space-x-4 text-sm text-text-secondary">
-                  <span>Booking ID: {booking.id}</span>
+                  <span>Booking ID: {booking._id}</span>
                   <span>Package: {booking.package}</span>
                   <span>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</span>
                 </div>
@@ -207,19 +160,19 @@ const BookingManagement = () => {
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
                       <p className="text-2xl font-bold text-text-primary">
-                        ${booking.totalAmount.toLocaleString()}
+                        ${booking.totalAmount?.toLocaleString() || 0}
                       </p>
                       <p className="text-xs text-text-secondary">Total Amount</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-success">
-                        ${booking.paidAmount.toLocaleString()}
+                        ${booking.paidAmount?.toLocaleString() || 0}
                       </p>
                       <p className="text-xs text-text-secondary">Paid</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-warning">
-                        ${booking.dueAmount.toLocaleString()}
+                        ${booking.dueAmount?.toLocaleString() || 0}
                       </p>
                       <p className="text-xs text-text-secondary">Due</p>
                     </div>
@@ -228,14 +181,14 @@ const BookingManagement = () => {
 
                 {/* Payment Items */}
                 <div className="space-y-3">
-                  {booking.paymentSchedule.map((payment) => (
-                    <div key={payment.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                  {booking.paymentSchedule?.map((payment, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <Icon 
-                          name={getPaymentStatusIcon(payment.status)} 
-                          size={20} 
-                          className={payment.status === 'paid' ? 'text-success' : payment.status === 'overdue' ? 'text-error' : 'text-warning'} 
-                          strokeWidth={2} 
+                        <Icon
+                          name={getPaymentStatusIcon(payment.status)}
+                          size={20}
+                          className={payment.status === 'paid' ? 'text-success' : payment.status === 'overdue' ? 'text-error' : 'text-warning'}
+                          strokeWidth={2}
                         />
                         <div>
                           <p className="font-medium text-text-primary">{payment.description}</p>
@@ -246,10 +199,10 @@ const BookingManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-text-primary">
-                          ${payment.amount.toLocaleString()}
+                          ${payment.amount?.toLocaleString() || 0}
                         </p>
                         <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(payment.status)}`}>
-                          {payment.status.toUpperCase()}
+                          {payment.status?.toUpperCase()}
                         </span>
                       </div>
                     </div>
@@ -265,14 +218,14 @@ const BookingManagement = () => {
                 </h5>
                 
                 <div className="space-y-3">
-                  {booking.documents.map((doc) => (
-                    <div key={doc.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                  {booking.documents?.map((doc, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(doc.status)}`}>
-                          <Icon 
-                            name={doc.status === 'signed' ? 'CheckCircle' : doc.status === 'uploaded' ? 'Upload' : 'Clock'} 
-                            size={20} 
-                            strokeWidth={2} 
+                          <Icon
+                            name={doc.status === 'signed' ? 'CheckCircle' : doc.status === 'uploaded' ? 'Upload' : 'Clock'}
+                            size={20}
+                            strokeWidth={2}
                           />
                         </div>
                         <div>
@@ -316,7 +269,7 @@ const BookingManagement = () => {
             No Bookings Found
           </h4>
           <p className="text-text-secondary mb-6">
-            {activeFilter === 'all' ? "You haven't made any bookings yet." : `No bookings match the"${filterOptions.find(f => f.id === activeFilter)?.label}" filter.`}
+            {activeFilter === 'all' ? "You haven't made any bookings yet." : `No bookings match the "${filterOptions.find(f => f.id === activeFilter)?.label}" filter.`}
           </p>
         </div>
       )}

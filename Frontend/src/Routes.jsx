@@ -9,6 +9,7 @@ import EventPackages from "pages/event-packages";
 import UserDashboard from "pages/user-dashboard";
 import ContactPage from "pages/contact-page";
 import Login from "pages/login";
+import AdminDashboard from "pages/admin-dashboard";
 import { useAuth } from '@clerk/clerk-react';
 
 // SSO Callback handler with redirect
@@ -38,6 +39,7 @@ const Routes = () => {
           <Route path="/contact-page" element={<ContactPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/sso-callback" element={<SsoCallback />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>
