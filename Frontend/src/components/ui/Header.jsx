@@ -8,15 +8,22 @@ const Header = () => {
   const location = useLocation();
   const { user } = useUser();
 
-  const navigationItems = [
+  // Determine if user is admin
+  const isAdmin = user?.publicMetadata?.role === 'admin';
+
+  // Build navigation items, add Admin Dashboard for admins
+  let navigationItems = [
     { label: 'Home', path: '/landing-page', icon: 'Home' },
     { label: 'Book Event', path: '/event-booking-form', icon: 'Calendar' },
     { label: 'Event Packages', path: '/event-packages', icon: 'Package' },
-    { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' },
-    { label: 'Admin', path: '/admin-dashboard', icon: 'Shield' } // Admin nav button for testing
+    { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' }
   ];
+  if (isAdmin) {
+    navigationItems.push({ label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' });
+  }
 
-  const authenticatedItems = [
+  // Only show 'My Events' if not admin
+  const authenticatedItems = isAdmin ? [] : [
     { label: 'My Events', path: '/user-dashboard', icon: 'User' }
   ];
 

@@ -24,22 +24,26 @@ router.get('/users', async (req, res) => {
 // Create user
 router.post('/users', async (req, res) => {
   try {
-    const { email, password, username, role } = req.body;
+    const { email, password, username } = req.body;
     const finalUsername = username || email.split('@')[0];
-    const payload = {
-      email_address: [email],
-      password,
-      username: finalUsername
-    };
-    if (role) {
-      payload.public_metadata = { role };
-    }
+    // Create the user
     const response = await axios.post(
       `${CLERK_API_BASE}/users`,
-      payload,
+      { email_address: [email], password, username: finalUsername },
       { headers: clerkHeaders }
     );
-    res.json(response.data);
+    const userId = response.data.id;
+    // Always set role to service_provider in public metadata
+    if (userId) {
+      await axios.patch(
+        `${CLERK_API_BASE}/users/${userId}/metadata`,
+        { public_metadata: { role: 'service_provider' } },
+        { headers: clerkHeaders }
+      );
+    }
+    // Fetch the updated user
+    const updatedUser = await axios.get(`${CLERK_API_BASE}/users/${userId}`, { headers: clerkHeaders });
+    res.json(updatedUser.data);
   } catch (err) {
     console.error('Clerk user creation error:', err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || err.message });

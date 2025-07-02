@@ -1,16 +1,23 @@
 import React, { useEffect } from 'react';
-import { SignIn, useAuth } from '@clerk/clerk-react';
+import { SignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { isSignedIn } = useAuth();
+  const { user, isLoaded } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isSignedIn) {
-      navigate('/user-dashboard', { replace: true });
+    if (isSignedIn && isLoaded && user) {
+      // Check for admin role in Clerk publicMetadata
+      const role = user.publicMetadata?.role;
+      if (role === 'admin') {
+        navigate('/admin-dashboard', { replace: true });
+      } else {
+        navigate('/user-dashboard', { replace: true });
+      }
     }
-  }, [isSignedIn, navigate]);
+  }, [isSignedIn, isLoaded, user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
