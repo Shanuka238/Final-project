@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import EventTypeSelection from './components/EventTypeSelection';
 import DateTimeSelection from './components/DateTimeSelection';
@@ -7,8 +8,11 @@ import LocationInput from './components/LocationInput';
 import GuestCountSelection from './components/GuestCountSelection';
 import BudgetEstimation from './components/BudgetEstimation';
 import BookingSummary from './components/BookingSummary';
+import { useUser } from '@clerk/clerk-react';
+import NotLoggedIn from './components/NotLoggedIn';
 
 const EventBookingForm = () => {
+  const { isSignedIn, isLoaded } = useUser();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -17,8 +21,8 @@ const EventBookingForm = () => {
     eventDate: '',
     eventTime: '',
     location: '',
-    guestCount: 50,
-    budget: 5000,
+    guestCount: 0,
+    budget: 0,
     specialRequirements: '',
     contactInfo: {
       name: '',
@@ -26,9 +30,10 @@ const EventBookingForm = () => {
       phone: ''
     }
   });
-
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [bookedSlots, setBookedSlots] = useState([]);
 
   const steps = [
     { id: 1, title: 'Event Type', icon: 'Calendar', description: 'Choose your event type' },
@@ -51,27 +56,40 @@ const EventBookingForm = () => {
     // Save form data to localStorage
     localStorage.setItem('eventBookingForm', JSON.stringify(formData));
     validateForm();
-  }, [formData]);
+    calculateProgress();
+  }, [formData, currentStep]);
+
+  useEffect(() => {
+    // Fetch all booked event dates and times from backend
+    fetch('http://localhost:5000/api/booked-slots')
+      .then(res => res.json())
+      .then(data => setBookedSlots(data))
+      .catch(() => setBookedSlots([]));
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
-    
     if (currentStep >= 1 && !formData.eventType) {
       newErrors.eventType = 'Please select an event type';
     }
-    
+    if (currentStep >= 1 && !formData.eventSubType) {
+      newErrors.eventSubType = 'Please select an event sub-type';
+    }
     if (currentStep >= 2 && !formData.eventDate) {
       newErrors.eventDate = 'Please select an event date';
     }
-    
+    if (currentStep >= 2 && !formData.eventTime) {
+      newErrors.eventTime = 'Please select an event time';
+    }
     if (currentStep >= 3 && !formData.location) {
       newErrors.location = 'Please enter event location';
     }
-    
-    if (currentStep >= 5 && formData.budget < 1000) {
-      newErrors.budget = 'Minimum budget should be $1,000';
+    if (currentStep >= 4 && (!formData.guestCount || formData.guestCount <= 0)) {
+      newErrors.guestCount = 'Please enter the number of guests';
     }
-    
+    if (currentStep >= 5 && (!formData.budget || formData.budget < 1000)) {
+      newErrors.budget = 'Minimum budget should be Rs 1,000';
+    }
     if (currentStep >= 6) {
       if (!formData.contactInfo.name) {
         newErrors.contactName = 'Please enter your name';
@@ -83,9 +101,25 @@ const EventBookingForm = () => {
         newErrors.contactPhone = 'Please enter your phone number';
       }
     }
-    
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
+  };
+
+  const calculateProgress = () => {
+    // Each field contributes equally to progress (7 fields: eventType, eventSubType, eventDate, eventTime, location, guestCount, budget, contactInfo.name, contactInfo.email, contactInfo.phone)
+    let total = 10;
+    let filled = 0;
+    if (formData.eventType) filled++;
+    if (formData.eventSubType) filled++;
+    if (formData.eventDate) filled++;
+    if (formData.eventTime) filled++;
+    if (formData.location) filled++;
+    if (formData.guestCount > 0) filled++;
+    if (formData.budget > 0) filled++;
+    if (formData.contactInfo.name) filled++;
+    if (formData.contactInfo.email) filled++;
+    if (formData.contactInfo.phone) filled++;
+    setProgress(Math.round((filled / total) * 100));
   };
 
   const updateFormData = (field, value) => {
@@ -107,7 +141,20 @@ const EventBookingForm = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < steps.length) {
+    validateForm();
+    // Only allow next if no errors for the current step
+    const stepFields = [
+      ['eventType', 'eventSubType'],
+      ['eventDate', 'eventTime'],
+      ['location'],
+      ['guestCount'],
+      ['budget'],
+      ['contactName', 'contactEmail', 'contactPhone']
+    ];
+    const currentFields = stepFields[currentStep - 1];
+    const hasError = currentFields.some(field => errors[field]);
+    // If no error and not last step, go next
+    if (!hasError && currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -118,35 +165,55 @@ const EventBookingForm = () => {
     }
   };
 
-  const handleSubmit = () => {
-    if (isFormValid) {
-      // Save booking data
-      const bookingData = {
-        ...formData,
-        id: Date.now(),
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        estimatedCost: calculateEstimatedCost()
-      };
-      
-      // Save to localStorage (mock database)
-      const existingBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-      existingBookings.push(bookingData);
-      localStorage.setItem('userBookings', JSON.stringify(existingBookings));
-      
-      // Clear form data
+  const handleSubmit = async () => {
+    if (!isFormValid) return;
+    // Assume userId is available from authentication context (replace as needed)
+    const userId = window.Clerk?.user?.id || 'test-user';
+    const eventData = {
+      title: formData.eventType + (formData.eventSubType ? ` - ${formData.eventSubType}` : ''),
+      type: formData.eventType,
+      date: formData.eventDate,
+      time: formData.eventTime,
+      location: formData.location,
+      status: 'pending',
+      guests: formData.guestCount,
+      image: '', // Optionally set image
+      progress: 0,
+      nextAction: '',
+      daysUntil: 0
+    };
+    const bookingData = {
+      eventTitle: eventData.title,
+      package: '', // Optionally set package
+      totalAmount: formData.budget,
+      paidAmount: 0,
+      dueAmount: formData.budget,
+      status: 'active',
+      bookingDate: new Date().toISOString(),
+      eventDate: formData.eventDate,
+      paymentSchedule: [],
+      documents: []
+    };
+    try {
+      await fetch('http://localhost:5000/api/book-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, eventData, bookingData })
+      });
       localStorage.removeItem('eventBookingForm');
-      
-      // Navigate to packages page
-      navigate('/event-packages', { state: { bookingData } });
+      navigate('/user-dashboard');
+    } catch (err) {
+      alert('Failed to book event. Please try again.');
     }
   };
 
   const calculateEstimatedCost = () => {
-    let baseCost = formData.budget;
-    const guestMultiplier = formData.guestCount / 50;
+    let baseCost = formData.budget || 0;
+    const guestMultiplier = formData.guestCount > 0 ? formData.guestCount / 50 : 0;
     return Math.round(baseCost * guestMultiplier);
   };
+
+  const formatCurrency = (amount) => `Rs ${amount.toLocaleString('en-LK')}`;
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -164,6 +231,7 @@ const EventBookingForm = () => {
             formData={formData}
             updateFormData={updateFormData}
             errors={errors}
+            bookedSlots={bookedSlots}
           />
         );
       case 3:
@@ -270,8 +338,18 @@ const EventBookingForm = () => {
     }
   };
 
+  if (isLoaded && !isSignedIn) {
+    return <NotLoggedIn />;
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="min-h-screen bg-background"
+    >
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary-50 to-accent-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -338,7 +416,7 @@ const EventBookingForm = () => {
               </div>
 
               {/* Booking Summary */}
-              <BookingSummary formData={formData} estimatedCost={calculateEstimatedCost()} />
+              <BookingSummary formData={formData} estimatedCost={calculateEstimatedCost()} formatCurrency={formatCurrency} />
             </div>
           </div>
 
@@ -351,13 +429,13 @@ const EventBookingForm = () => {
                   Step {currentStep} of {steps.length}
                 </span>
                 <span className="text-sm font-medium text-primary">
-                  {Math.round((currentStep / steps.length) * 100)}% Complete
+                  {progress}% Complete
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-primary h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                  style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
@@ -405,7 +483,30 @@ const EventBookingForm = () => {
                   ) : (
                     <button
                       onClick={nextStep}
-                      className="flex items-center space-x-2 btn-primary"
+                      disabled={(() => {
+                        const stepFields = [
+                          ['eventType', 'eventSubType'],
+                          ['eventDate', 'eventTime'],
+                          ['location'],
+                          ['guestCount'],
+                          ['budget'],
+                          ['contactName', 'contactEmail', 'contactPhone']
+                        ];
+                        const currentFields = stepFields[currentStep - 1];
+                        return currentFields.some(field => errors[field]);
+                      })()}
+                      className={`flex items-center space-x-2 btn-primary ${(() => {
+                        const stepFields = [
+                          ['eventType', 'eventSubType'],
+                          ['eventDate', 'eventTime'],
+                          ['location'],
+                          ['guestCount'],
+                          ['budget'],
+                          ['contactName', 'contactEmail', 'contactPhone']
+                        ];
+                        const currentFields = stepFields[currentStep - 1];
+                        return currentFields.some(field => errors[field]) ? 'opacity-50 cursor-not-allowed' : '';
+                      })()}`}
                     >
                       <span>Continue</span>
                       <Icon name="ChevronRight" size={20} strokeWidth={2} />
@@ -417,7 +518,7 @@ const EventBookingForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

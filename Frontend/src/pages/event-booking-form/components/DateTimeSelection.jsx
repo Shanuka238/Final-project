@@ -1,23 +1,36 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 
-const DateTimeSelection = ({ formData, updateFormData, errors }) => {
+const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  // Compute unavailable dates from bookedSlots
+  const unavailableDates = bookedSlots
+    .filter(slot => slot.date)
+    .map(slot => {
+      const d = new Date(slot.date);
+      return d.getDate();
+    });
+
+  // Compute unavailable times for selected date
+  const unavailableTimes = bookedSlots
+    .filter(slot => slot.date === formData.eventDate)
+    .map(slot => slot.time);
 
   const timeSlots = [
     { value: '09:00', label: '9:00 AM', available: true },
     { value: '10:00', label: '10:00 AM', available: true },
-    { value: '11:00', label: '11:00 AM', available: false },
+    { value: '11:00', label: '11:00 AM', available: true },
     { value: '12:00', label: '12:00 PM', available: true },
     { value: '13:00', label: '1:00 PM', available: true },
     { value: '14:00', label: '2:00 PM', available: true },
-    { value: '15:00', label: '3:00 PM', available: false },
+    { value: '15:00', label: '3:00 PM', available: true },
     { value: '16:00', label: '4:00 PM', available: true },
     { value: '17:00', label: '5:00 PM', available: true },
     { value: '18:00', label: '6:00 PM', available: true },
     { value: '19:00', label: '7:00 PM', available: true },
-    { value: '20:00', label: '8:00 PM', available: false }
+    { value: '20:00', label: '8:00 PM', available: true }
   ];
 
   const months = [
@@ -36,14 +49,10 @@ const DateTimeSelection = ({ formData, updateFormData, errors }) => {
   const isDateAvailable = (date) => {
     const today = new Date();
     const selectedDate = new Date(selectedYear, selectedMonth, date);
-    
-    // Disable past dates
     if (selectedDate < today.setHours(0, 0, 0, 0)) {
       return false;
     }
-    
-    // Mock unavailable dates (e.g., already booked)
-    const unavailableDates = [15, 22, 29];
+    // Use unavailableDates from backend
     return !unavailableDates.includes(date);
   };
 
@@ -188,24 +197,28 @@ const DateTimeSelection = ({ formData, updateFormData, errors }) => {
           
           <div className="bg-surface border border-border rounded-xl p-4">
             <div className="grid grid-cols-2 gap-3">
-              {timeSlots.map((slot) => (
-                <button
-                  key={slot.value}
-                  onClick={() => slot.available && updateFormData('eventTime', slot.value)}
-                  disabled={!slot.available}
-                  className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    formData.eventTime === slot.value
-                      ? 'bg-primary text-white shadow-primary'
-                      : slot.available
-                      ? 'bg-surface hover:bg-primary-50 text-text-primary border border-border hover:border-primary-300' :'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  {slot.label}
-                  {!slot.available && (
-                    <div className="text-xs text-gray-400 mt-1">Booked</div>
-                  )}
-                </button>
-              ))}
+              {timeSlots.map((slot) => {
+                const isUnavailable = unavailableTimes.includes(slot.value);
+                return (
+                  <button
+                    key={slot.value}
+                    onClick={() => !isUnavailable && updateFormData('eventTime', slot.value)}
+                    disabled={isUnavailable}
+                    className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      formData.eventTime === slot.value
+                        ? 'bg-primary text-white shadow-primary'
+                        : !isUnavailable
+                        ? 'bg-surface hover:bg-primary-50 text-text-primary border border-border hover:border-primary-300'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {slot.label}
+                    {isUnavailable && (
+                      <div className="text-xs text-gray-400 mt-1">Booked</div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

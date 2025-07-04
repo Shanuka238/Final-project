@@ -8,7 +8,7 @@ export const fetchUserEvents = async (userId) => {
 };
 
 export const fetchUserBookings = async (userId) => {
-  const res = await axios.get(`${API_BASE}/bookings/${userId}`);
+  const res = await axios.get(`${API_BASE}/user-bookings/${userId}`);
   return res.data;
 };
 
@@ -19,5 +19,10 @@ export const fetchUserFavorites = async (userId) => {
 
 export const fetchUserActivities = async (userId) => {
   const res = await axios.get(`${API_BASE}/activities/${userId}`);
+  return res.data;
+};
+
+export const fetchUserUpcomingEvents = async (userId) => {
+  const res = await axios.get(`${API_BASE}/user-upcoming-events/${userId}`);
   return res.data;
 };

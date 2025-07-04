@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import { useUser } from '@clerk/clerk-react';
 import { fetchUserBookings } from 'api/dashboard';
+import axios from 'axios';
+
+const formatCurrency = (amount) => `Rs ${amount?.toLocaleString('en-LK') || 0}`;
 
 const BookingManagement = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -58,6 +61,16 @@ const BookingManagement = () => {
         return 'AlertCircle';
       default:
         return 'Circle';
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking?')) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/booking/${bookingId}`);
+      setBookings(prev => prev.filter(b => b._id !== bookingId));
+    } catch (err) {
+      alert('Failed to delete booking.');
     }
   };
 
@@ -118,7 +131,7 @@ const BookingManagement = () => {
         {filteredBookings.map((booking) => (
           <div key={booking._id} className="card">
             {/* Booking Header */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
+            <div className="flex justify-between items-center mb-2">
               <div>
                 <div className="flex items-center space-x-3 mb-2">
                   <h4 className="font-heading text-lg font-semibold text-text-primary">
@@ -144,6 +157,13 @@ const BookingManagement = () => {
                   <Icon name="Edit" size={16} strokeWidth={2} />
                   <span>Modify</span>
                 </button>
+                <button
+                  onClick={() => handleDeleteBooking(booking._id)}
+                  className="btn-secondary text-error ml-2"
+                  title="Delete Booking"
+                >
+                  <Icon name="Trash" size={18} strokeWidth={2} />
+                </button>
               </div>
             </div>
 
@@ -160,19 +180,19 @@ const BookingManagement = () => {
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
                       <p className="text-2xl font-bold text-text-primary">
-                        ${booking.totalAmount?.toLocaleString() || 0}
+                        {formatCurrency(booking.totalAmount)}
                       </p>
                       <p className="text-xs text-text-secondary">Total Amount</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-success">
-                        ${booking.paidAmount?.toLocaleString() || 0}
+                        {formatCurrency(booking.paidAmount)}
                       </p>
                       <p className="text-xs text-text-secondary">Paid</p>
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-warning">
-                        ${booking.dueAmount?.toLocaleString() || 0}
+                        {formatCurrency(booking.dueAmount)}
                       </p>
                       <p className="text-xs text-text-secondary">Due</p>
                     </div>
@@ -199,7 +219,7 @@ const BookingManagement = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-text-primary">
-                          ${payment.amount?.toLocaleString() || 0}
+                          {formatCurrency(payment.amount)}
                         </p>
                         <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(payment.status)}`}>
                           {payment.status?.toUpperCase()}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchClerkUsers, createClerkUser, deleteClerkUser } from 'api/admin';
+import CenterPopup from '../../components/CenterPopup';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -9,6 +10,8 @@ const AdminDashboard = () => {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('user');
   const [error, setError] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState({ show: false, userId: null });
 
   useEffect(() => {
     fetchClerkUsers()
@@ -28,6 +31,7 @@ const AdminDashboard = () => {
       setRole('user');
       const updated = await fetchClerkUsers();
       setUsers(updated);
+      setPopupMessage('Service provider account added successfully!');
     } catch (err) {
       // Show detailed error from backend if available
       if (err.response && err.response.data && err.response.data.error) {
@@ -36,18 +40,28 @@ const AdminDashboard = () => {
           errorMsg = JSON.stringify(errorMsg);
         }
         setError('Failed to add user: ' + errorMsg);
+        setPopupMessage('Failed to add service provider account.');
       } else {
         setError('Failed to add user');
+        setPopupMessage('Failed to add service provider account.');
       }
     }
   };
 
   const handleDeleteUser = async (userId) => {
+    setConfirmDelete({ show: true, userId });
+  };
+
+  const confirmDeleteUser = async () => {
+    const userId = confirmDelete.userId;
+    setConfirmDelete({ show: false, userId: null });
     try {
       await deleteClerkUser(userId);
       setUsers(users.filter(u => u.id !== userId));
+      setPopupMessage('Service provider account deleted successfully!');
     } catch {
       setError('Failed to delete user');
+      setPopupMessage('Failed to delete service provider account.');
     }
   };
 
@@ -91,12 +105,23 @@ const AdminDashboard = () => {
                 <td className="p-2 align-middle">{user.username}</td>
                 <td className="p-2 align-middle">{getEmail(user)}</td>
                 <td className="p-2 align-middle">
-                  <button onClick={() => handleDeleteUser(user.id)} className="btn-secondary">Delete</button>
+                  <button onClick={() => setConfirmDelete({ show: true, userId: user.id })} className="btn-secondary">Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+      {confirmDelete.show && (
+        <CenterPopup
+          message="Do you want to delete that user?"
+          confirm
+          onConfirm={confirmDeleteUser}
+          onCancel={() => setConfirmDelete({ show: false, userId: null })}
+        />
+      )}
+      {popupMessage && !confirmDelete.show && (
+        <CenterPopup message={popupMessage} onClose={() => setPopupMessage('')} />
       )}
     </div>
   );

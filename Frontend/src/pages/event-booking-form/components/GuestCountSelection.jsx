@@ -182,10 +182,10 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
           </h4>
           <div className="text-right">
             <p className="text-2xl font-bold text-primary">
-              ${getCostEstimate().toLocaleString()}
+              Rs {getCostEstimate().toLocaleString('en-LK')}
             </p>
             <p className="text-sm text-text-secondary">
-              ${Math.round(getCostEstimate() / formData.guestCount)} per guest
+              Rs {Math.round(getCostEstimate() / formData.guestCount).toLocaleString('en-LK')} per guest
             </p>
           </div>
         </div>
@@ -194,17 +194,17 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
           <div className="text-center">
             <Icon name="Utensils" size={20} className="text-primary mx-auto mb-2" strokeWidth={2} />
             <p className="font-medium text-text-primary">Catering</p>
-            <p className="text-text-secondary">${Math.round(getCostEstimate() * 0.6).toLocaleString()}</p>
+            <p className="text-text-secondary">Rs {Math.round(getCostEstimate() * 0.6).toLocaleString('en-LK')}</p>
           </div>
           <div className="text-center">
             <Icon name="MapPin" size={20} className="text-primary mx-auto mb-2" strokeWidth={2} />
             <p className="font-medium text-text-primary">Venue</p>
-            <p className="text-text-secondary">${Math.round(getCostEstimate() * 0.3).toLocaleString()}</p>
+            <p className="text-text-secondary">Rs {Math.round(getCostEstimate() * 0.3).toLocaleString('en-LK')}</p>
           </div>
           <div className="text-center">
             <Icon name="Sparkles" size={20} className="text-primary mx-auto mb-2" strokeWidth={2} />
             <p className="font-medium text-text-primary">Extras</p>
-            <p className="text-text-secondary">${Math.round(getCostEstimate() * 0.1).toLocaleString()}</p>
+            <p className="text-text-secondary">Rs {Math.round(getCostEstimate() * 0.1).toLocaleString('en-LK')}</p>
           </div>
         </div>
       </div>

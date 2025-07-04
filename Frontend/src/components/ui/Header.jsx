@@ -12,14 +12,19 @@ const Header = () => {
   const isAdmin = user?.publicMetadata?.role === 'admin';
 
   // Build navigation items, add Admin Dashboard for admins
-  let navigationItems = [
-    { label: 'Home', path: '/landing-page', icon: 'Home' },
-    { label: 'Book Event', path: '/event-booking-form', icon: 'Calendar' },
-    { label: 'Event Packages', path: '/event-packages', icon: 'Package' },
-    { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' }
-  ];
+  let navigationItems;
   if (isAdmin) {
-    navigationItems.push({ label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' });
+    navigationItems = [
+      { label: 'Home', path: '/landing-page', icon: 'Home' },
+      { label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' }
+    ];
+  } else {
+    navigationItems = [
+      { label: 'Home', path: '/landing-page', icon: 'Home' },
+      { label: 'Book Event', path: '/event-booking-form', icon: 'Calendar' },
+      { label: 'Event Packages', path: '/event-packages', icon: 'Package' },
+      { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' }
+    ];
   }
 
   // Only show 'My Events' if not admin

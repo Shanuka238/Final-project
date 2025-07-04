@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import ContactForm from './components/ContactForm';
 import BusinessInfo from './components/BusinessInfo';
@@ -15,7 +16,13 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="min-h-screen bg-background"
+    >
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-50 to-secondary-100 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,7 +119,7 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 };
 

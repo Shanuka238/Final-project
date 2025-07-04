@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useUser } from '@clerk/clerk-react';
-import { fetchUserEvents } from 'api/dashboard';
+import { fetchUserUpcomingEvents } from 'api/dashboard';
 
 const UpcomingEvents = ({ showAll = false, setActiveTab }) => {
   const { user } = useUser();
@@ -12,7 +12,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab }) => {
 
   useEffect(() => {
     if (user) {
-      fetchUserEvents(user.id)
+      fetchUserUpcomingEvents(user.id)
         .then((data) => setEvents(data))
         .catch(() => setEvents([]))
         .finally(() => setLoading(false));

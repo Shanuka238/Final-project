@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
+import { motion } from 'framer-motion';
 
 import PackageCard from './components/PackageCard';
 import PackageComparison from './components/PackageComparison';
@@ -18,122 +19,22 @@ const EventPackages = () => {
     eventType: 'all',
     features: []
   });
-
-  // Mock data for packages
-  const mockPackages = [
-    {
-      id: 1,
-      title: "Premium Wedding Package",
-      type: "wedding",
-      priceRange: "$5,000 - $8,000",
-      price: 6500,
-      image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviewCount: 127,
-      availability: "available",
-      features: ["Full Event Planning", "Venue Decoration", "Photography", "Catering Coordination", "Bridal Suite", "Wedding Cake"],
-      description: `Our Premium Wedding Package offers comprehensive planning services for your dream wedding. From venue selection to the final dance, we handle every detail with precision and care.
-
-Includes full-day coordination, premium decorations, professional photography coverage, and personalized wedding planning consultation.`,
-      timeline: "6-12 months planning period",
-      isPopular: true,
-      isFavorite: false
-    },
-    {
-      id: 2,
-      title: "Birthday Celebration Deluxe",
-      type: "birthday",
-      priceRange: "$800 - $1,500",
-      price: 1200,
-      image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=300&fit=crop",
-      rating: 4.7,
-      reviewCount: 89,
-      availability: "limited",
-      features: ["Theme Decoration", "Entertainment", "Custom Cake", "Party Favors", "Photography", "Music System"],
-      description: `Make birthdays unforgettable with our Deluxe Birthday Package. Perfect for milestone celebrations and special occasions.
-
-Features themed decorations, professional entertainment, custom birthday cake design, and complete party coordination.`,
-      timeline: "2-4 weeks planning period",
-      isPopular: false,
-      isFavorite: false
-    },
-    {
-      id: 3,
-      title: "Corporate Event Excellence",
-      type: "corporate",
-      priceRange: "$3,000 - $6,000",
-      price: 4500,
-      image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?w=400&h=300&fit=crop",
-      rating: 4.8,
-      reviewCount: 156,
-      availability: "available",
-      features: ["Professional Setup", "AV Equipment", "Catering", "Registration Management", "Networking Areas", "Branded Materials"],
-      description: `Elevate your corporate events with our Excellence Package. Designed for conferences, seminars, product launches, and corporate celebrations.
-
-Includes professional staging, complete AV setup, catering coordination, and dedicated event management team.`,
-      timeline: "4-8 weeks planning period",
-      isPopular: true,
-      isFavorite: false
-    },
-    {
-      id: 4,
-      title: "Intimate Garden Party",
-      type: "custom",
-      priceRange: "$1,200 - $2,500",
-      price: 1800,
-      image: "https://images.pixabay.com/photo/2017/07/21/23/57/concert-2526990_1280.jpg?w=400&h=300&fit=crop",
-      rating: 4.6,
-      reviewCount: 73,
-      availability: "available",
-      features: ["Outdoor Setup", "Garden Decoration", "Ambient Lighting", "Refreshments", "Live Music", "Weather Backup"],
-      description: `Create magical outdoor experiences with our Garden Party Package. Perfect for intimate gatherings, anniversary celebrations, and special occasions.
-
-Features beautiful garden decorations, ambient lighting setup, live acoustic music, and complete weather contingency planning.`,
-      timeline: "3-6 weeks planning period",
-      isPopular: false,
-      isFavorite: false
-    },
-    {
-      id: 5,
-      title: "Luxury Anniversary Celebration",
-      type: "anniversary",
-      priceRange: "$2,000 - $4,000",
-      price: 3000,
-      image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviewCount: 94,
-      availability: "available",
-      features: ["Romantic Setup", "Fine Dining", "Live Entertainment", "Personalized Decor", "Photography", "Memory Book"],
-      description: `Celebrate love milestones with our Luxury Anniversary Package. Designed to create unforgettable romantic experiences for couples.
-
-Includes elegant romantic setup, fine dining experience, live entertainment, and personalized memory creation services.`,
-      timeline: "4-6 weeks planning period",
-      isPopular: false,
-      isFavorite: false
-    },
-    {
-      id: 6,
-      title: "Kids Party Extravaganza",
-      type: "birthday",
-      priceRange: "$500 - $1,000",
-      price: 750,
-      image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?w=400&h=300&fit=crop",
-      rating: 4.5,
-      reviewCount: 112,
-      availability: "available",
-      features: ["Character Entertainment", "Games & Activities", "Themed Decorations", "Kid-Friendly Menu", "Party Bags", "Face Painting"],
-      description: `Make your child's birthday magical with our Kids Party Extravaganza. Featuring beloved characters, exciting games, and age-appropriate entertainment.
-
-Includes professional character entertainment, interactive games, themed decorations, and complete party coordination.`,
-      timeline: "2-3 weeks planning period",
-      isPopular: true,
-      isFavorite: false
-    }
-  ];
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setPackages(mockPackages);
-    setFilteredPackages(mockPackages);
+    setLoading(true);
+    fetch('http://localhost:5000/api/packages')
+      .then(res => res.json())
+      .then(data => {
+        setPackages(data);
+        setFilteredPackages(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setPackages([]);
+        setFilteredPackages([]);
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -221,7 +122,13 @@ Includes professional character entertainment, interactive games, themed decorat
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="min-h-screen bg-background"
+    >
       {/* Breadcrumb */}
       <div className="bg-surface border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -393,24 +300,11 @@ Includes professional character entertainment, interactive games, themed decorat
 
       {/* Packages Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {filteredPackages.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Icon name="Package" size={48} className="text-primary" strokeWidth={1.5} />
-            </div>
-            <h3 className="font-heading text-2xl font-semibold text-text-primary mb-4">
-              No packages found
-            </h3>
-            <p className="text-text-secondary mb-6 max-w-md mx-auto">
-              Try adjusting your filters or browse all available packages
-            </p>
-            <button
-              onClick={clearFilters}
-              className="btn-primary"
-            >
-              Clear Filters
-            </button>
-          </div>
+        {/* Loading and No Events States */}
+        {loading ? (
+          <div className="text-center py-16 text-xl text-text-secondary">Loading event packages...</div>
+        ) : filteredPackages.length === 0 ? (
+          <div className="text-center py-16 text-xl text-text-secondary">No event packages found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredPackages.map((pkg) => (
@@ -444,7 +338,7 @@ Includes professional character entertainment, interactive games, themed decorat
           onClose={() => setShowComparison(false)}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

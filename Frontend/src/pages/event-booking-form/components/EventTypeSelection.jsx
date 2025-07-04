@@ -1,57 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'components/AppIcon';
 
 const EventTypeSelection = ({ formData, updateFormData, errors }) => {
-  const eventTypes = [
-    {
-      id: 'wedding',
-      name: 'Wedding',
-      icon: 'Heart',
-      description: 'Celebrate your special day with elegance',
-      subTypes: ['Traditional Wedding', 'Destination Wedding', 'Intimate Ceremony', 'Reception Only'],
-      color: 'from-pink-500 to-rose-500'
-    },
-    {
-      id: 'birthday',
-      name: 'Birthday Party',
-      icon: 'Gift',
-      description: 'Make birthdays memorable and fun',
-      subTypes: ['Kids Birthday', 'Adult Birthday', 'Milestone Birthday', 'Surprise Party'],
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      id: 'corporate',
-      name: 'Corporate Event',
-      icon: 'Building',
-      description: 'Professional events that impress',
-      subTypes: ['Conference', 'Team Building', 'Product Launch', 'Annual Meeting'],
-      color: 'from-green-500 to-emerald-500'
-    },
-    {
-      id: 'anniversary',
-      name: 'Anniversary',
-      icon: 'Calendar',
-      description: 'Celebrate milestones together',
-      subTypes: ['Wedding Anniversary', 'Company Anniversary', 'Personal Milestone'],
-      color: 'from-purple-500 to-violet-500'
-    },
-    {
-      id: 'graduation',
-      name: 'Graduation',
-      icon: 'GraduationCap',
-      description: 'Honor academic achievements',
-      subTypes: ['High School Graduation', 'College Graduation', 'Professional Certification'],
-      color: 'from-yellow-500 to-orange-500'
-    },
-    {
-      id: 'custom',
-      name: 'Custom Event',
-      icon: 'Sparkles',
-      description: 'Unique events tailored to you',
-      subTypes: ['Social Gathering', 'Charity Event', 'Festival', 'Other'],
-      color: 'from-indigo-500 to-purple-500'
-    }
-  ];
+  const [eventTypes, setEventTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/event-types')
+      .then(res => res.json())
+      .then(data => {
+        setEventTypes(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   const handleEventTypeSelect = (eventType) => {
     updateFormData('eventType', eventType.id);
@@ -59,6 +21,19 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
   };
 
   const selectedEventType = eventTypes.find(type => type.id === formData.eventType);
+
+  // Map eventType.id to a hardcoded gradient class
+  const colorMap = {
+    wedding: 'from-pink-500 to-rose-500',
+    birthday: 'from-blue-500 to-cyan-500',
+    corporate: 'from-green-500 to-emerald-500',
+    anniversary: 'from-purple-500 to-violet-500',
+    graduation: 'from-yellow-500 to-orange-500',
+    custom: 'from-indigo-500 to-purple-500'
+  };
+
+  if (loading) return <div className="text-center py-8 text-lg text-text-secondary">Loading event types...</div>;
+  if (!eventTypes.length) return <div className="text-center py-8 text-lg text-text-secondary">No event types found.</div>;
 
   return (
     <div className="space-y-8">
@@ -84,7 +59,7 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
             }`}
           >
             <div className="text-center">
-              <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${eventType.color} flex items-center justify-center`}>
+              <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${colorMap[eventType.id] || 'from-primary to-accent'} flex items-center justify-center`}>
                 <Icon name={eventType.icon} size={32} color="white" strokeWidth={2} />
               </div>
               <h4 className="font-heading text-lg font-semibold text-text-primary mb-2">

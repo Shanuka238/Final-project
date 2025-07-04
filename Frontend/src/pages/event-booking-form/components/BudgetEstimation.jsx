@@ -5,12 +5,12 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
   const [showBreakdown, setShowBreakdown] = useState(false);
 
   const budgetRanges = [
-    { min: 1000, max: 2500, label: '$1,000 - $2,500', description: 'Basic package', icon: 'DollarSign' },
-    { min: 2500, max: 5000, label: '$2,500 - $5,000', description: 'Standard package', icon: 'DollarSign' },
-    { min: 5000, max: 10000, label: '$5,000 - $10,000', description: 'Premium package', icon: 'DollarSign' },
-    { min: 10000, max: 25000, label: '$10,000 - $25,000', description: 'Luxury package', icon: 'DollarSign' },
-    { min: 25000, max: 50000, label: '$25,000 - $50,000', description: 'Ultra-luxury package', icon: 'DollarSign' },
-    { min: 50000, max: 100000, label: '$50,000+', description: 'Exclusive experience', icon: 'DollarSign' }
+    { min: 1000, max: 2500, label: 'Rs 1,000 - Rs 2,500', description: 'Basic package', icon: 'DollarSign' },
+    { min: 2500, max: 5000, label: 'Rs 2,500 - Rs 5,000', description: 'Standard package', icon: 'DollarSign' },
+    { min: 5000, max: 10000, label: 'Rs 5,000 - Rs 10,000', description: 'Premium package', icon: 'DollarSign' },
+    { min: 10000, max: 25000, label: 'Rs 10,000 - Rs 25,000', description: 'Luxury package', icon: 'DollarSign' },
+    { min: 25000, max: 50000, label: 'Rs 25,000 - Rs 50,000', description: 'Ultra-luxury package', icon: 'DollarSign' },
+    { min: 50000, max: 100000, label: 'Rs 50,000+', description: 'Exclusive experience', icon: 'DollarSign' }
   ];
 
   const budgetCategories = [
@@ -159,7 +159,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
                   
                   <div className="text-center min-w-[120px]">
                     <span className="text-2xl font-bold text-primary">
-                      ${formData.budget.toLocaleString()}
+                      Rs {formData.budget.toLocaleString('en-LK')}
                     </span>
                   </div>
                   
@@ -186,11 +186,11 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
                   }}
                 />
                 <div className="flex justify-between text-xs text-text-secondary mt-2">
-                  <span>$1K</span>
-                  <span>$25K</span>
-                  <span>$50K</span>
-                  <span>$75K</span>
-                  <span>$100K+</span>
+                  <span>Rs 1K</span>
+                  <span>Rs 25K</span>
+                  <span>Rs 50K</span>
+                  <span>Rs 75K</span>
+                  <span>Rs 100K+</span>
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
                 Or enter exact amount:
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">Rs</span>
                 <input
                   type="number"
                   min="1000"
@@ -219,7 +219,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-primary">Cost per guest:</span>
                 <span className="text-lg font-bold text-primary">
-                  ${Math.round(formData.budget / formData.guestCount)}
+                  Rs {Math.round(formData.budget / formData.guestCount).toLocaleString('en-LK')}
                 </span>
               </div>
             </div>
@@ -261,7 +261,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
                       <span className="font-medium text-text-primary">{category.name}</span>
                     </div>
                     <span className="font-bold text-accent-600">
-                      ${category.amount.toLocaleString()}
+                      Rs {category.amount.toLocaleString('en-LK')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -310,7 +310,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
               <Icon name="TrendingDown" size={20} strokeWidth={2} />
             </div>
             <p className="font-medium text-text-primary">Budget-Friendly</p>
-            <p className="text-sm text-text-secondary">$30-60 per guest</p>
+            <p className="text-sm text-text-secondary">Rs 30-60 per guest</p>
           </div>
           
           <div className="text-center">
@@ -318,7 +318,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
               <Icon name="Minus" size={20} strokeWidth={2} />
             </div>
             <p className="font-medium text-text-primary">Standard</p>
-            <p className="text-sm text-text-secondary">$60-120 per guest</p>
+            <p className="text-sm text-text-secondary">Rs 60-120 per guest</p>
           </div>
           
           <div className="text-center">
@@ -326,7 +326,7 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
               <Icon name="TrendingUp" size={20} strokeWidth={2} />
             </div>
             <p className="font-medium text-text-primary">Premium</p>
-            <p className="text-sm text-text-secondary">$120+ per guest</p>
+            <p className="text-sm text-text-secondary">Rs 120+ per guest</p>
           </div>
         </div>
       </div>

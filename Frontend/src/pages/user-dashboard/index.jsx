@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
+import { motion } from 'framer-motion';
+
 import Icon from 'components/AppIcon';
-import { fetchUserEvents, fetchUserBookings, fetchUserFavorites } from 'api/dashboard';
+import { fetchUserBookings, fetchUserUpcomingEvents, fetchUserFavorites } from 'api/dashboard';
 
 import WelcomeSection from './components/WelcomeSection';
 import UpcomingEvents from './components/UpcomingEvents';
@@ -20,7 +22,7 @@ const UserDashboard = () => {
   useEffect(() => {
     if (isLoaded && user) {
       Promise.all([
-        fetchUserEvents(user.id),
+        fetchUserUpcomingEvents(user.id),
         fetchUserBookings(user.id),
         fetchUserFavorites(user.id)
       ]).then(([events, bookings, favorites]) => {
@@ -158,7 +160,13 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="min-h-screen bg-background"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
@@ -216,7 +224,7 @@ const UserDashboard = () => {
           {renderTabContent()}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

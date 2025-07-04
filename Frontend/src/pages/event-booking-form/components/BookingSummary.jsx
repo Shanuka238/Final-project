@@ -51,7 +51,7 @@ const BookingSummary = ({ formData, estimatedCost }) => {
       items.push({
         icon: 'DollarSign',
         label: 'Budget',
-        value: `$${formData.budget.toLocaleString()}`
+        value: `Rs ${formData.budget.toLocaleString('en-LK')}`
       });
     }
     
@@ -133,11 +133,11 @@ const BookingSummary = ({ formData, estimatedCost }) => {
               </div>
               <div className="text-right">
                 <p className="text-lg font-bold text-accent-600">
-                  ${estimatedCost.toLocaleString()}
+                  Rs {estimatedCost.toLocaleString('en-LK')}
                 </p>
                 {formData.guestCount && (
                   <p className="text-xs text-text-secondary">
-                    ${Math.round(estimatedCost / formData.guestCount)} per guest
+                    Rs {Math.round(estimatedCost / formData.guestCount).toLocaleString('en-LK')} per guest
                   </p>
                 )}
               </div>
