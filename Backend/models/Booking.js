@@ -1,0 +1,30 @@
+const mongoose = require('mongoose');
+
+const BookingSchema = new mongoose.Schema({
+  userId: { type: String, required: true }, // Clerk user ID
+  eventTitle: String,
+  package: String,
+  totalAmount: Number,
+  paidAmount: Number,
+  dueAmount: Number,
+  status: String,
+  bookingDate: String,
+  eventDate: String,
+  paymentSchedule: [
+    {
+      description: String,
+      amount: Number,
+      dueDate: String,
+      status: String
+    }
+  ],
+  documents: [
+    {
+      name: String,
+      status: String,
+      uploadDate: String
+    }
+  ]
+});
+
+module.exports = mongoose.model('Booking', BookingSchema);

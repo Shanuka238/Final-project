@@ -1,0 +1,525 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import Icon from 'components/AppIcon';
+import EventTypeSelection from './components/EventTypeSelection';
+import DateTimeSelection from './components/DateTimeSelection';
+import LocationInput from './components/LocationInput';
+import GuestCountSelection from './components/GuestCountSelection';
+import BudgetEstimation from './components/BudgetEstimation';
+import BookingSummary from './components/BookingSummary';
+import { useUser } from '@clerk/clerk-react';
+import NotLoggedIn from './components/NotLoggedIn';
+
+const EventBookingForm = () => {
+  const { isSignedIn, isLoaded } = useUser();
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    eventType: '',
+    eventSubType: '',
+    eventDate: '',
+    eventTime: '',
+    location: '',
+    guestCount: 0,
+    budget: 0,
+    specialRequirements: '',
+    contactInfo: {
+      name: '',
+      email: '',
+      phone: ''
+    }
+  });
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [bookedSlots, setBookedSlots] = useState([]);
+
+  const steps = [
+    { id: 1, title: 'Event Type', icon: 'Calendar', description: 'Choose your event type' },
+    { id: 2, title: 'Date & Time', icon: 'Clock', description: 'Select date and time' },
+    { id: 3, title: 'Location', icon: 'MapPin', description: 'Event location details' },
+    { id: 4, title: 'Guest Count', icon: 'Users', description: 'Number of attendees' },
+    { id: 5, title: 'Budget', icon: 'DollarSign', description: 'Budget estimation' },
+    { id: 6, title: 'Contact Info', icon: 'User', description: 'Your contact details' }
+  ];
+
+  useEffect(() => {
+    // Load saved form data from localStorage
+    const savedData = localStorage.getItem('eventBookingForm');
+    if (savedData) {
+      setFormData(JSON.parse(savedData));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save form data to localStorage
+    localStorage.setItem('eventBookingForm', JSON.stringify(formData));
+    validateForm();
+    calculateProgress();
+  }, [formData, currentStep]);
+
+  useEffect(() => {
+    // Fetch all booked event dates and times from backend
+    fetch('http://localhost:5000/api/booked-slots')
+      .then(res => res.json())
+      .then(data => setBookedSlots(data))
+      .catch(() => setBookedSlots([]));
+  }, []);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (currentStep >= 1 && !formData.eventType) {
+      newErrors.eventType = 'Please select an event type';
+    }
+    if (currentStep >= 1 && !formData.eventSubType) {
+      newErrors.eventSubType = 'Please select an event sub-type';
+    }
+    if (currentStep >= 2 && !formData.eventDate) {
+      newErrors.eventDate = 'Please select an event date';
+    }
+    if (currentStep >= 2 && !formData.eventTime) {
+      newErrors.eventTime = 'Please select an event time';
+    }
+    if (currentStep >= 3 && !formData.location) {
+      newErrors.location = 'Please enter event location';
+    }
+    if (currentStep >= 4 && (!formData.guestCount || formData.guestCount <= 0)) {
+      newErrors.guestCount = 'Please enter the number of guests';
+    }
+    if (currentStep >= 5 && (!formData.budget || formData.budget < 1000)) {
+      newErrors.budget = 'Minimum budget should be Rs 1,000';
+    }
+    if (currentStep >= 6) {
+      if (!formData.contactInfo.name) {
+        newErrors.contactName = 'Please enter your name';
+      }
+      if (!formData.contactInfo.email) {
+        newErrors.contactEmail = 'Please enter your email';
+      }
+      if (!formData.contactInfo.phone) {
+        newErrors.contactPhone = 'Please enter your phone number';
+      }
+    }
+    setErrors(newErrors);
+    setIsFormValid(Object.keys(newErrors).length === 0);
+  };
+
+  const calculateProgress = () => {
+    // Each field contributes equally to progress (7 fields: eventType, eventSubType, eventDate, eventTime, location, guestCount, budget, contactInfo.name, contactInfo.email, contactInfo.phone)
+    let total = 10;
+    let filled = 0;
+    if (formData.eventType) filled++;
+    if (formData.eventSubType) filled++;
+    if (formData.eventDate) filled++;
+    if (formData.eventTime) filled++;
+    if (formData.location) filled++;
+    if (formData.guestCount > 0) filled++;
+    if (formData.budget > 0) filled++;
+    if (formData.contactInfo.name) filled++;
+    if (formData.contactInfo.email) filled++;
+    if (formData.contactInfo.phone) filled++;
+    setProgress(Math.round((filled / total) * 100));
+  };
+
+  const updateFormData = (field, value) => {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      setFormData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const nextStep = () => {
+    validateForm();
+    // Only allow next if no errors for the current step
+    const stepFields = [
+      ['eventType', 'eventSubType'],
+      ['eventDate', 'eventTime'],
+      ['location'],
+      ['guestCount'],
+      ['budget'],
+      ['contactName', 'contactEmail', 'contactPhone']
+    ];
+    const currentFields = stepFields[currentStep - 1];
+    const hasError = currentFields.some(field => errors[field]);
+    // If no error and not last step, go next
+    if (!hasError && currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!isFormValid) return;
+    // Assume userId is available from authentication context (replace as needed)
+    const userId = window.Clerk?.user?.id || 'test-user';
+    const eventData = {
+      title: formData.eventType + (formData.eventSubType ? ` - ${formData.eventSubType}` : ''),
+      type: formData.eventType,
+      date: formData.eventDate,
+      time: formData.eventTime,
+      location: formData.location,
+      status: 'pending',
+      guests: formData.guestCount,
+      image: '', // Optionally set image
+      progress: 0,
+      nextAction: '',
+      daysUntil: 0
+    };
+    const bookingData = {
+      eventTitle: eventData.title,
+      package: '', // Optionally set package
+      totalAmount: formData.budget,
+      paidAmount: 0,
+      dueAmount: formData.budget,
+      status: 'active',
+      bookingDate: new Date().toISOString(),
+      eventDate: formData.eventDate,
+      paymentSchedule: [],
+      documents: []
+    };
+    try {
+      await fetch('http://localhost:5000/api/book-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, eventData, bookingData })
+      });
+      localStorage.removeItem('eventBookingForm');
+      navigate('/user-dashboard');
+    } catch (err) {
+      alert('Failed to book event. Please try again.');
+    }
+  };
+
+  const calculateEstimatedCost = () => {
+    let baseCost = formData.budget || 0;
+    const guestMultiplier = formData.guestCount > 0 ? formData.guestCount / 50 : 0;
+    return Math.round(baseCost * guestMultiplier);
+  };
+
+  const formatCurrency = (amount) => `Rs ${amount.toLocaleString('en-LK')}`;
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <EventTypeSelection
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 2:
+        return (
+          <DateTimeSelection
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+            bookedSlots={bookedSlots}
+          />
+        );
+      case 3:
+        return (
+          <LocationInput
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 4:
+        return (
+          <GuestCountSelection
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 5:
+        return (
+          <BudgetEstimation
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 6:
+        return (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="font-heading text-2xl font-semibold text-text-primary mb-2">
+                Contact Information
+              </h3>
+              <p className="text-text-secondary">
+                Please provide your contact details to complete the booking
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.contactInfo.name}
+                  onChange={(e) => updateFormData('contactInfo.name', e.target.value)}
+                  className={`input-field ${errors.contactName ? 'border-error' : ''}`}
+                  placeholder="Enter your full name"
+                />
+                {errors.contactName && (
+                  <p className="text-error text-sm mt-1">{errors.contactName}</p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  value={formData.contactInfo.email}
+                  onChange={(e) => updateFormData('contactInfo.email', e.target.value)}
+                  className={`input-field ${errors.contactEmail ? 'border-error' : ''}`}
+                  placeholder="Enter your email address"
+                />
+                {errors.contactEmail && (
+                  <p className="text-error text-sm mt-1">{errors.contactEmail}</p>
+                )}
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  value={formData.contactInfo.phone}
+                  onChange={(e) => updateFormData('contactInfo.phone', e.target.value)}
+                  className={`input-field ${errors.contactPhone ? 'border-error' : ''}`}
+                  placeholder="Enter your phone number"
+                />
+                {errors.contactPhone && (
+                  <p className="text-error text-sm mt-1">{errors.contactPhone}</p>
+                )}
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-text-primary mb-2">
+                  Special Requirements (Optional)
+                </label>
+                <textarea
+                  value={formData.specialRequirements}
+                  onChange={(e) => updateFormData('specialRequirements', e.target.value)}
+                  className="input-field h-24 resize-none"
+                  placeholder="Any special requirements or notes for your event..."
+                />
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (isLoaded && !isSignedIn) {
+    return <NotLoggedIn />;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="min-h-screen bg-background"
+    >
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-primary-50 to-accent-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary mb-4">
+              Plan Your Perfect Event
+            </h1>
+            <p className="text-xl text-text-secondary max-w-2xl mx-auto">
+              Tell us about your dream event and we'll help bring it to life with our expert planning services
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Progress Steps - Desktop Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="card sticky top-24">
+              <h3 className="font-heading text-xl font-semibold text-text-primary mb-6">
+                Booking Progress
+              </h3>
+              
+              <div className="space-y-4">
+                {steps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
+                      currentStep === step.id
+                        ? 'bg-primary-50 border border-primary-200'
+                        : currentStep > step.id
+                        ? 'bg-success-50 border border-success-200' :'bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        currentStep === step.id
+                          ? 'bg-primary text-white'
+                          : currentStep > step.id
+                          ? 'bg-success text-white' :'bg-gray-300 text-gray-600'
+                      }`}
+                    >
+                      {currentStep > step.id ? (
+                        <Icon name="Check" size={20} strokeWidth={2} />
+                      ) : (
+                        <Icon name={step.icon} size={20} strokeWidth={2} />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p
+                        className={`font-medium ${
+                          currentStep === step.id
+                            ? 'text-primary'
+                            : currentStep > step.id
+                            ? 'text-success' :'text-text-secondary'
+                        }`}
+                      >
+                        {step.title}
+                      </p>
+                      <p className="text-sm text-text-secondary">{step.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Booking Summary */}
+              <BookingSummary formData={formData} estimatedCost={calculateEstimatedCost()} formatCurrency={formatCurrency} />
+            </div>
+          </div>
+
+          {/* Main Form Content */}
+          <div className="lg:col-span-2">
+            {/* Mobile Progress Bar */}
+            <div className="lg:hidden mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-text-secondary">
+                  Step {currentStep} of {steps.length}
+                </span>
+                <span className="text-sm font-medium text-primary">
+                  {progress}% Complete
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-primary h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="card">
+              {renderStepContent()}
+
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                <button
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    currentStep === 1
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' :'bg-secondary text-primary hover:bg-primary hover:text-white'
+                  }`}
+                >
+                  <Icon name="ChevronLeft" size={20} strokeWidth={2} />
+                  <span>Previous</span>
+                </button>
+
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('eventBookingForm', JSON.stringify(formData));
+                      alert('Draft saved successfully!');
+                    }}
+                    className="px-4 py-2 text-text-secondary hover:text-primary transition-colors duration-200"
+                  >
+                    Save Draft
+                  </button>
+
+                  {currentStep === steps.length ? (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!isFormValid}
+                      className={`flex items-center space-x-2 px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
+                        isFormValid
+                          ? 'btn-primary' :'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      <Icon name="Send" size={20} strokeWidth={2} />
+                      <span>Submit Booking</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={nextStep}
+                      disabled={(() => {
+                        const stepFields = [
+                          ['eventType', 'eventSubType'],
+                          ['eventDate', 'eventTime'],
+                          ['location'],
+                          ['guestCount'],
+                          ['budget'],
+                          ['contactName', 'contactEmail', 'contactPhone']
+                        ];
+                        const currentFields = stepFields[currentStep - 1];
+                        return currentFields.some(field => errors[field]);
+                      })()}
+                      className={`flex items-center space-x-2 btn-primary ${(() => {
+                        const stepFields = [
+                          ['eventType', 'eventSubType'],
+                          ['eventDate', 'eventTime'],
+                          ['location'],
+                          ['guestCount'],
+                          ['budget'],
+                          ['contactName', 'contactEmail', 'contactPhone']
+                        ];
+                        const currentFields = stepFields[currentStep - 1];
+                        return currentFields.some(field => errors[field]) ? 'opacity-50 cursor-not-allowed' : '';
+                      })()}`}
+                    >
+                      <span>Continue</span>
+                      <Icon name="ChevronRight" size={20} strokeWidth={2} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default EventBookingForm;
