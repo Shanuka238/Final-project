@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import { useUser } from '@clerk/clerk-react';
+import CenterPopup from 'components/CenterPopup';
+import { addPackageToFavorites } from 'api/dashboard';
 
 const PackageCard = ({ 
   package: pkg, 
@@ -11,6 +14,8 @@ const PackageCard = ({
   canSelect 
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [popup, setPopup] = useState('');
+  const { user } = useUser();
 
   const getAvailabilityColor = (availability) => {
     switch (availability) {
@@ -38,6 +43,18 @@ const PackageCard = ({
     }
   };
 
+  const handleAddFavorite = async () => {
+    if (!user) return setPopup('Please log in to add favorites.');
+    if (pkg.isFavorite) return setPopup('Already in favorites!');
+    const res = await addPackageToFavorites(user.id, pkg);
+    if (res && res.message === 'Already in favorites') {
+      setPopup('Already in favorites!');
+      return;
+    }
+    setPopup('Added to favorites!');
+    if (typeof onFavoriteToggle === 'function') onFavoriteToggle(pkg._id || pkg.id);
+  };
+
   return (
     <>
       <div className="card group hover:shadow-accent transition-all duration-300 relative overflow-hidden">
@@ -50,15 +67,12 @@ const PackageCard = ({
 
         {/* Favorite Button */}
         <button
-          onClick={onFavoriteToggle}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 shadow-secondary"
+          onClick={handleAddFavorite}
+          className={`absolute top-4 right-4 z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 hover:bg-white transition-all duration-200 shadow-secondary`}
+          disabled={pkg.isFavorite}
         >
-          <Icon 
-            name={pkg.isFavorite ? "Heart" : "Heart"} 
-            size={20} 
-            className={pkg.isFavorite ? "text-error fill-current" : "text-text-secondary"} 
-            strokeWidth={2} 
-          />
+          <Icon name="Heart" size={20} className={pkg.isFavorite ? "text-error fill-current" : "text-black"} strokeWidth={2} />
+          <span className={`text-sm font-semibold ${pkg.isFavorite ? 'text-error' : 'text-black'}`}>Favourite</span>
         </button>
 
         {/* Package Image */}
@@ -136,20 +150,6 @@ const PackageCard = ({
                 <Icon name="Eye" size={18} strokeWidth={2} />
               </button>
             </div>
-            
-            {/* Comparison Checkbox */}
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={onSelect}
-                disabled={!canSelect}
-                className="w-4 h-4 text-primary border-border rounded focus:ring-primary-500"
-              />
-              <span className="text-sm text-text-secondary">
-                Compare {!canSelect && !isSelected ? '(Max 3)' : ''}
-              </span>
-            </label>
           </div>
         </div>
       </div>
@@ -247,6 +247,11 @@ const PackageCard = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* CenterPopup for feedback */}
+      {popup && (
+        <CenterPopup message={popup} onClose={() => setPopup('')} />
       )}
     </>
   );

@@ -7,12 +7,33 @@ export const fetchClerkUsers = async () => {
   return res.data;
 };
 
-export const createClerkUser = async (email, password, username, role) => {
-  const res = await axios.post(`${API_BASE}/users`, { email, password, username, role });
+export const createClerkUser = async (email, password, username, role, metadata) => {
+  const res = await axios.post(`${API_BASE}/users`, { email, password, username, role, metadata });
   return res.data;
 };
 
 export const deleteClerkUser = async (userId) => {
   const res = await axios.delete(`${API_BASE}/users/${userId}`);
+  return res.data;
+};
+
+// Dashboard summary API
+export const fetchDashboardSummary = async () => {
+  const res = await axios.get(`${API_BASE}/dashboard-summary`);
+  return res.data;
+};
+
+export const fetchAllEvents = async () => {
+  const res = await axios.get(`${API_BASE}/events`);
+  return res.data;
+};
+
+export const fetchAllBookings = async () => {
+  const res = await axios.get(`${API_BASE}/bookings`);
+  return res.data;
+};
+
+export const fetchAllPackages = async () => {
+  const res = await axios.get(`${API_BASE}/packages`);
   return res.data;
 };

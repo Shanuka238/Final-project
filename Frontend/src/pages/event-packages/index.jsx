@@ -102,7 +102,7 @@ const EventPackages = () => {
 
   const handleFavoriteToggle = (packageId) => {
     setPackages(prev => prev.map(pkg => 
-      pkg.id === packageId ? { ...pkg, isFavorite: !pkg.isFavorite } : pkg
+      (pkg._id === packageId || pkg.id === packageId) ? { ...pkg, isFavorite: true } : pkg
     ));
   };
 
@@ -316,12 +316,12 @@ const EventPackages = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredPackages.map((pkg) => (
               <PackageCard
-                key={pkg.id}
+                key={pkg._id || pkg.id}
                 package={pkg}
-                isSelected={selectedPackages.includes(pkg.id)}
-                onSelect={() => handlePackageSelect(pkg.id)}
-                onFavoriteToggle={() => handleFavoriteToggle(pkg.id)}
-                canSelect={selectedPackages.length < 3 || selectedPackages.includes(pkg.id)}
+                isSelected={selectedPackages.includes(pkg._id || pkg.id)}
+                onSelect={() => handlePackageSelect(pkg._id || pkg.id)}
+                onFavoriteToggle={handleFavoriteToggle}
+                canSelect={selectedPackages.length < 3 || selectedPackages.includes(pkg._id || pkg.id)}
               />
             ))}
           </div>

@@ -21,6 +21,24 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject
   useUnifiedTopology: true,
 });
 
+// Helper to log user activity
+async function logActivity({ userId, type, title, description, icon, iconColor, iconBg, relatedEvent, actionBy, amount }) {
+  const Activity = require('./models/Activity');
+  await Activity.create({
+    userId,
+    type,
+    title,
+    description,
+    timestamp: new Date(),
+    icon,
+    iconColor,
+    iconBg,
+    relatedEvent,
+    actionBy,
+    amount
+  });
+}
+
 // API: Get events for a user
 app.get('/api/events/:userId', async (req, res) => {
   try {
@@ -89,6 +107,16 @@ app.post('/api/book-event', async (req, res) => {
     const event = await Event.create({ ...eventData, userId });
     // Save booking
     const booking = await Booking.create({ ...bookingData, userId });
+    // Log activity
+    await logActivity({
+      userId,
+      type: 'booking',
+      title: 'Booked an event',
+      description: `Booked event: ${eventData.title} on ${eventData.date}`,
+      icon: 'CalendarCheck',
+      iconColor: 'text-success',
+      relatedEvent: eventData.title
+    });
     res.json({ event, booking });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -188,6 +216,32 @@ app.patch('/api/booking/:bookingId/pay', async (req, res) => {
     if (booking.dueAmount === 0) booking.status = 'paid';
     await booking.save();
     res.json(booking);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Add package to favorites
+app.post('/api/favorites/package', async (req, res) => {
+  try {
+    const { userId, pkg } = req.body;
+    if (!userId || !pkg) return res.status(400).json({ error: 'Missing userId or package' });
+    // Prevent duplicate favorite
+    const exists = await Favorite.findOne({ userId, type: 'package', 'data._id': pkg._id });
+    if (exists) return res.status(200).json({ message: 'Already in favorites' });
+    const favorite = await Favorite.create({ userId, type: 'package', data: pkg, savedDate: new Date().toISOString() });
+    res.json(favorite);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Remove favorite by _id
+app.delete('/api/favorites/:favoriteId', async (req, res) => {
+  try {
+    const { favoriteId } = req.params;
+    await Favorite.findByIdAndDelete(favoriteId);
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

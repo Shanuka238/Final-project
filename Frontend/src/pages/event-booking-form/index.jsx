@@ -195,12 +195,14 @@ const EventBookingForm = () => {
       nextAction: '',
       daysUntil: 0
     };
+    // Calculate estimated total
+    const estimatedTotal = calculateEstimatedCost();
     const bookingData = {
       eventTitle: eventData.title,
       package: '', // Optionally set package
-      totalAmount: formData.budget,
+      totalAmount: estimatedTotal,
       paidAmount: 0,
-      dueAmount: formData.budget,
+      dueAmount: estimatedTotal,
       status: 'active',
       bookingDate: new Date().toISOString(),
       eventDate: formData.eventDate,

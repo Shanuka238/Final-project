@@ -26,3 +26,13 @@ export const fetchUserUpcomingEvents = async (userId) => {
   const res = await axios.get(`${API_BASE}/user-upcoming-events/${userId}`);
   return res.data;
 };
+
+export const addPackageToFavorites = async (userId, pkg) => {
+  const res = await axios.post(`${API_BASE}/favorites/package`, { userId, pkg });
+  return res.data;
+};
+
+export const removeFavorite = async (favoriteId) => {
+  const res = await axios.delete(`${API_BASE}/favorites/${favoriteId}`);
+  return res.data;
+};

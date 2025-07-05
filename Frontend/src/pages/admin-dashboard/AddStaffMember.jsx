@@ -15,9 +15,8 @@ const AddStaffMember = ({ onClose, onAdd }) => {
     setError("");
     setSuccess("");
     try {
-      // Use name as username, role is always 'staff', save staffRole as metadata
-      // Save only the selected role as staffRole, and always set role to 'staff' for backend filtering
-      await createClerkUser(email, password, name, 'staff', { staffRole: role });
+      // Only set role to 'staff', do not send staffRole in metadata
+      await createClerkUser(email, password, name, 'staff');
       setSuccess("Staff member added!");
       setTimeout(() => {
         setSuccess("");
@@ -56,12 +55,6 @@ const AddStaffMember = ({ onClose, onAdd }) => {
           >
             <option value="" disabled>Select Role</option>
             <option value="staff">Staff</option>
-            <option value="Decorator">Decorator</option>
-            <option value="Caterer">Caterer</option>
-            <option value="Entertainer">Entertainer</option>
-            <option value="Photographer">Photographer</option>
-            <option value="Coordinator">Coordinator</option>
-            <option value="Other">Other</option>
           </select>
           <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg mt-2">Add Staff Member</button>
         </form>

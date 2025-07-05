@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useUser } from '@clerk/clerk-react';
-import { fetchUserFavorites } from 'api/dashboard';
+import { fetchUserFavorites, removeFavorite } from 'api/dashboard';
 
 const FavoritesSection = ({ showAll = false }) => {
   const [activeCategory, setActiveCategory] = useState('packages');
@@ -28,9 +28,9 @@ const FavoritesSection = ({ showAll = false }) => {
     { id: 'venues', label: 'Venues', count: favoriteVenues.length }
   ];
 
-  const handleRemoveFavorite = (id, type) => {
-    // In a real app, this would update the state/database
-    console.log(`Removing ${type} with id ${id} from favorites`);
+  const handleRemoveFavorite = async (id) => {
+    await removeFavorite(id);
+    setFavorites(prev => prev.filter(f => f._id !== id));
   };
 
   const renderPackageCard = (fav) => {
@@ -38,16 +38,19 @@ const FavoritesSection = ({ showAll = false }) => {
     return (
       <div key={fav._id} className="border border-border rounded-xl overflow-hidden hover:shadow-secondary transition-all duration-200">
         <div className="relative">
+          {/* Remove Favorite Button */}
+          <button
+            onClick={() => handleRemoveFavorite(fav._id)}
+            className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-white/90 px-3 py-1 rounded-full text-error border border-error hover:bg-error hover:text-white transition-all"
+            title="Remove from favorites"
+          >
+            <Icon name="Trash" size={16} />
+            <span className="text-xs font-semibold">Remove</span>
+          </button>
           <Image src={pkg.image} alt={pkg.name} className="w-full h-48 object-cover" />
           {pkg.isPopular && (
             <div className="absolute top-3 left-3 bg-accent text-white px-2 py-1 rounded-full text-xs font-medium">Popular</div>
           )}
-          <button
-            onClick={() => handleRemoveFavorite(fav._id, 'package')}
-            className="absolute top-3 right-3 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center transition-colors duration-200"
-          >
-            <Icon name="Heart" size={16} className="text-error fill-current" strokeWidth={2} />
-          </button>
         </div>
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
