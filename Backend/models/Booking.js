@@ -4,6 +4,8 @@ const BookingSchema = new mongoose.Schema({
   userId: { type: String, required: true }, // Clerk user ID
   eventTitle: String,
   package: String,
+  guestCount: Number, // Number of guests
+  price: Number, // Price for selected number of guests
   totalAmount: Number,
   paidAmount: Number,
   dueAmount: Number,

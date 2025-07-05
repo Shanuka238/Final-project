@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/partynest', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject.cicv4nv.mongodb.net/?retryWrites=true&w=majority&appName=Finalproject', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

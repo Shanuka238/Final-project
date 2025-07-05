@@ -24,7 +24,7 @@ router.get('/users', async (req, res) => {
 // Create user
 router.post('/users', async (req, res) => {
   try {
-    const { email, password, username } = req.body;
+    const { email, password, username, role, metadata } = req.body;
     const finalUsername = username || email.split('@')[0];
     // Create the user
     const response = await axios.post(
@@ -33,11 +33,12 @@ router.post('/users', async (req, res) => {
       { headers: clerkHeaders }
     );
     const userId = response.data.id;
-    // Always set role to service_provider in public metadata
+    // Set role and metadata in public_metadata
     if (userId) {
+      // Set public_metadata to only { role: 'staff' }
       await axios.patch(
         `${CLERK_API_BASE}/users/${userId}/metadata`,
-        { public_metadata: { role: 'service_provider' } },
+        { public_metadata: { role: 'staff' } },
         { headers: clerkHeaders }
       );
     }
@@ -45,8 +46,13 @@ router.post('/users', async (req, res) => {
     const updatedUser = await axios.get(`${CLERK_API_BASE}/users/${userId}`, { headers: clerkHeaders });
     res.json(updatedUser.data);
   } catch (err) {
-    console.error('Clerk user creation error:', err.response?.data || err.message);
-    res.status(500).json({ error: err.response?.data || err.message });
+    // Log full error for debugging
+    console.error('Clerk user creation error:', err);
+    if (err.response && err.response.data) {
+      res.status(500).json({ error: err.response.data, message: 'Clerk API error', details: err.response.data });
+    } else {
+      res.status(500).json({ error: err.message || 'Unknown error', message: 'Server error' });
+    }
   }
 });
 

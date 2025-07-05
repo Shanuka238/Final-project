@@ -140,6 +140,19 @@ const EventBookingForm = () => {
     }
   };
 
+  const goToStep = (step) => {
+    setCurrentStep(step);
+    // Reset price-related fields when entering the Budget step (step 5)
+    if (step === 5) {
+      setFormData(prev => ({
+        ...prev,
+        perGuestCost: 0,
+        extraBudget: 0,
+        totalAmount: 0
+      }));
+    }
+  };
+
   const nextStep = () => {
     validateForm();
     // Only allow next if no errors for the current step
@@ -207,10 +220,22 @@ const EventBookingForm = () => {
     }
   };
 
+  // --- Unified per-guest cost for all calculations ---
+  const getPerGuestCost = () => {
+    const basePrice = 20;
+    let multiplier = 1;
+    if (formData.guestCount <= 25) multiplier = 1.2;
+    else if (formData.guestCount <= 50) multiplier = 1.1;
+    else if (formData.guestCount <= 100) multiplier = 1.0;
+    else if (formData.guestCount <= 200) multiplier = 0.95;
+    else multiplier = 0.9;
+    return Math.round(basePrice * multiplier);
+  };
+
+  // Estimated total = (per guest cost * guest count) + budget
   const calculateEstimatedCost = () => {
-    let baseCost = formData.budget || 0;
-    const guestMultiplier = formData.guestCount > 0 ? formData.guestCount / 50 : 0;
-    return Math.round(baseCost * guestMultiplier);
+    const perGuest = getPerGuestCost();
+    return (perGuest * (formData.guestCount || 0)) + (formData.budget || 0);
   };
 
   const formatCurrency = (amount) => `Rs ${amount.toLocaleString('en-LK')}`;

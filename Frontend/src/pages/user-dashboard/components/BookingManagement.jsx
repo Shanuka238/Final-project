@@ -6,7 +6,7 @@ import axios from 'axios';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PaymentModal from './PaymentModal';
 
-const formatCurrency = (amount) => `Rs ${amount?.toLocaleString('en-LK') || 0}`;
+const formatCurrency = (estimatedCost) => `Rs ${estimatedCost.toLocaleString('en-LK') || 0}`;
 
 const BookingManagement = () => {
   const [activeFilter, setActiveFilter] = useState('all');

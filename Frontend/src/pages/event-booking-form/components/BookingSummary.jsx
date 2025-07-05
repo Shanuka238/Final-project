@@ -137,7 +137,7 @@ const BookingSummary = ({ formData, estimatedCost }) => {
                 </p>
                 {formData.guestCount && (
                   <p className="text-xs text-text-secondary">
-                    Rs {Math.round(estimatedCost / formData.guestCount).toLocaleString('en-LK')} per guest
+                    Rs 24 per guest
                   </p>
                 )}
               </div>

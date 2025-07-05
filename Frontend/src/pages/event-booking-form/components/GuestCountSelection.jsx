@@ -27,7 +27,7 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
   };
 
   const getCostEstimate = () => {
-    const basePrice = 50; // Base price per guest
+    const basePrice = 20; // Base price per guest
     let multiplier = 1;
     
     // Adjust pricing based on guest count
