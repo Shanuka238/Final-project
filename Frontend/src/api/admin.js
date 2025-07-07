@@ -1,3 +1,13 @@
+// Staff messaging API
+export const fetchStaffMessages = async (staffId) => {
+  const res = await axios.get(`${API_BASE}/messages/${staffId}`);
+  return res.data;
+};
+
+export const sendStaffMessage = async (staffId, sender, content, staffName, staffEmail) => {
+  const res = await axios.post(`${API_BASE}/messages/${staffId}`, { sender, content, staffName, staffEmail });
+  return res.data;
+};
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000/api/admin';

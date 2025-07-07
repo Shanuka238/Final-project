@@ -36,7 +36,7 @@ const FavoritesSection = ({ showAll = false }) => {
   const renderPackageCard = (fav) => {
     const pkg = fav.data;
     return (
-      <div key={fav._id} className="border border-border rounded-xl overflow-hidden hover:shadow-secondary transition-all duration-200">
+      <div key={fav._id} className="border border-border rounded-xl overflow-hidden hover:shadow-secondary transition-all duration-200 bg-white w-full max-w-xs mx-auto" style={{ minWidth: '260px' }}>
         <div className="relative">
           {/* Remove Favorite Button */}
           <button
@@ -54,11 +54,11 @@ const FavoritesSection = ({ showAll = false }) => {
         </div>
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
-            <div>
-              <h4 className="font-semibold text-text-primary">{pkg.name}</h4>
-              <p className="text-sm text-text-secondary">{pkg.type} Event</p>
+            <div className="min-w-0">
+              <h4 className="font-semibold text-text-primary truncate" title={pkg.name}>{pkg.name}</h4>
+              <p className="text-sm text-text-secondary truncate">{pkg.type} Event</p>
             </div>
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <p className="font-bold text-primary">${pkg.price?.toLocaleString() || 0}</p>
               {pkg.originalPrice > pkg.price && (
                 <p className="text-xs text-text-secondary line-through">
@@ -192,10 +192,36 @@ const FavoritesSection = ({ showAll = false }) => {
         ))}
       </div>
       {/* Content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="favorites-scroll flex overflow-x-auto gap-6 pb-2" style={{scrollbarWidth: 'thin'}}>
         {activeCategory === 'packages' && favoritePackages.map(renderPackageCard)}
         {activeCategory === 'venues' && favoriteVenues.map(renderVenueCard)}
       </div>
+      <style>{`
+        .favorites-scroll {
+          scrollbar-color: #c7d2fe #f3f4f6;
+        }
+        .favorites-scroll > div {
+          min-width: 300px;
+          max-width: 350px;
+          width: 100%;
+        }
+        @media (max-width: 768px) {
+          .favorites-scroll > div {
+            min-width: 90vw;
+            max-width: 100vw;
+          }
+        }
+        .favorites-scroll::-webkit-scrollbar {
+          height: 8px;
+        }
+        .favorites-scroll::-webkit-scrollbar-thumb {
+          background: #c7d2fe;
+          border-radius: 4px;
+        }
+        .favorites-scroll::-webkit-scrollbar-track {
+          background: #f3f4f6;
+        }
+      `}</style>
       {/* Empty State */}
       {((activeCategory === 'packages' && favoritePackages.length === 0) ||
         (activeCategory === 'venues' && favoriteVenues.length === 0)) && (

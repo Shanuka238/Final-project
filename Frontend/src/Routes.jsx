@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route, useNavigate } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -27,21 +27,28 @@ const SsoCallback = () => {
 const Routes = () => {
   return (
     <BrowserRouter>
-      <ErrorBoundary>
+      {/* <ErrorBoundary> */}
         <ScrollToTop />
         <Header />
-        <RouterRoutes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/landing-page" element={<LandingPage />} />
-          <Route path="/event-booking-form" element={<EventBookingForm />} />
-          <Route path="/event-packages" element={<EventPackages />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/contact-page" element={<ContactPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/login/sso-callback" element={<SsoCallback />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        </RouterRoutes>
-      </ErrorBoundary>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-lg">Loading...</div>}>
+          <RouterRoutes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/landing-page" element={<LandingPage />} />
+            <Route path="/event-booking-form" element={<EventBookingForm />} />
+            <Route path="/event-packages" element={<EventPackages />} />
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/contact-page" element={<ContactPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/login/sso-callback" element={<SsoCallback />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            {/* Correct lazy loading for StaffDashboard */}
+            {(() => {
+              const StaffDashboard = React.lazy(() => import('pages/staff-dashboard'));
+              return <Route path="/staff-dashboard" element={<StaffDashboard />} />;
+            })()}
+          </RouterRoutes>
+        </Suspense>
+      {/* </ErrorBoundary> */}
     </BrowserRouter>
   );
 };

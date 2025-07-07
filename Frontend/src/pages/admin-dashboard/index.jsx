@@ -3,7 +3,94 @@ import Icon from '../../components/AppIcon';
 import CenterPopup from '../../components/CenterPopup';
 import CalendarWidget from '../user-dashboard/components/CalendarWidget';
 import AddStaffMember from './AddStaffMember';
-import { fetchClerkUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages } from 'api/admin';
+import { fetchClerkUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages, fetchStaffMessages, sendStaffMessage } from 'api/admin';
+// StaffMessagesModal component
+function StaffMessagesModal({ staff, onClose }) {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [response, setResponse] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+	if (staff?.id) {
+	  setLoading(true);
+	  fetchStaffMessages(staff.id)
+		.then(setMessages)
+		.catch(() => setMessages([]))
+		.finally(() => setLoading(false));
+	}
+  }, [staff]);
+
+  const handleSend = async (e) => {
+	e.preventDefault();
+	if (!response.trim()) return;
+	setSending(true);
+	try {
+	  const updated = await sendStaffMessage(
+		staff.id,
+		'admin',
+		response,
+		staff.username || staff.firstName || staff.first_name || '',
+		(staff.emailAddresses && staff.emailAddresses[0]?.emailAddress) || (staff.email_addresses && staff.email_addresses[0]?.email_address) || ''
+	  );
+	  setMessages(updated);
+	  setResponse("");
+	} catch (err) {
+	  setError("Failed to send message.");
+	} finally {
+	  setSending(false);
+	}
+  };
+
+  return (
+	<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+	  <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-lg relative">
+		<button className="absolute top-2 right-2 text-gray-400 hover:text-purple-600" onClick={onClose}>&times;</button>
+		<h3 className="text-lg font-bold text-purple-800 mb-2 flex items-center gap-2">
+		  <Icon name="MessageCircle" size={20} /> Messages with {staff.username || staff.firstName || staff.first_name || 'Staff'}
+		</h3>
+		{loading ? (
+		  <div className="text-center text-gray-400 py-8">Loading messages...</div>
+		) : (
+		  <div className="max-h-64 overflow-y-auto mb-4 border rounded p-2 bg-purple-50">
+			{messages.length === 0 ? (
+			  <div className="text-center text-gray-400 py-4">No messages yet.</div>
+			) : (
+			  messages.map((msg, idx) => (
+				<div key={idx} className={`mb-2 flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
+				  <div className={`px-3 py-2 rounded-lg text-sm ${msg.sender === 'admin' ? 'bg-purple-200 text-purple-900' : 'bg-gray-200 text-gray-700'}`}>
+					<span className="block font-semibold mb-1">{msg.sender === 'admin' ? 'Admin' : 'Staff'}</span>
+					<span>{msg.content}</span>
+					<div className="text-xs text-gray-500 mt-1">{msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ''}</div>
+				  </div>
+				</div>
+			  ))
+			)}
+		  </div>
+		)}
+		<form onSubmit={handleSend} className="flex gap-2 mt-2">
+		  <input
+			type="text"
+			className="flex-1 border rounded px-3 py-2"
+			placeholder="Type your response..."
+			value={response}
+			onChange={e => setResponse(e.target.value)}
+			disabled={sending}
+		  />
+		  <button
+			type="submit"
+			className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition disabled:opacity-60"
+			disabled={sending || !response.trim()}
+		  >
+			{sending ? 'Sending...' : 'Send'}
+		  </button>
+		</form>
+		{error && <div className="text-red-600 text-sm mt-2">{error}</div>}
+	  </div>
+	</div>
+  );
+}
 
 const summaryTemplate = [
 	{
@@ -34,20 +121,7 @@ const summaryTemplate = [
 		color: 'bg-rose-100',
 		iconColor: 'text-rose-500',
 	},
-	{
-		label: 'Messages',
-		key: 'messages',
-		icon: 'MessageCircle',
-		color: 'bg-yellow-100',
-		iconColor: 'text-yellow-500',
-	},
-	{
-		label: 'Staff',
-		key: 'staffCount',
-		icon: 'Briefcase',
-		color: 'bg-green-100',
-		iconColor: 'text-green-600',
-	},
+	
 ];
 
 const tabs = [
@@ -55,8 +129,7 @@ const tabs = [
 	'Users',
 	'Events',
 	'Bookings',
-	'Packages',
-	'Messages'
+	'Packages'
 ];
 
 const AdminDashboard = () => {
@@ -68,7 +141,9 @@ const AdminDashboard = () => {
 	const [deleteConfirm, setDeleteConfirm] = useState({ open: false, staff: null });
 	const [allEvents, setAllEvents] = useState([]);
 	const [allBookings, setAllBookings] = useState([]);
-	const [allPackages, setAllPackages] = useState([]);
+  const [allPackages, setAllPackages] = useState([]);
+  // Staff messages modal state
+  const [viewMessagesStaff, setViewMessagesStaff] = useState(null);
 
 	// Fetch staff from Clerk
 	const loadStaff = useCallback(() => {
@@ -83,10 +158,28 @@ const AdminDashboard = () => {
 			.catch(() => setStaffMembers([]));
 	}, []);
 
+	// Real-time polling for staff and user accounts updates
+	useEffect(() => {
+		const fetchAll = () => {
+			loadStaff();
+			fetchClerkUsers()
+				.then(users => {
+					const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
+					const filtered = arr.filter(u => (u.publicMetadata?.role || u.public_metadata?.role) !== 'admin');
+					setSummary(prev => ({
+						...prev,
+						totalAccounts: filtered.length
+					}));
+				})
+				.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
+		};
+		fetchAll(); // initial fetch
+		const interval = setInterval(fetchAll, 1000); // fetch every 5 seconds
+		return () => clearInterval(interval);
+	}, [loadStaff]);
 
 	// Fetch dashboard summary
 	useEffect(() => {
-		loadStaff();
 		fetchDashboardSummary()
 			.then(data => setSummary({
 				...data,
@@ -97,16 +190,6 @@ const AdminDashboard = () => {
 			.catch(() => setSummary({}));
 	}, [loadStaff]);
 
-	// Fetch dashboard summary and staff count
-	useEffect(() => {
-		fetchClerkUsers()
-			.then(users => {
-				const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
-				const staffCount = arr.filter(u => (u.publicMetadata?.role || u.public_metadata?.role) === 'staff').length;
-				setSummary(prev => ({ ...prev, staffCount }));
-			})
-			.catch(() => setSummary(prev => ({ ...prev, staffCount: 0 })));
-	}, []);
 
 	// Users tab: show list of all users (not just role: user)
 	const [userList, setUserList] = useState([]);
@@ -151,20 +234,6 @@ const AdminDashboard = () => {
 				</div>
 				<div className="flex gap-3 flex-wrap justify-end">
 					<button
-						className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-5 rounded-lg shadow transition-all text-base"
-						onClick={() => setPopupMessage('New Event clicked!')}
-					>
-						<Icon name="PlusCircle" size={20} />
-						New Event
-					</button>
-					<button
-						className="flex items-center gap-2 border-2 border-purple-600 text-purple-700 font-semibold py-2 px-5 rounded-lg hover:bg-purple-50 transition-all text-base"
-						onClick={() => setPopupMessage('Manage Packages clicked!')}
-					>
-						<Icon name="Package" size={20} />
-						Manage Packages
-					</button>
-					<button
 						className="flex items-center gap-2 bg-green-100 text-green-700 font-semibold py-2 px-5 rounded-lg border border-green-300 hover:bg-green-200 transition-all text-base"
 						onClick={() => setShowAddStaff(true)}
 					>
@@ -199,7 +268,7 @@ const AdminDashboard = () => {
 		  <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
 			<Icon name="Users" size={22} /> Users
 		  </h2>
-		  {userList.length === 0 ? (
+		  {userList.filter(user => (user.publicMetadata?.role || user.public_metadata?.role) !== 'admin').length === 0 ? (
 			<div className="text-center text-gray-400 py-8">No users found.</div>
 		  ) : (
 			<div className="overflow-x-auto">
@@ -212,7 +281,7 @@ const AdminDashboard = () => {
 				  </tr>
 				</thead>
 				<tbody>
-				  {userList.map((user, idx) => (
+				  {userList.filter(user => (user.publicMetadata?.role || user.public_metadata?.role) !== 'admin').map((user, idx) => (
 					<tr key={user.id || idx} className="border-t">
 					  <td className="py-2 px-4">{user.username || user.firstName || user.first_name || 'N/A'}</td>
 					  <td className="py-2 px-4">{(user.emailAddresses && user.emailAddresses[0]?.emailAddress) || (user.email_addresses && user.email_addresses[0]?.email_address) || 'N/A'}</td>
@@ -406,6 +475,8 @@ const AdminDashboard = () => {
 						<th className="py-2 px-4">Email</th>
 						<th className="py-2 px-4">Role</th>
 						<th className="py-2 px-4">Action</th>
+						{/* <th className="py-2 px-4">Contact</th> */}
+						<th className="py-2 px-4">Messages</th>
 					  </tr>
 					</thead>
 					<tbody>
@@ -438,6 +509,28 @@ const AdminDashboard = () => {
 							<Icon name="Trash2" size={18} /> Delete
 						  </button>
 						</td>
+						{/* <td className="py-2 px-4">
+						  <button
+							className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded transition-all border border-blue-200 hover:bg-blue-50"
+							title="Contact Staff"
+							onClick={() => window.location = `mailto:${(staff.emailAddresses && staff.emailAddresses[0]?.emailAddress) || (staff.email_addresses && staff.email_addresses[0]?.email_address) || ''}`}
+						  >
+							<Icon name="Mail" size={18} /> Contact
+						  </button>
+						</td> */}
+						<td className="py-2 px-4">
+						  <button
+							className="flex items-center gap-1 text-purple-600 hover:text-purple-800 font-medium px-2 py-1 rounded transition-all border border-purple-200 hover:bg-purple-50"
+							title="View Staff Messages"
+							onClick={() => setViewMessagesStaff(staff)}
+						  >
+							<Icon name="MessageCircle" size={18} /> View Messages
+						  </button>
+						</td>
+	  {/* Staff Messages Modal */}
+	  {viewMessagesStaff && (
+		<StaffMessagesModal staff={viewMessagesStaff} onClose={() => setViewMessagesStaff(null)} />
+	  )}
 					  </tr>
 					  ))}
 					</tbody>

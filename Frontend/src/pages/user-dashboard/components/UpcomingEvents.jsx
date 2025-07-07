@@ -97,8 +97,23 @@ const UpcomingEvents = ({ showAll = false, setActiveTab }) => {
                         <span>{event.location}</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+                    {/* Key Features Section */}
+                    {Array.isArray(event.features) && event.features.length > 0 && (
+                      <div className="mt-2">
+                        <h5 className="text-xs font-semibold text-text-primary mb-1">Key Features:</h5>
+                        <div className="flex flex-wrap gap-2">
+                          {event.features.map((feature, idx) => (
+                            <span key={idx} className="inline-flex items-center px-2 py-1 bg-primary-50 text-primary rounded-full text-xs font-medium">
+                              <Icon name="Check" size={12} className="mr-1 text-success" strokeWidth={2} />
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  {/* End Key Features Section */}
+                </div>
+                <div className="flex items-center space-x-2 mt-2 sm:mt-0">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(event.status)}`}>
                       <Icon name={getStatusIcon(event.status)} size={12} className="inline mr-1" strokeWidth={2} />
                       {event.status?.replace('_', ' ').toUpperCase()}
@@ -160,6 +175,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab }) => {
           </div>
         ))}
       </div>
+      {/* End of event cards */}
       {displayEvents.length === 0 && (
         <div className="text-center py-12">
           <Icon name="Calendar" size={64} className="text-text-tertiary mx-auto mb-4" />
@@ -176,6 +192,6 @@ const UpcomingEvents = ({ showAll = false, setActiveTab }) => {
       )}
     </div>
   );
-};
+}
 
 export default UpcomingEvents;

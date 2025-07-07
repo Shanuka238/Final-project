@@ -9,10 +9,12 @@ const Login = () => {
 
   useEffect(() => {
     if (isSignedIn && isLoaded && user) {
-      // Check for admin role in Clerk publicMetadata
+      // Check for role in Clerk publicMetadata
       const role = user.publicMetadata?.role;
       if (role === 'admin') {
         navigate('/admin-dashboard', { replace: true });
+      } else if (role === 'staff') {
+        navigate('/staff-dashboard', { replace: true });
       } else {
         navigate('/user-dashboard', { replace: true });
       }
@@ -22,7 +24,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <div className="max-w-md w-full card p-8">
-        <SignIn routing="path" path="/login" afterSignInUrl="/user-dashboard" />
+        <SignIn routing="path" path="/login" />
       </div>
     </div>
   );

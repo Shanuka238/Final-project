@@ -8,15 +8,23 @@ const Header = () => {
   const location = useLocation();
   const { user } = useUser();
 
-  // Determine if user is admin
-  const isAdmin = user?.publicMetadata?.role === 'admin';
 
-  // Build navigation items, add Admin Dashboard for admins
+  // Determine user role
+  const role = user?.publicMetadata?.role;
+  const isAdmin = role === 'admin';
+  const isStaff = role === 'staff';
+
+  // Build navigation items based on role
   let navigationItems;
   if (isAdmin) {
     navigationItems = [
       { label: 'Home', path: '/landing-page', icon: 'Home' },
       { label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' }
+    ];
+  } else if (isStaff) {
+    navigationItems = [
+      { label: 'Home', path: '/landing-page', icon: 'Home' },
+      { label: 'Staff Dashboard', path: '/staff-dashboard', icon: 'Briefcase' }
     ];
   } else {
     navigationItems = [
@@ -27,8 +35,8 @@ const Header = () => {
     ];
   }
 
-  // Only show 'My Events' if not admin
-  const authenticatedItems = isAdmin ? [] : [
+  // Only show 'My Events' if not admin or staff
+  const authenticatedItems = (isAdmin || isStaff) ? [] : [
     { label: 'My Events', path: '/user-dashboard', icon: 'User' }
   ];
 

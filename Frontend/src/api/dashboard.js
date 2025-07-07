@@ -36,3 +36,18 @@ export const removeFavorite = async (favoriteId) => {
   const res = await axios.delete(`${API_BASE}/favorites/${favoriteId}`);
   return res.data;
 };
+
+export const addNewPackage = async (pkg) => {
+  const res = await axios.post(`${API_BASE}/packages`, pkg);
+  return res.data;
+};
+
+export const deletePackage = async (packageId) => {
+  const res = await axios.delete(`${API_BASE}/packages/${packageId}`);
+  return res.data;
+};
+
+export const updatePackage = async (packageId, pkg) => {
+  const res = await axios.put(`${API_BASE}/packages/${packageId}`, pkg);
+  return res.data;
+};

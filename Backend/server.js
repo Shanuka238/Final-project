@@ -247,7 +247,48 @@ app.delete('/api/favorites/:favoriteId', async (req, res) => {
   }
 });
 
+// API: Add a new event package
+app.post('/api/packages', async (req, res) => {
+  try {
+    const pkg = await Package.create(req.body);
+    res.status(201).json(pkg);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Delete a package by ID
+app.delete('/api/packages/:packageId', async (req, res) => {
+  try {
+    const deleted = await Package.findByIdAndDelete(req.params.packageId);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Package not found' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Edit a package by ID
+app.put('/api/packages/:packageId', async (req, res) => {
+  try {
+    const updated = await Package.findByIdAndUpdate(
+      req.params.packageId,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ error: 'Package not found' });
+    }
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/admin', require('./routes/admin-messages'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
