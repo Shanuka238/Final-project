@@ -1,16 +1,17 @@
 // Remove duplicate ContactAdminForm definition (keep only one, above StaffDashboard)
 import React, { useState, useEffect } from "react";
 import StaffCalendarWidget from './components/StaffCalendarWidget';
-import UpcomingEvents from './components/UpcomingEvents';
-import MyTasks from './components/MyTasks';
-import { CalendarDays, UserPlus, Mail } from "lucide-react";
+import ManagePackages from './components/ManagePackages';
+import { CalendarDays, Mail } from "lucide-react";
 import { useUser } from '@clerk/clerk-react';
 import { fetchUserEvents, fetchUserBookings } from 'api/dashboard';
 import StaffMessagesModal from "./StaffMessagesModal";
+import { fetchStaffMessages } from 'api/admin';
+import { fetchAllPackages } from 'api/admin';
 
 const tabs = [
   "Overview",
-  "Manage Events",
+  "Manage Packages",
 ];
 
 export default function StaffDashboard() {
@@ -19,7 +20,8 @@ export default function StaffDashboard() {
   const [staff, setStaff] = useState(null);
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [requests, setRequests] = useState([]);
+  const [packages, setPackages] = useState([]);
+  const [newAdminMessages, setNewAdminMessages] = useState(0);
   // Staff messaging modal state
   const [showMessagesModal, setShowMessagesModal] = useState(false);
 
@@ -34,15 +36,21 @@ export default function StaffDashboard() {
       });
       fetchUserEvents(user.id).then(setEvents).catch(() => setEvents([]));
       fetchUserBookings(user.id).then(setBookings).catch(() => setBookings([]));
-      // TODO: fetch real service requests for staff if available
+      // Fetch all packages
+      fetchAllPackages().then(setPackages).catch(() => setPackages([]));
+      // Fetch staff messages and count new admin messages
+      fetchStaffMessages(user.id).then(messages => {
+        // Count all messages from admin (no read-tracking yet)
+        const adminMsgs = Array.isArray(messages) ? messages.filter(m => m.sender === 'admin') : [];
+        setNewAdminMessages(adminMsgs.length);
+      }).catch(() => setNewAdminMessages(0));
     }
   }, [isLoaded, user]);
 
   // Summary cards (replace with real data if available)
   const summary = [
-    { label: "Assigned Events", value: events.length, icon: <CalendarDays className="text-purple-500" />, bg: "bg-purple-50" },
-    { label: "Active Bookings", value: bookings.length, icon: <span className='text-green-500'>B</span>, bg: "bg-green-50" },
-    { label: "Pending Service Requests", value: requests.length, icon: <span className='text-yellow-500'>S</span>, bg: "bg-yellow-50" },
+    { label: "Active Packages", value: packages.length, icon: <span className="text-purple-500">📦</span>, bg: "bg-purple-50" },
+    { label: "New Admin Messages", value: newAdminMessages, icon: <Mail className="text-blue-500" />, bg: "bg-blue-50" },
   ];
 
   if (!staff) {
@@ -138,13 +146,10 @@ export default function StaffDashboard() {
                 </h2>
                 <StaffCalendarWidget events={events} />
               </div>
-              <UpcomingEvents events={events} />
-              <MyTasks requests={requests} />
+              <ManagePackages packages={packages} setPackages={setPackages} />
             </>
           )}
-          {activeTab === "Manage Events" && <UpcomingEvents events={events} />}
-          {/* {activeTab === "Bookings" && <ManageBookings />} */}
-          {activeTab === "Service Requests" && <MyTasks requests={requests} />}
+          {activeTab === "Manage Packages" && <ManagePackages packages={packages} setPackages={setPackages} />}
         </div>
       </div>
     </div>

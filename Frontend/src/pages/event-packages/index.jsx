@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useUser } from '@clerk/clerk-react';
 
 import PackageCard from './components/PackageCard';
-import PackageComparison from './components/PackageComparison';
 import FilterPanel from './components/FilterPanel';
 import NotLoggedIn from './components/NotLoggedIn';
 
@@ -14,7 +13,6 @@ const EventPackages = () => {
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [selectedPackages, setSelectedPackages] = useState([]);
-  const [showComparison, setShowComparison] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('popularity');
   const [filters, setFilters] = useState({
@@ -283,16 +281,10 @@ const EventPackages = () => {
               <div className="flex items-center space-x-3">
                 <Icon name="GitCompare" size={20} strokeWidth={2} />
                 <span className="font-medium">
-                  {selectedPackages.length} package{selectedPackages.length > 1 ? 's' : ''} selected for comparison
+                  {selectedPackages.length} package{selectedPackages.length > 1 ? 's' : ''} selected
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => setShowComparison(true)}
-                  className="px-4 py-2 bg-white text-primary rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200"
-                >
-                  Compare Now
-                </button>
                 <button
                   onClick={() => setSelectedPackages([])}
                   className="p-2 hover:bg-primary-700 rounded-lg transition-colors duration-200"
@@ -335,14 +327,6 @@ const EventPackages = () => {
           onFilterChange={handleFilterChange}
           onClose={() => setShowFilters(false)}
           packages={packages}
-        />
-      )}
-
-      {/* Package Comparison Modal */}
-      {showComparison && selectedPackages.length > 0 && (
-        <PackageComparison
-          packages={packages.filter(pkg => selectedPackages.includes(pkg.id))}
-          onClose={() => setShowComparison(false)}
         />
       )}
     </motion.div>

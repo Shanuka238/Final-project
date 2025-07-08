@@ -51,3 +51,8 @@ export const updatePackage = async (packageId, pkg) => {
   const res = await axios.put(`${API_BASE}/packages/${packageId}`, pkg);
   return res.data;
 };
+
+export const fetchEventTypes = async () => {
+  const res = await axios.get(`${API_BASE}/event-types`);
+  return res.data;
+};

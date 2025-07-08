@@ -289,6 +289,7 @@ app.put('/api/packages/:packageId', async (req, res) => {
 
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/admin', require('./routes/admin-messages'));
+app.use('/api/user-messages', require('./routes/user-messages'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

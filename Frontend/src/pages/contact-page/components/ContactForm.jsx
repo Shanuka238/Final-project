@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
+import { fetchEventTypes } from 'api/dashboard';
+import { sendUserMessage, fetchUserMessages } from 'api/userMessages';
+import UserMessagesModal from './UserMessagesModal';
 
 const ContactForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -12,23 +15,32 @@ const ContactForm = ({ onSubmit }) => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [eventTypes, setEventTypes] = useState([]);
+  const [userReplies, setUserReplies] = useState([]);
+  const [showUserMessages, setShowUserMessages] = useState(false);
+  const [showEmailWarning, setShowEmailWarning] = useState(false);
+  const contactMethods = [];
 
-  const eventTypes = [
-    { value: '', label: 'Select Event Type' },
-    { value: 'wedding', label: 'Wedding' },
-    { value: 'birthday', label: 'Birthday Party' },
-    { value: 'corporate', label: 'Corporate Event' },
-    { value: 'anniversary', label: 'Anniversary' },
-    { value: 'graduation', label: 'Graduation' },
-    { value: 'baby-shower', label: 'Baby Shower' },
-    { value: 'other', label: 'Other' }
-  ];
+  useEffect(() => {
+    fetchEventTypes().then(data => {
+      // Map Mongo event types to select options
+      if (Array.isArray(data)) {
+        setEventTypes(data.map(type => ({ value: type.id, label: type.name })));
+      } else {
+        setEventTypes([]);
+      }
+    }).catch(() => setEventTypes([]));
+  }, []);
 
-  const contactMethods = [
-    { value: 'email', label: 'Email', icon: 'Mail' },
-    { value: 'phone', label: 'Phone Call', icon: 'Phone' },
-    { value: 'consultation', label: 'In-Person Consultation', icon: 'Users' }
-  ];
+  useEffect(() => {
+    // Fetch user's own messages and replies by email (if available)
+    if (formData.email) {
+      fetchUserMessages().then(msgs => {
+        const myMsgs = msgs.filter(m => m.email === formData.email);
+        setUserReplies(myMsgs.flatMap(m => m.replies || []));
+      });
+    }
+  }, [formData.email]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -88,35 +100,52 @@ const ContactForm = ({ onSubmit }) => {
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      await sendUserMessage(formData);
+      onSubmit();
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        eventType: '',
+        contactMethod: 'email',
+        message: ''
+      });
+    } catch (err) {
+      setErrors({ message: 'Failed to send message. Please try again.' });
+    }
 
-    console.log('Form submitted:', formData);
-    onSubmit();
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      eventType: '',
-      contactMethod: 'email',
-      message: ''
-    });
-    
     setIsSubmitting(false);
+  };
+
+  const handleShowMessages = () => {
+    setShowUserMessages(true);
   };
 
   return (
     <div className="bg-surface rounded-2xl shadow-primary p-8">
-      <div className="mb-8">
-        <h2 className="font-heading text-3xl font-bold text-text-primary mb-4">
-          Send Us a Message
-        </h2>
-        <p className="text-text-secondary">
-          Fill out the form below and we'll get back to you within 24 hours. We're excited to help plan your special event!
-        </p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="font-heading text-3xl font-bold text-text-primary mb-4">
+            Send Us a Message
+          </h2>
+          <p className="text-text-secondary">
+            Fill out the form below and we'll get back to you within 24 hours. We're excited to help plan your special event!
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg border border-purple-200 hover:bg-purple-200 transition-all text-base"
+            onClick={handleShowMessages}
+          >
+            <Icon name="Mail" size={20} /> View My Messages
+          </button>
+        </div>
       </div>
+      {showUserMessages && (
+        <UserMessagesModal email={formData.email} onClose={() => setShowUserMessages(false)} />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name Field */}
@@ -228,7 +257,9 @@ const ContactForm = ({ onSubmit }) => {
               onChange={handleInputChange}
               className={`input-field pl-12 ${errors.eventType ? 'border-error focus:ring-error' : ''}`}
             >
-              {eventTypes.map((type) => (
+              {eventTypes.length === 0 ? (
+                <option value="">No event types available</option>
+              ) : eventTypes.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.label}
                 </option>
@@ -249,7 +280,9 @@ const ContactForm = ({ onSubmit }) => {
             Preferred Contact Method
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {contactMethods.map((method) => (
+            {contactMethods.length === 0 ? (
+              <div className="text-gray-400">No contact methods available</div>
+            ) : contactMethods.map((method) => (
               <label
                 key={method.value}
                 className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-all duration-200 ${
@@ -335,6 +368,21 @@ const ContactForm = ({ onSubmit }) => {
           </div>
         </div>
       </form>
+
+      {/* Admin Replies Section */}
+      {userReplies.length > 0 && (
+        <div className="mt-8">
+          <h3 className="font-heading text-xl font-bold text-primary mb-2">Replies from Admin</h3>
+          <ul className="space-y-2">
+            {userReplies.map((reply, idx) => (
+              <li key={idx} className="bg-primary-50 rounded p-2 text-sm">
+                <span className="font-semibold text-primary">Admin:</span> {reply.content}
+                <div className="text-xs text-gray-400">{reply.createdAt ? new Date(reply.createdAt).toLocaleString() : ''}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

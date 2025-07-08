@@ -3,42 +3,23 @@ import Icon from 'components/AppIcon';
 
 const FAQSection = () => {
   const [openFAQ, setOpenFAQ] = useState(0);
-
+  // Restored FAQ mock data
   const faqs = [
     {
       question: "How far in advance should I book my event?",
-      answer: `We recommend booking your event at least 3-6 months in advance, especially for popular dates like weekends and holidays. However, we understand that sometimes events come up quickly, and we'll do our best to accommodate last-minute requests based on availability.
-
-For weddings and large corporate events, we suggest booking 6-12 months ahead to ensure you get your preferred date and have ample time for detailed planning.`
+      answer: `We recommend booking your event at least 3-6 months in advance, especially for popular dates like weekends and holidays. However, we understand that sometimes events come up quickly, and we'll do our best to accommodate last-minute requests based on availability.\n\nFor weddings and large corporate events, we suggest booking 6-12 months ahead to ensure you get your preferred date and have ample time for detailed planning.`
     },
     {
-      question: "What\'s included in your event planning packages?",
-      answer: `Our packages vary depending on the type and scale of your event, but typically include:
-
-• Initial consultation and event design
-• Vendor coordination and management  
-• Timeline creation and day-of coordination
-• Setup and breakdown supervision
-• Emergency support during the event
-
-We offer three main tiers: Essential (basic coordination), Premium (full planning), and Luxury (white-glove service with premium vendors). Each package can be customized to fit your specific needs and budget.`
+      question: "What's included in your event planning packages?",
+      answer: `Our packages vary depending on the type and scale of your event, but typically include:\n\n• Initial consultation and event design\n• Vendor coordination and management  \n• Timeline creation and day-of coordination\n• Setup and breakdown supervision\n• Emergency support during the event\n\nWe offer three main tiers: Essential (basic coordination), Premium (full planning), and Luxury (white-glove service with premium vendors). Each package can be customized to fit your specific needs and budget.`
     },
     {
       question: "Do you provide vendors or do I need to find my own?",
-      answer: `We have an extensive network of trusted, vetted vendors including caterers, photographers, florists, musicians, and decorators. We can handle all vendor coordination as part of our service.
-
-However, if you have preferred vendors you'd like to work with, we're happy to coordinate with them as well. Our goal is to make your event perfect, whether that's with our recommended partners or your chosen providers.`
+      answer: `We have an extensive network of trusted, vetted vendors including caterers, photographers, florists, musicians, and decorators. We can handle all vendor coordination as part of our service.\n\nHowever, if you have preferred vendors you'd like to work with, we're happy to coordinate with them as well. Our goal is to make your event perfect, whether that's with our recommended partners or your chosen providers.`
     },
     {
       question: "What are your payment terms and cancellation policy?",
-      answer: `We typically require a 25% deposit to secure your date, with the remaining balance due 30 days before your event. We accept various payment methods including credit cards, bank transfers, and payment plans for larger events.
-
-Our cancellation policy varies by package and timing:
-• 90+ days before event: 50% refund of deposit
-• 30-89 days: 25% refund of deposit  
-• Less than 30 days: No refund, but we can reschedule based on availability
-
-We also offer event insurance options to protect your investment.`
+      answer: `We typically require a 25% deposit to secure your date, with the remaining balance due 30 days before your event. We accept various payment methods including credit cards, bank transfers, and payment plans for larger events.\n\nOur cancellation policy varies by package and timing:\n• 90+ days before event: 50% refund of deposit\n• 30-89 days: 25% refund of deposit  \n• Less than 30 days: No refund, but we can reschedule based on availability\n\nWe also offer event insurance options to protect your investment.`
     },
     {
       question: "Can you work within my budget?",
@@ -46,9 +27,7 @@ We also offer event insurance options to protect your investment.`
     },
     {
       question: "Do you handle destination events or only local ones?",
-      answer: `While we're based in New York, we absolutely handle destination events! We've planned beautiful weddings in the Hamptons, corporate retreats in the Catskills, and celebrations across the tri-state area.
-
-For events outside our immediate area, we may include travel costs in the planning fee, but we have partnerships with local vendors in popular destinations to ensure seamless execution wherever your event takes place.`
+      answer: `While we're based in New York, we absolutely handle destination events! We've planned beautiful weddings in the Hamptons, corporate retreats in the Catskills, and celebrations across the tri-state area.\n\nFor events outside our immediate area, we may include travel costs in the planning fee, but we have partnerships with local vendors in popular destinations to ensure seamless execution wherever your event takes place.`
     }
   ];
 

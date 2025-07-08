@@ -35,20 +35,6 @@ const ContactPage = () => {
               Contact us today and let's start creating unforgettable memories together.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                to="/event-booking-form"
-                className="btn-primary flex items-center space-x-2"
-              >
-                <Icon name="Calendar" size={20} strokeWidth={2} />
-                <span>Book Event Now</span>
-              </Link>
-              <Link
-                to="/event-packages"
-                className="btn-secondary flex items-center space-x-2"
-              >
-                <Icon name="Package" size={20} strokeWidth={2} />
-                <span>View Packages</span>
-              </Link>
             </div>
           </div>
         </div>

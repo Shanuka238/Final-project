@@ -4,6 +4,8 @@ import CenterPopup from '../../components/CenterPopup';
 import CalendarWidget from '../user-dashboard/components/CalendarWidget';
 import AddStaffMember from './AddStaffMember';
 import { fetchClerkUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages, fetchStaffMessages, sendStaffMessage } from 'api/admin';
+import { fetchUserMessages, sendAdminReply } from 'api/userMessages';
+
 // StaffMessagesModal component
 function StaffMessagesModal({ staff, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -129,7 +131,8 @@ const tabs = [
 	'Users',
 	'Events',
 	'Bookings',
-	'Packages'
+	'Packages',
+	'User Messages'
 ];
 
 const AdminDashboard = () => {
@@ -142,8 +145,11 @@ const AdminDashboard = () => {
 	const [allEvents, setAllEvents] = useState([]);
 	const [allBookings, setAllBookings] = useState([]);
   const [allPackages, setAllPackages] = useState([]);
+  const [userMessages, setUserMessages] = useState([]);
   // Staff messages modal state
   const [viewMessagesStaff, setViewMessagesStaff] = useState(null);
+  const [replyingId, setReplyingId] = useState(null);
+  const [replyContent, setReplyContent] = useState('');
 
 	// Fetch staff from Clerk
 	const loadStaff = useCallback(() => {
@@ -212,13 +218,25 @@ const AdminDashboard = () => {
 			fetchAllBookings().then(setAllBookings).catch(() => setAllBookings([]));
 		} else if (activeTab === 'Packages') {
 			fetchAllPackages().then(setAllPackages).catch(() => setAllPackages([]));
-		}
+		} else if (activeTab === 'User Messages') {
+      fetchUserMessages().then(msgs => {
+        setUserMessages(msgs.filter(m => !m.replies || m.replies.length === 0));
+      }).catch(() => setUserMessages([]));
+    }
 	}, [activeTab]);
 
 	// Avatar initials
 	const adminName = 'Admin';
 	const adminEmail = 'admin@partynest.com';
 	const initials = adminName.split(' ').map((n) => n[0]).join('');
+
+	const handleReply = async (msgId) => {
+		if (!replyContent.trim()) return;
+		await sendAdminReply(msgId, replyContent);
+		setReplyContent('');
+		setReplyingId(null);
+		fetchUserMessages().then(setUserMessages).catch(() => setUserMessages([]));
+	};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-white px-2 pb-10">
@@ -393,7 +411,77 @@ const AdminDashboard = () => {
 			</div>
 		  )}
 		</div>
-	  ) : (
+	  ) : activeTab === 'User Messages' ? (
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-6 mt-6">
+        <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
+          <Icon name="Mail" size={22} /> User Messages
+        </h2>
+        {userMessages.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">No user messages found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left border mt-4">
+              <thead>
+                <tr className="bg-purple-50">
+                  <th className="py-2 px-4">Name</th>
+                  <th className="py-2 px-4">Email</th>
+                  <th className="py-2 px-4">Phone</th>
+                  <th className="py-2 px-4">Event Type</th>
+                  <th className="py-2 px-4">Contact Method</th>
+                  <th className="py-2 px-4">Message</th>
+                  <th className="py-2 px-4">Replies</th>
+                  <th className="py-2 px-4">Date</th>
+                  <th className="py-2 px-4">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userMessages.map((msg, idx) => (
+                  <tr key={msg._id || idx} className="border-t align-top">
+                    <td className="py-2 px-4">{msg.name}</td>
+                    <td className="py-2 px-4">{msg.email}</td>
+                    <td className="py-2 px-4">{msg.phone}</td>
+                    <td className="py-2 px-4">{msg.eventType}</td>
+                    <td className="py-2 px-4">{msg.contactMethod}</td>
+                    <td className="py-2 px-4 whitespace-pre-line">{msg.message}</td>
+                    <td className="py-2 px-4">
+                      {msg.replies && msg.replies.length > 0 ? (
+                        <ul className="space-y-2">
+                          {msg.replies.map((r, i) => (
+                            <li key={i} className="bg-purple-50 rounded p-2 text-sm">
+                              <span className="font-semibold text-purple-700">Admin:</span> {r.content}
+                              <div className="text-xs text-gray-400">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</div>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : <span className="text-gray-400">No replies</span>}
+                    </td>
+                    <td className="py-2 px-4">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}</td>
+                    <td className="py-2 px-4">
+                      {replyingId === msg._id ? (
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            className="border rounded p-2 text-sm"
+                            rows={2}
+                            value={replyContent}
+                            onChange={e => setReplyContent(e.target.value)}
+                          />
+                          <div className="flex gap-2">
+                            <button className="bg-purple-600 text-white px-3 py-1 rounded" onClick={() => handleReply(msg._id)}>Send</button>
+                            <button className="bg-gray-200 px-3 py-1 rounded" onClick={() => { setReplyingId(null); setReplyContent(''); }}>Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button className="bg-purple-100 text-purple-700 px-3 py-1 rounded" onClick={() => setReplyingId(msg._id)}>Reply</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    ) : (
 		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 		  {/* Left: Profile & KPIs */}
 		  <div className="col-span-1 flex flex-col gap-8">
