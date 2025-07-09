@@ -8,7 +8,8 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isSignedIn && isLoaded && user) {
+    if (!isLoaded) return; // Wait until user is loaded
+    if (isSignedIn && user) {
       // Check for role in Clerk publicMetadata
       const role = user.publicMetadata?.role;
       if (role === 'admin') {
@@ -20,6 +21,14 @@ const Login = () => {
       }
     }
   }, [isSignedIn, isLoaded, user, navigate]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+        <div className="max-w-md w-full card p-8 text-center text-gray-500">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">

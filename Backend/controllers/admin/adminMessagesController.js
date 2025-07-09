@@ -1,19 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const StaffMessage = require('../models/StaffMessage');
+const StaffMessage = require('../../models/StaffMessage');
 
-// Get all messages for a staff member
-router.get('/messages/:staffId', async (req, res) => {
+exports.getStaffMessages = async (req, res) => {
   try {
     const doc = await StaffMessage.findOne({ staffId: req.params.staffId });
     res.json(doc ? doc.messages : []);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
+};
 
-// Post a new message (admin or staff)
-router.post('/messages/:staffId', async (req, res) => {
+exports.postStaffMessage = async (req, res) => {
   try {
     const { sender, content } = req.body;
     let doc = await StaffMessage.findOne({ staffId: req.params.staffId });
@@ -31,6 +27,4 @@ router.post('/messages/:staffId', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-module.exports = router;
+};

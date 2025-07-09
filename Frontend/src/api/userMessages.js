@@ -7,8 +7,8 @@ export const sendUserMessage = async (data) => {
   return res.data;
 };
 
-export const fetchUserMessages = async () => {
-  const res = await axios.get(API_BASE);
+export const fetchUserMessages = async (userId) => {
+  const res = await axios.get(API_BASE, { params: userId ? { userId } : {} });
   return res.data;
 };
 

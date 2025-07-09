@@ -3,7 +3,7 @@ import Icon from "../../components/AppIcon";
 import { createClerkUser } from "../../api/admin";
 
 const AddStaffMember = ({ onClose, onAdd }) => {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
@@ -14,13 +14,16 @@ const AddStaffMember = ({ onClose, onAdd }) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    if (password.length < 8 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      setError("Password must be at least 8 characters and contain both letters and numbers.");
+      return;
+    }
     try {
-      // Only set role to 'staff', do not send staffRole in metadata
-      await createClerkUser(email, password, name, 'staff');
+      await createClerkUser(email, password, username, 'staff');
       setSuccess("Staff member added!");
       setTimeout(() => {
         setSuccess("");
-        setName("");
+        setUsername("");
         setEmail("");
         setRole("");
         setPassword("");
@@ -28,9 +31,21 @@ const AddStaffMember = ({ onClose, onAdd }) => {
         if (onAdd) onAdd();
       }, 1200);
     } catch (err) {
-      setError(
-        err?.response?.data?.error || err.message || "Failed to add staff member."
-      );
+      let message = err?.response?.data?.error || err.message || "Failed to add staff member.";
+      // Clerk free tier user limit error handling
+      if (typeof message === 'object' && message.errors && Array.isArray(message.errors)) {
+        const limitError = message.errors.find(e => e.code === 'resource_limit_exceeded');
+        if (limitError) {
+          message = "User limit reached for your Clerk plan. Please upgrade your Clerk subscription to add more staff members.";
+        }
+      }
+      if (typeof message === 'object' && message.message) {
+        message = message.message;
+      }
+      if (typeof message !== 'string') {
+        message = JSON.stringify(message);
+      }
+      setError(message);
     }
   };
 
@@ -44,7 +59,7 @@ const AddStaffMember = ({ onClose, onAdd }) => {
           <Icon name="UserPlus" size={20} /> Add Staff Member
         </h3>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <input type="text" className="border rounded-lg px-4 py-2" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} required />
+          <input type="text" className="border rounded-lg px-4 py-2" placeholder="Full Name" value={username} onChange={e => setUsername(e.target.value)} required />
           <input type="email" className="border rounded-lg px-4 py-2" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
           <input type="password" className="border rounded-lg px-4 py-2" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
           <select
@@ -57,9 +72,9 @@ const AddStaffMember = ({ onClose, onAdd }) => {
             <option value="staff">Staff</option>
           </select>
           <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-lg mt-2">Add Staff Member</button>
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+          {success && <div className="text-green-600 text-sm mt-2">{success}</div>}
         </form>
-        {success && <div className="text-center text-green-600 mt-3">{success}</div>}
-        {error && <div className="text-center text-red-600 mt-3">{error}</div>}
       </div>
     </div>
   );

@@ -146,6 +146,7 @@ const AdminDashboard = () => {
 	const [allBookings, setAllBookings] = useState([]);
   const [allPackages, setAllPackages] = useState([]);
   const [userMessages, setUserMessages] = useState([]);
+  const [showOnlyUnreplied, setShowOnlyUnreplied] = useState(true);
   // Staff messages modal state
   const [viewMessagesStaff, setViewMessagesStaff] = useState(null);
   const [replyingId, setReplyingId] = useState(null);
@@ -180,7 +181,7 @@ const AdminDashboard = () => {
 				.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
 		};
 		fetchAll(); // initial fetch
-		const interval = setInterval(fetchAll, 1000); // fetch every 5 seconds
+		const interval = setInterval(fetchAll, 5000); // fetch every 5 seconds
 		return () => clearInterval(interval);
 	}, [loadStaff]);
 
@@ -220,10 +221,12 @@ const AdminDashboard = () => {
 			fetchAllPackages().then(setAllPackages).catch(() => setAllPackages([]));
 		} else if (activeTab === 'User Messages') {
       fetchUserMessages().then(msgs => {
-        setUserMessages(msgs.filter(m => !m.replies || m.replies.length === 0));
+        setUserMessages(
+          showOnlyUnreplied ? msgs.filter(m => !m.replies || m.replies.length === 0) : msgs
+        );
       }).catch(() => setUserMessages([]));
     }
-	}, [activeTab]);
+	}, [activeTab, showOnlyUnreplied]);
 
 	// Avatar initials
 	const adminName = 'Admin';
@@ -416,6 +419,17 @@ const AdminDashboard = () => {
         <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
           <Icon name="Mail" size={22} /> User Messages
         </h2>
+        <div className="mb-4 flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showOnlyUnreplied}
+              onChange={() => setShowOnlyUnreplied(v => !v)}
+              className="accent-purple-600"
+            />
+            <span className="text-sm text-gray-700">Hide replied messages</span>
+          </label>
+        </div>
         {userMessages.length === 0 ? (
           <div className="text-center text-gray-400 py-8">No user messages found.</div>
         ) : (

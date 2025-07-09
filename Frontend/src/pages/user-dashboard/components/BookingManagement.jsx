@@ -76,7 +76,7 @@ const BookingManagement = () => {
     const bookingId = deleteModal.bookingId;
     setDeleteModal({ open: false, bookingId: null });
     try {
-      await axios.delete(`http://localhost:5000/api/booking/${bookingId}`);
+      await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`);
       setBookings(prev => prev.filter(b => b._id !== bookingId));
     } catch (err) {
       alert('Failed to delete booking.');
@@ -92,7 +92,7 @@ const BookingManagement = () => {
     const booking = paymentModal.booking;
     const payAmount = paymentIntent.amount;
     try {
-      const res = await axios.patch(`http://localhost:5000/api/booking/${booking._id}/pay`, {
+      const res = await axios.patch(`http://localhost:5000/api/bookings/${booking._id}/pay`, {
         amount: payAmount,
         paymentIntentId: paymentIntent.id
       });

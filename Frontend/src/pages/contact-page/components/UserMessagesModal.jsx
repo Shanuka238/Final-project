@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { fetchUserMessages } from 'api/userMessages';
 import Icon from 'components/AppIcon';
+import { useUser } from '@clerk/clerk-react';
 
 export default function UserMessagesModal({ onClose }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
+    if (!user) return;
     setLoading(true);
-    fetchUserMessages().then(msgs => {
+    fetchUserMessages(user.id).then(msgs => {
       setMessages(msgs);
       setLoading(false);
     });
-  }, []);
+  }, [user]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

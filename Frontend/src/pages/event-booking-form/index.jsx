@@ -185,7 +185,7 @@ const EventBookingForm = () => {
     const eventData = {
       title: formData.eventType + (formData.eventSubType ? ` - ${formData.eventSubType}` : ''),
       type: formData.eventType,
-      date: formData.eventDate,
+      date: formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : '', // Ensure YYYY-MM-DD
       time: formData.eventTime,
       location: formData.location,
       status: 'pending',
@@ -205,12 +205,12 @@ const EventBookingForm = () => {
       dueAmount: estimatedTotal,
       status: 'active',
       bookingDate: new Date().toISOString(),
-      eventDate: formData.eventDate,
+      eventDate: eventData.date, // Use formatted date
       paymentSchedule: [],
       documents: []
     };
     try {
-      await fetch('http://localhost:5000/api/book-event', {
+      await fetch('http://localhost:5000/api/bookings/book-event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, eventData, bookingData })
