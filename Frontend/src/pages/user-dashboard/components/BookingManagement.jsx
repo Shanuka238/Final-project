@@ -92,7 +92,7 @@ const BookingManagement = () => {
     const booking = paymentModal.booking;
     const payAmount = paymentIntent.amount;
     try {
-      const res = await axios.patch(`http://localhost:5000/api/booking/${booking._id}/pay`, {
+      const res = await axios.patch(`http://localhost:5000/api/bookings/${booking._id}/pay`, {
         amount: payAmount,
         paymentIntentId: paymentIntent.id
       });

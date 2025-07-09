@@ -7,6 +7,7 @@ const ReplySchema = new mongoose.Schema({
 });
 
 const UserMessageSchema = new mongoose.Schema({
+  userId: { type: String, required: true }, // Clerk user ID
   name: String,
   email: String,
   phone: String,

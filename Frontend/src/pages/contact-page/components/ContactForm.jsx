@@ -3,8 +3,10 @@ import Icon from 'components/AppIcon';
 import { fetchEventTypes } from 'api/dashboard';
 import { sendUserMessage, fetchUserMessages } from 'api/userMessages';
 import UserMessagesModal from './UserMessagesModal';
+import { useUser } from '@clerk/clerk-react';
 
 const ContactForm = ({ onSubmit }) => {
+  const { user } = useUser();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -101,7 +103,7 @@ const ContactForm = ({ onSubmit }) => {
     setIsSubmitting(true);
 
     try {
-      await sendUserMessage(formData);
+      await sendUserMessage({ ...formData, userId: user?.id });
       onSubmit();
       setFormData({
         name: '',
