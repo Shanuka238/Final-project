@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 
-const WelcomeSection = ({ user, stats }) => {
+import ProfileEditModal from './ProfileEditModal';
+
+const WelcomeSection = ({ user, setUser, stats }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleProfileClick = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+  const handleProfileSave = (form) => {
+    // TODO: Call API to update user profile
+    if (setUser) setUser((prev) => ({ ...prev, ...form, avatar: form.avatar || prev.avatar }));
+    setModalOpen(false);
+  };
+
   return (
     <div className="card">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div className="flex items-center space-x-4 mb-4 md:mb-0">
-          <div className="relative w-16 h-16">
+          <button onClick={handleProfileClick} className="relative w-16 h-16 focus:outline-none">
             {user?.avatar && !user.avatar.includes('no_image') ? (
               <Image
                 src={user.avatar}
@@ -22,7 +34,7 @@ const WelcomeSection = ({ user, stats }) => {
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full border-2 border-surface flex items-center justify-center">
               <Icon name="Check" size={12} color="white" strokeWidth={3} />
             </div>
-          </div>
+          </button>
           <div>
             <h2 className="font-heading text-2xl font-bold text-text-primary">
               {user?.name || 'User'}
@@ -36,6 +48,12 @@ const WelcomeSection = ({ user, stats }) => {
             </div>
           </div>
         </div>
+        <ProfileEditModal
+          user={user}
+          open={modalOpen}
+          onClose={handleModalClose}
+          onSave={handleProfileSave}
+        />
         
         <div className="flex items-center space-x-2 text-sm text-text-secondary">
           <Icon name="Calendar" size={16} strokeWidth={2} />

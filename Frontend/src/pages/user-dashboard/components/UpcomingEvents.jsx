@@ -80,7 +80,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
             className="border border-border rounded-xl p-6 hover:shadow-secondary transition-all duration-200">
             <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-6">
               <div className="w-full lg:w-48 h-32 rounded-lg overflow-hidden mb-4 lg:mb-0 flex-shrink-0">
-                <Image src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                <Image src={"/assets/images/Upcoming.png"} alt="Upcoming Event" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
@@ -135,30 +135,18 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-border">
                   <div className="flex items-center space-x-4 mb-4 sm:mb-0">
-                    <div className="flex items-center space-x-2">
-                      <Image src={event.plannerAvatar} alt={event.planner} className="w-8 h-8 rounded-full object-cover" />
-                      <div>
-                        <p className="text-sm font-medium text-text-primary">{event.planner}</p>
-                        <p className="text-xs text-text-secondary">Event Planner</p>
-                      </div>
-                    </div>
                     <div className="text-sm text-text-secondary">
                       <Icon name="Users" size={16} className="inline mr-1" strokeWidth={2} />
                       {event.guests || 0} guests
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button className="flex items-center space-x-1 px-3 py-2 text-sm text-primary hover:bg-primary-50 rounded-lg transition-colors duration-200">
+                    <button
+                      className="flex items-center space-x-1 px-3 py-2 text-sm text-primary hover:bg-primary-50 rounded-lg transition-colors duration-200"
+                      onClick={() => setActiveTab && setActiveTab('bookings')}
+                    >
                       <Icon name="Eye" size={16} strokeWidth={2} />
                       <span>View Details</span>
-                    </button>
-                    <button className="flex items-center space-x-1 px-3 py-2 text-sm text-text-secondary hover:bg-surface-secondary rounded-lg transition-colors duration-200">
-                      <Icon name="Edit" size={16} strokeWidth={2} />
-                      <span>Modify</span>
-                    </button>
-                    <button className="flex items-center space-x-1 px-3 py-2 text-sm text-text-secondary hover:bg-surface-secondary rounded-lg transition-colors duration-200">
-                      <Icon name="MessageCircle" size={16} strokeWidth={2} />
-                      <span>Contact</span>
                     </button>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+const logActivity = require('../../utils/logActivity');
 // Delete a user package booking
 exports.deleteUserPackage = async (req, res) => {
   try {
@@ -51,6 +52,16 @@ exports.bookUserPackage = async (req, res) => {
       eventTime,
       guestCount,
       price
+    });
+    // Log activity for recent activity tracking
+    await logActivity({
+      userId,
+      type: 'package',
+      title: 'Booked a package',
+      description: `Booked package: ${packageTitle}`,
+      icon: 'Package',
+      iconColor: 'text-accent',
+      relatedEvent: packageTitle
     });
     res.status(201).json(userPackage);
   } catch (err) {

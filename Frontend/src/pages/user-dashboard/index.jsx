@@ -24,6 +24,7 @@ const UserDashboard = () => {
   const { user } = useAuth();
   const isLoaded = !!user;
   const [stats, setStats] = useState({ events: 0, bookings: 0, favorites: 0, packages: 0 });
+  const [dashboardUser, setDashboardUser] = useState(null);
 
   useEffect(() => {
     if (isLoaded && user && user.id) {
@@ -92,8 +93,10 @@ const UserDashboard = () => {
   ];
 
   // Prepare user data for dashboard
-  const dashboardUser = user
-    ? {
+
+  useEffect(() => {
+    if (user) {
+      setDashboardUser({
         id: user.id || user._id,
         name: user.username || user.name || 'User',
         email: user.email || '',
@@ -103,8 +106,9 @@ const UserDashboard = () => {
         upcomingEvents: 0, // Replace with real data if available
         savedPackages: 0, // Replace with real data if available
         membershipTier: user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Member',
-      }
-    : null;
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isLoaded) setIsLoading(false);
@@ -126,11 +130,11 @@ const UserDashboard = () => {
       case 'overview':
         return (
           <div className="space-y-8">
-            <WelcomeSection user={dashboardUser} stats={dashboardStats} />
+            <WelcomeSection user={dashboardUser} setUser={setDashboardUser} stats={dashboardStats} />
             <UserServices selectedServices={selectedServices} setSelectedServices={setSelectedServices} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
-                <UpcomingEvents user={dashboardUser} />
+                <UpcomingEvents user={dashboardUser} setActiveTab={setActiveTab} />
                 <RecentActivity user={dashboardUser} />
               </div>
               <div className="space-y-8">
@@ -141,7 +145,7 @@ const UserDashboard = () => {
           </div>
         );
       case 'events':
-        return <UpcomingEvents showAll={true} user={dashboardUser} />;
+        return <UpcomingEvents showAll={true} user={dashboardUser} setActiveTab={setActiveTab} />;
       case 'bookings':
         return <BookingManagement user={dashboardUser} />;
       case 'favorites':
