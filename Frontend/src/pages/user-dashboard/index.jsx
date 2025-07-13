@@ -7,6 +7,8 @@ import { useAuth } from 'contexts/AuthContext';
 import Icon from 'components/AppIcon';
 import { fetchUserBookings, fetchUserUpcomingEvents, fetchUserFavorites } from 'api/dashboard';
 import { fetchUserPackages } from 'api/packageBookings';
+import { fetchUserProfile } from 'api/profile';
+import { getToken } from 'utils/auth';
 
 import WelcomeSection from './components/WelcomeSection';
 import UpcomingEvents from './components/UpcomingEvents';
@@ -15,7 +17,7 @@ import FavoritesSection from './components/FavoritesSection';
 import MyPackagesSection from './components/MyPackagesSection';
 import CalendarWidget from './components/CalendarWidget';
 import RecentActivity from './components/RecentActivity';
-import UserServices from './components/UserServices';
+
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -94,20 +96,28 @@ const UserDashboard = () => {
 
   // Prepare user data for dashboard
 
+  // Always fetch latest user profile from backend
   useEffect(() => {
-    if (user) {
-      setDashboardUser({
-        id: user.id || user._id,
-        name: user.username || user.name || 'User',
-        email: user.email || '',
-        avatar: user.imageUrl || '',
-        joinDate: user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : '',
-        totalBookings: 0, // Replace with real data if available
-        upcomingEvents: 0, // Replace with real data if available
-        savedPackages: 0, // Replace with real data if available
-        membershipTier: user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Member',
-      });
-    }
+    const fetchProfile = async () => {
+      try {
+        const token = getToken();
+        const profile = await fetchUserProfile(token);
+        setDashboardUser(prev => ({
+          id: profile._id || profile.id,
+          name: profile.username || profile.name || 'User',
+          email: profile.email || '',
+          avatar: profile.avatar || '',
+          joinDate: prev?.joinDate || (profile.createdAt ? new Date(profile.createdAt).toISOString().split('T')[0] : ''),
+          totalBookings: 0,
+          upcomingEvents: 0,
+          savedPackages: 0,
+          membershipTier: profile.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : 'Member',
+        }));
+      } catch {
+        setDashboardUser(null);
+      }
+    };
+    if (user) fetchProfile();
   }, [user]);
 
   useEffect(() => {
@@ -131,7 +141,6 @@ const UserDashboard = () => {
         return (
           <div className="space-y-8">
             <WelcomeSection user={dashboardUser} setUser={setDashboardUser} stats={dashboardStats} />
-            <UserServices selectedServices={selectedServices} setSelectedServices={setSelectedServices} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <UpcomingEvents user={dashboardUser} setActiveTab={setActiveTab} />

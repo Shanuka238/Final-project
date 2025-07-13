@@ -3,20 +3,48 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 
 import ProfileEditModal from './ProfileEditModal';
+import { updateUserProfile, fetchUserProfile } from 'api/profile';
+import { getToken } from 'utils/auth';
 
 const WelcomeSection = ({ user, setUser, stats }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  // const [saving, setSaving] = useState(false);
 
   const handleProfileClick = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
-  const handleProfileSave = (form) => {
-    // TODO: Call API to update user profile
-    if (setUser) setUser((prev) => ({ ...prev, ...form, avatar: form.avatar || prev.avatar }));
-    setModalOpen(false);
+
+  const [showSaved, setShowSaved] = useState(false);
+  const handleProfileSave = async (form) => {
+    try {
+      const token = getToken();
+      // Map frontend 'name' to backend 'username'
+      const payload = {
+        username: form.name,
+        email: form.email,
+        password: form.password,
+        avatar: form.avatar
+      };
+      await updateUserProfile(payload, token);
+      setModalOpen(false);
+      setShowSaved(true);
+      setTimeout(() => {
+        setShowSaved(false);
+        window.location.reload();
+      }, 1200);
+    } catch (err) {
+      alert('Failed to update profile: ' + (err?.response?.data?.message || err.message));
+    }
   };
 
   return (
     <div className="card">
+      {showSaved && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20">
+          <div className="bg-white px-8 py-6 rounded-xl shadow-xl text-xl font-semibold text-success animate-fade-in">
+            Changes saved
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div className="flex items-center space-x-4 mb-4 md:mb-0">
           <button onClick={handleProfileClick} className="relative w-16 h-16 focus:outline-none">

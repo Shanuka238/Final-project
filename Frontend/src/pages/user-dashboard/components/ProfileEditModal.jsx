@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 
 const ProfileEditModal = ({ user, open, onClose, onSave }) => {
   const [form, setForm] = useState({
     email: user?.email || '',
-    name: user?.name || '',
+    name: user?.name || user?.username || '',
     password: '',
     avatar: user?.avatar || ''
   });
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');
+
+  // Sync form state with user prop when modal opens
+  useEffect(() => {
+    if (open) {
+      setForm({
+        email: user?.email || '',
+        name: user?.name || user?.username || '',
+        password: '',
+        avatar: user?.avatar || ''
+      });
+      setAvatarPreview(user?.avatar || '');
+    }
+  }, [open, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,6 +43,7 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(form);
+    setForm((prev) => ({ ...prev, password: '' })); // clear password after save
   };
 
   if (!open) return null;

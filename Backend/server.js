@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject.cicv4nv.mongodb.net/?retryWrites=true&w=majority&appName=Finalproject', {
@@ -23,6 +23,7 @@ app.use('/api/activities', require('./routes/user/activities'));
 app.use('/api/packages', require('./routes/user/packages'));
 app.use('/api/event-types', require('./routes/user/eventTypes'));
 app.use('/api/payments', require('./routes/user/payments'));
+app.use('/api/user/profile', require('./routes/user/profile'));
 
 // Mount admin, services, and message routes
 app.use('/api/admin', require('./routes/admin/admin'));
