@@ -69,7 +69,7 @@ const RecentActivity = ({ user }) => {
               <p className="text-sm text-text-secondary mt-1">{activity.description}</p>
               {activity.actionBy && (
                 <div className="flex items-center space-x-2 mt-2">
-                  <Image src={activity.actionBy.avatar} alt={activity.actionBy.name} className="w-6 h-6 rounded-full object-cover" />
+                  {/* Avatar removed */}
                   <span className="text-xs text-text-secondary">{activity.actionBy.name} ({activity.actionBy.role})</span>
                 </div>
               )}

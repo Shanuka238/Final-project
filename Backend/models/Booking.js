@@ -27,6 +27,14 @@ const BookingSchema = new mongoose.Schema({
       status: String,
       uploadDate: String
     }
+  ],
+  reviews: [
+    {
+      userId: String,
+      review: String,
+      rating: Number,
+      date: String
+    }
   ]
 });
 

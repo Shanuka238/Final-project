@@ -13,7 +13,6 @@ const ActivitySchema = new mongoose.Schema({
   actionBy: {
     name: String,
     role: String,
-    avatar: String
   },
   amount: Number
 });

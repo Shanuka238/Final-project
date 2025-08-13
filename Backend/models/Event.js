@@ -11,7 +11,6 @@ const EventSchema = new mongoose.Schema({
   status: String,
   guests: Number,
   planner: String,
-  plannerAvatar: String,
   image: String,
   progress: Number,
   nextAction: String,

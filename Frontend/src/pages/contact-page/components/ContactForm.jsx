@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from 'contexts/AuthContext';
 import Icon from 'components/AppIcon';
 import { fetchEventTypes } from 'api/dashboard';
 import { sendUserMessage, fetchUserMessages } from 'api/userMessages';
@@ -6,8 +7,7 @@ import UserMessagesModal from './UserMessagesModal';
 // ...removed Clerk import...
 
 const ContactForm = ({ onSubmit }) => {
-  // Clerk removed: use a placeholder user
-  const user = { id: 'test-user' };
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,6 +16,12 @@ const ContactForm = ({ onSubmit }) => {
     contactMethod: 'email',
     message: ''
   });
+  // Autofill email if user is logged in
+  useEffect(() => {
+    if (user && user.email) {
+      setFormData(prev => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [eventTypes, setEventTypes] = useState([]);
@@ -104,16 +110,18 @@ const ContactForm = ({ onSubmit }) => {
     setIsSubmitting(true);
 
     try {
-      await sendUserMessage({ ...formData, userId: user?.id });
+      const payload = { ...formData };
+      if (user && user.id && user.id !== 'test-user') payload.userId = user.id;
+      await sendUserMessage(payload);
       onSubmit();
-      setFormData({
+      setFormData(prev => ({
         name: '',
-        email: '',
+        email: user && user.email ? user.email : '',
         phone: '',
         eventType: '',
         contactMethod: 'email',
         message: ''
-      });
+      }));
     } catch (err) {
       setErrors({ message: 'Failed to send message. Please try again.' });
     }
@@ -139,7 +147,7 @@ const ContactForm = ({ onSubmit }) => {
         <div className="flex flex-col items-end gap-2">
           <button
             type="button"
-            className="flex items-center gap-2 bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg border border-purple-200 hover:bg-purple-200 transition-all text-base"
+            className="flex items-center gap-2 bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg border border-purple-200 transition-all text-base"
             onClick={handleShowMessages}
           >
             <Icon name="Mail" size={20} /> View My Messages
@@ -201,6 +209,8 @@ const ContactForm = ({ onSubmit }) => {
               onChange={handleInputChange}
               className={`input-field pl-12 ${errors.email ? 'border-error focus:ring-error' : ''}`}
               placeholder="Enter your email address"
+              readOnly={!!(user && user.email)}
+              style={user && user.email ? { backgroundColor: '#f3f4f6', cursor: 'not-allowed' } : {}}
             />
           </div>
           {errors.email && (
@@ -372,20 +382,7 @@ const ContactForm = ({ onSubmit }) => {
         </div>
       </form>
 
-      {/* Admin Replies Section */}
-      {userReplies.length > 0 && (
-        <div className="mt-8">
-          <h3 className="font-heading text-xl font-bold text-primary mb-2">Replies from Admin</h3>
-          <ul className="space-y-2">
-            {userReplies.map((reply, idx) => (
-              <li key={idx} className="bg-primary-50 rounded p-2 text-sm">
-                <span className="font-semibold text-primary">Admin:</span> {reply.content}
-                <div className="text-xs text-gray-400">{reply.createdAt ? new Date(reply.createdAt).toLocaleString() : ''}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+
     </div>
   );
 };

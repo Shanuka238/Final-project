@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from 'contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
@@ -6,14 +7,20 @@ import ContactForm from './components/ContactForm';
 import BusinessInfo from './components/BusinessInfo';
 import MapSection from './components/MapSection';
 import FAQSection from './components/FAQSection';
+import NotLoggedIn from './components/NotLoggedIn';
 
 const ContactPage = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const { user } = useAuth();
 
   const handleFormSubmit = () => {
     setFormSubmitted(true);
     setTimeout(() => setFormSubmitted(false), 5000);
   };
+
+  if (!user) {
+    return <NotLoggedIn />;
+  }
 
   return (
     <motion.div

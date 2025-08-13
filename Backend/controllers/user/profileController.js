@@ -11,15 +11,14 @@ exports.getProfile = async (req, res) => {
 const User = require('../../models/User');
 const bcrypt = require('bcryptjs');
 
-// Update user profile (username, email, password, avatar)
+// Update user profile (username, email, password)
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { username, email, password, avatar } = req.body;
+    const { username, email, password } = req.body;
     const update = {};
     if (username) update.username = username;
     if (email) update.email = email;
-    if (typeof avatar !== 'undefined') update.avatar = avatar;
     if (password) {
       const salt = await bcrypt.genSalt(10);
       update.password = await bcrypt.hash(password, salt);

@@ -3,7 +3,7 @@ import Icon from '../../components/AppIcon';
 import CenterPopup from '../../components/CenterPopup';
 import CalendarWidget from '../user-dashboard/components/CalendarWidget';
 import AddStaffMember from './AddStaffMember';
-import { fetchClerkUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages, fetchStaffMessages, sendStaffMessage } from 'api/admin';
+import { fetchMongoUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages, fetchStaffMessages, sendStaffMessage } from 'api/admin';
 import { fetchUserMessages, sendAdminReply } from 'api/userMessages';
 
 // StaffMessagesModal component
@@ -15,9 +15,11 @@ function StaffMessagesModal({ staff, onClose }) {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-	if (staff?.id) {
+	// Try both _id and id for robustness
+	const staffId = staff?._id || staff?.id || staff?.email || '';
+	if (staffId) {
 	  setLoading(true);
-	  fetchStaffMessages(staff.id)
+	  fetchStaffMessages(staffId)
 		.then(setMessages)
 		.catch(() => setMessages([]))
 		.finally(() => setLoading(false));
@@ -29,12 +31,13 @@ function StaffMessagesModal({ staff, onClose }) {
 	if (!response.trim()) return;
 	setSending(true);
 	try {
+	  const staffId = staff?._id || staff?.id || staff?.email || '';
 	  const updated = await sendStaffMessage(
-		staff.id,
+		staffId,
 		'admin',
 		response,
 		staff.username || staff.firstName || staff.first_name || '',
-		(staff.emailAddresses && staff.emailAddresses[0]?.emailAddress) || (staff.email_addresses && staff.email_addresses[0]?.email_address) || ''
+		(staff.emailAddresses && staff.emailAddresses[0]?.emailAddress) || (staff.email_addresses && staff.email_addresses[0]?.email_address) || staff.email || ''
 	  );
 	  setMessages(updated);
 	  setResponse("");
@@ -154,36 +157,33 @@ const AdminDashboard = () => {
 
 	// Fetch staff from Clerk
 	const loadStaff = useCallback(() => {
-		fetchClerkUsers()
+	  fetchMongoUsers()
 			.then(users => {
-				// Filter users with role 'staff' (case-insensitive, Clerk publicMetadata)
-				const staff = users.filter(
-					u => (u.publicMetadata?.role || u.public_metadata?.role) === 'staff'
-				);
-				setStaffMembers(staff);
+	// Filter users with role 'staff' (MongoDB)
+	const staff = users.filter(u => u.role === 'staff');
+	setStaffMembers(staff);
 			})
 			.catch(() => setStaffMembers([]));
 	}, []);
 
-	// Real-time polling for staff and user accounts updates
-	useEffect(() => {
-		const fetchAll = () => {
-			loadStaff();
-			fetchClerkUsers()
-				.then(users => {
-					const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
-					const filtered = arr.filter(u => (u.publicMetadata?.role || u.public_metadata?.role) !== 'admin');
-					setSummary(prev => ({
-						...prev,
-						totalAccounts: filtered.length
-					}));
-				})
-				.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
-		};
-		fetchAll(); // initial fetch
-		const interval = setInterval(fetchAll, 5000); // fetch every 5 seconds
-		return () => clearInterval(interval);
-	}, [loadStaff]);
+  // Fetch staff and user accounts once on mount
+  useEffect(() => {
+	const fetchAll = () => {
+	  loadStaff();
+	  fetchMongoUsers()
+		.then(users => {
+		  const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
+		  // Only count users with role 'user' or 'staff' (not admin)
+		  const filtered = arr.filter(u => u.role === 'user' || u.role === 'staff');
+		  setSummary(prev => ({
+			...prev,
+			totalAccounts: filtered.length
+		  }));
+		})
+		.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
+	};
+	fetchAll(); // initial fetch only
+  }, [loadStaff]);
 
 	// Fetch dashboard summary
 	useEffect(() => {
@@ -200,16 +200,16 @@ const AdminDashboard = () => {
 
 	// Users tab: show list of all users (not just role: user)
 	const [userList, setUserList] = useState([]);
-	useEffect(() => {
-		if (activeTab === 'Users') {
-			fetchClerkUsers()
-				.then(users => {
-					const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
-					setUserList(arr);
-				})
-				.catch(() => setUserList([]));
-		}
-	}, [activeTab]);
+  useEffect(() => {
+	if (activeTab === 'Users') {
+	  fetchMongoUsers()
+		.then(users => {
+		  const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
+		  setUserList(arr);
+		})
+		.catch(() => setUserList([]));
+	}
+  }, [activeTab]);
 
 	// Fetch events, bookings, and packages
 	useEffect(() => {
@@ -220,15 +220,15 @@ const AdminDashboard = () => {
 		} else if (activeTab === 'Packages') {
 			fetchAllPackages().then(setAllPackages).catch(() => setAllPackages([]));
 		} else if (activeTab === 'User Messages') {
-      fetchUserMessages().then(msgs => {
-        setUserMessages(
-          showOnlyUnreplied ? msgs.filter(m => !m.replies || m.replies.length === 0) : msgs
-        );
-      }).catch(() => setUserMessages([]));
-    }
+	  fetchUserMessages().then(msgs => {
+		setUserMessages(
+		  showOnlyUnreplied ? msgs.filter(m => !m.replies || m.replies.length === 0) : msgs
+		);
+	  }).catch(() => setUserMessages([]));
+	}
 	}, [activeTab, showOnlyUnreplied]);
 
-	// Avatar initials
+	// Avatar removed
 	const adminName = 'Admin';
 	const adminEmail = 'admin@partynest.com';
 	const initials = adminName.split(' ').map((n) => n[0]).join('');
@@ -289,30 +289,32 @@ const AdminDashboard = () => {
 		  <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
 			<Icon name="Users" size={22} /> Users
 		  </h2>
-		  {userList.filter(user => (user.publicMetadata?.role || user.public_metadata?.role) !== 'admin').length === 0 ? (
-			<div className="text-center text-gray-400 py-8">No users found.</div>
-		  ) : (
-			<div className="overflow-x-auto">
-			  <table className="min-w-full text-left border mt-4">
-				<thead>
-				  <tr className="bg-purple-50">
-					<th className="py-2 px-4">Name</th>
-					<th className="py-2 px-4">Email</th>
-					<th className="py-2 px-4">Created At</th>
-				  </tr>
-				</thead>
-				<tbody>
-				  {userList.filter(user => (user.publicMetadata?.role || user.public_metadata?.role) !== 'admin').map((user, idx) => (
-					<tr key={user.id || idx} className="border-t">
-					  <td className="py-2 px-4">{user.username || user.firstName || user.first_name || 'N/A'}</td>
-					  <td className="py-2 px-4">{(user.emailAddresses && user.emailAddresses[0]?.emailAddress) || (user.email_addresses && user.email_addresses[0]?.email_address) || 'N/A'}</td>
-					  <td className="py-2 px-4">{user.createdAt ? new Date(user.createdAt).toLocaleString() : (user.created_at ? new Date(user.created_at).toLocaleString() : 'N/A')}</td>
-					</tr>
-				  ))}
-				</tbody>
-			  </table>
-			</div>
-		  )}
+  {userList.filter(user => user.role === 'user' || user.role === 'staff').length === 0 ? (
+	<div className="text-center text-gray-400 py-8">No users found.</div>
+  ) : (
+	<div className="overflow-x-auto">
+	  <table className="min-w-full text-left border mt-4">
+		<thead>
+		  <tr className="bg-purple-50">
+			<th className="py-2 px-4">Name</th>
+			<th className="py-2 px-4">Email</th>
+			<th className="py-2 px-4">Role</th>
+			<th className="py-2 px-4">Created At</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  {userList.filter(user => user.role === 'user' || user.role === 'staff').map((user, idx) => (
+			<tr key={user._id || user.id || idx} className="border-t">
+			  <td className="py-2 px-4">{user.username || 'N/A'}</td>
+			  <td className="py-2 px-4">{user.email || 'N/A'}</td>
+			  <td className="py-2 px-4">{user.role || 'N/A'}</td>
+			  <td className="py-2 px-4">{user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}</td>
+			</tr>
+		  ))}
+		</tbody>
+	  </table>
+	</div>
+  )}
 		</div>
 	  ) : activeTab === 'Events' ? (
 		<div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-6 mt-6">
@@ -415,87 +417,87 @@ const AdminDashboard = () => {
 		  )}
 		</div>
 	  ) : activeTab === 'User Messages' ? (
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-6 mt-6">
-        <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
-          <Icon name="Mail" size={22} /> User Messages
-        </h2>
-        <div className="mb-4 flex items-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showOnlyUnreplied}
-              onChange={() => setShowOnlyUnreplied(v => !v)}
-              className="accent-purple-600"
-            />
-            <span className="text-sm text-gray-700">Hide replied messages</span>
-          </label>
-        </div>
-        {userMessages.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">No user messages found.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left border mt-4">
-              <thead>
-                <tr className="bg-purple-50">
-                  <th className="py-2 px-4">Name</th>
-                  <th className="py-2 px-4">Email</th>
-                  <th className="py-2 px-4">Phone</th>
-                  <th className="py-2 px-4">Event Type</th>
-                  <th className="py-2 px-4">Contact Method</th>
-                  <th className="py-2 px-4">Message</th>
-                  <th className="py-2 px-4">Replies</th>
-                  <th className="py-2 px-4">Date</th>
-                  <th className="py-2 px-4">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userMessages.map((msg, idx) => (
-                  <tr key={msg._id || idx} className="border-t align-top">
-                    <td className="py-2 px-4">{msg.name}</td>
-                    <td className="py-2 px-4">{msg.email}</td>
-                    <td className="py-2 px-4">{msg.phone}</td>
-                    <td className="py-2 px-4">{msg.eventType}</td>
-                    <td className="py-2 px-4">{msg.contactMethod}</td>
-                    <td className="py-2 px-4 whitespace-pre-line">{msg.message}</td>
-                    <td className="py-2 px-4">
-                      {msg.replies && msg.replies.length > 0 ? (
-                        <ul className="space-y-2">
-                          {msg.replies.map((r, i) => (
-                            <li key={i} className="bg-purple-50 rounded p-2 text-sm">
-                              <span className="font-semibold text-purple-700">Admin:</span> {r.content}
-                              <div className="text-xs text-gray-400">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</div>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : <span className="text-gray-400">No replies</span>}
-                    </td>
-                    <td className="py-2 px-4">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}</td>
-                    <td className="py-2 px-4">
-                      {replyingId === msg._id ? (
-                        <div className="flex flex-col gap-2">
-                          <textarea
-                            className="border rounded p-2 text-sm"
-                            rows={2}
-                            value={replyContent}
-                            onChange={e => setReplyContent(e.target.value)}
-                          />
-                          <div className="flex gap-2">
-                            <button className="bg-purple-600 text-white px-3 py-1 rounded" onClick={() => handleReply(msg._id)}>Send</button>
-                            <button className="bg-gray-200 px-3 py-1 rounded" onClick={() => { setReplyingId(null); setReplyContent(''); }}>Cancel</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button className="bg-purple-100 text-purple-700 px-3 py-1 rounded" onClick={() => setReplyingId(msg._id)}>Reply</button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    ) : (
+	  <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-6 mt-6">
+		<h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
+		  <Icon name="Mail" size={22} /> User Messages
+		</h2>
+		<div className="mb-4 flex items-center gap-4">
+		  <label className="flex items-center gap-2 cursor-pointer">
+			<input
+			  type="checkbox"
+			  checked={showOnlyUnreplied}
+			  onChange={() => setShowOnlyUnreplied(v => !v)}
+			  className="accent-purple-600"
+			/>
+			<span className="text-sm text-gray-700">Hide replied messages</span>
+		  </label>
+		</div>
+		{userMessages.length === 0 ? (
+		  <div className="text-center text-gray-400 py-8">No user messages found.</div>
+		) : (
+		  <div className="overflow-x-auto">
+			<table className="min-w-full text-left border mt-4">
+			  <thead>
+				<tr className="bg-purple-50">
+				  <th className="py-2 px-4">Name</th>
+				  <th className="py-2 px-4">Email</th>
+				  <th className="py-2 px-4">Phone</th>
+				  <th className="py-2 px-4">Event Type</th>
+				  <th className="py-2 px-4">Contact Method</th>
+				  <th className="py-2 px-4">Message</th>
+				  <th className="py-2 px-4">Replies</th>
+				  <th className="py-2 px-4">Date</th>
+				  <th className="py-2 px-4">Action</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				{userMessages.map((msg, idx) => (
+				  <tr key={msg._id || idx} className="border-t align-top">
+					<td className="py-2 px-4">{msg.name}</td>
+					<td className="py-2 px-4">{msg.email}</td>
+					<td className="py-2 px-4">{msg.phone}</td>
+					<td className="py-2 px-4">{msg.eventType}</td>
+					<td className="py-2 px-4">{msg.contactMethod}</td>
+					<td className="py-2 px-4 whitespace-pre-line">{msg.message}</td>
+					<td className="py-2 px-4">
+					  {msg.replies && msg.replies.length > 0 ? (
+						<ul className="space-y-2">
+						  {msg.replies.map((r, i) => (
+							<li key={i} className="bg-purple-50 rounded p-2 text-sm">
+							  <span className="font-semibold text-purple-700">Admin:</span> {r.content}
+							  <div className="text-xs text-gray-400">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ''}</div>
+							</li>
+						  ))}
+						</ul>
+					  ) : <span className="text-gray-400">No replies</span>}
+					</td>
+					<td className="py-2 px-4">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}</td>
+					<td className="py-2 px-4">
+					  {replyingId === msg._id ? (
+						<div className="flex flex-col gap-2">
+						  <textarea
+							className="border rounded p-2 text-sm"
+							rows={2}
+							value={replyContent}
+							onChange={e => setReplyContent(e.target.value)}
+						  />
+						  <div className="flex gap-2">
+							<button className="bg-purple-600 text-white px-3 py-1 rounded" onClick={() => handleReply(msg._id)}>Send</button>
+							<button className="bg-gray-200 px-3 py-1 rounded" onClick={() => { setReplyingId(null); setReplyContent(''); }}>Cancel</button>
+						  </div>
+						</div>
+					  ) : (
+						<button className="bg-purple-100 text-purple-700 px-3 py-1 rounded" onClick={() => setReplyingId(msg._id)}>Reply</button>
+					  )}
+					</td>
+				  </tr>
+				))}
+			  </tbody>
+			</table>
+		  </div>
+		)}
+	  </div>
+	) : (
 		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 		  {/* Left: Profile & KPIs */}
 		  <div className="col-span-1 flex flex-col gap-8">
@@ -590,17 +592,11 @@ const AdminDashboard = () => {
 							  staff.first_name ||
 							  'N/A'}
 						  </td>
+			<td className="py-2 px-4">
+			  {staff.email || 'N/A'}
+			</td>
 						  <td className="py-2 px-4">
-							{(staff.emailAddresses &&
-							  staff.emailAddresses[0]?.emailAddress) ||
-							  (staff.email_addresses &&
-								staff.email_addresses[0]?.email_address) ||
-							  'N/A'}
-						  </td>
-						  <td className="py-2 px-4">
-							{staff.publicMetadata?.staffRole ||
-							  staff.public_metadata?.staffRole ||
-							  'Staff'}
+			{staff.staffRole || 'Staff'}
 						</td>
 						<td className="py-2 px-4">
 						  <button
@@ -640,7 +636,28 @@ const AdminDashboard = () => {
 				</div>
 			  )}
 			  {showAddStaff && (
-				<AddStaffMember onClose={() => setShowAddStaff(false)} onAdd={loadStaff} />
+		<AddStaffMember onClose={() => setShowAddStaff(false)} onAdd={() => {
+		  loadStaff();
+		  fetchMongoUsers()
+			.then(users => {
+			  const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
+			  const filtered = arr.filter(u => u.role === 'user' || u.role === 'staff');
+			  setSummary(prev => ({
+				...prev,
+				totalAccounts: filtered.length
+			  }));
+			})
+			.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
+		  fetchDashboardSummary()
+			.then(data => setSummary(prev => ({
+			  ...prev,
+			  ...data,
+			  staffCount: Array.isArray(data.staffMembers)
+				? data.staffMembers.length
+				: (typeof data.serviceProviders === 'number' ? data.serviceProviders : 0)
+			})))
+			.catch(() => setSummary({}));
+		}} />
 			  )}
 			</div>
 			{/* Calendar Widget */}
@@ -663,7 +680,28 @@ const AdminDashboard = () => {
 	  )}
 	  {/* Add Staff Member Modal */}
 	  {showAddStaff && (
-		<AddStaffMember onClose={() => setShowAddStaff(false)} />
+	<AddStaffMember onClose={() => setShowAddStaff(false)} onAdd={() => {
+	  loadStaff();
+	  fetchMongoUsers()
+		.then(users => {
+		  const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
+		  const filtered = arr.filter(u => u.role === 'user' || u.role === 'staff');
+		  setSummary(prev => ({
+			...prev,
+			totalAccounts: filtered.length
+		  }));
+		})
+		.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
+	  fetchDashboardSummary()
+		.then(data => setSummary(prev => ({
+		  ...prev,
+		  ...data,
+		  staffCount: Array.isArray(data.staffMembers)
+			? data.staffMembers.length
+			: (typeof data.serviceProviders === 'number' ? data.serviceProviders : 0)
+		})))
+		.catch(() => setSummary({}));
+	}} />
 	  )}
 	  {/* CenterPopup for delete confirmation */}
 	  {deleteConfirm.open && (
@@ -672,7 +710,7 @@ const AdminDashboard = () => {
 		  confirm
 		  onConfirm={async () => {
 			try {
-			  const userId = deleteConfirm.staff.id;
+			  const userId = deleteConfirm.staff._id || deleteConfirm.staff.id;
 			  if (!userId) throw new Error('User ID not found');
 			  const { deleteClerkUser } = await import('../../api/admin');
 			  await deleteClerkUser(userId);

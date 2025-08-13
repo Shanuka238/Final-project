@@ -16,6 +16,9 @@ import { bookEvent as apiBookEvent } from 'api/dashboard';
 
 const EventBookingForm = () => {
   const { user } = useAuth();
+  if (!user) {
+    return <NotLoggedIn />;
+  }
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({

@@ -29,7 +29,14 @@ const Login = () => {
       if (!res.ok) throw new Error(data.message || 'Login failed');
       // Save JWT and optionally user info
       login(data.token);
-      navigate('/user-dashboard');
+      const userData = JSON.parse(atob(data.token.split('.')[1]));
+      if (userData.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (userData.role === 'staff') {
+        navigate('/staff-dashboard');
+      } else {
+        navigate('/user-dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

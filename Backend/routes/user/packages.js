@@ -14,9 +14,6 @@ router.patch('/user-booking/:userPackageId/pay', packagesController.payUserPacka
 
 // Public package routes
 router.get('/', packagesController.getAllPackages);
-router.post('/', packagesController.addPackage);
-router.delete('/:packageId', packagesController.deletePackage);
-router.put('/:packageId', packagesController.editPackage);
 
 // User package booking routes
 router.post('/book', packagesController.bookUserPackage);

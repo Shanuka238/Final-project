@@ -50,7 +50,23 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
     return <div className="text-center py-12">Loading events...</div>;
   }
 
-  const displayEvents = showAll ? events : events.slice(0, 2);
+  // Compute daysUntil and completed status for each event
+  const today = new Date();
+  const computedEvents = events.map(event => {
+    const eventDate = new Date(event.date);
+    // Calculate days until event
+    const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+    let status = event.status;
+    if (daysUntil < 0) {
+      status = 'completed';
+    }
+    return {
+      ...event,
+      daysUntil: daysUntil < 0 ? 0 : daysUntil,
+      status,
+    };
+  });
+  const displayEvents = showAll ? computedEvents : computedEvents.slice(0, 2);
 
   return (
     <div className="card">

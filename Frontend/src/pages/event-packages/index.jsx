@@ -14,6 +14,9 @@ import { bookUserPackage } from 'api/dashboard';
 
 const EventPackages = () => {
   const { user } = useAuth();
+  if (!user) {
+    return <NotLoggedIn />;
+  }
   // Clerk removed: use AuthContext or fallback
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);

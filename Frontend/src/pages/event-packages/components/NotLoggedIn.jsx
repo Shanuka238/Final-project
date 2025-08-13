@@ -11,13 +11,12 @@ const NotLoggedIn = () => {
         You must be signed in to view event packages. Please sign in to continue, or return to the home page.
       </p>
       <div className="flex gap-4">
-        <SignInButton>
-          <button
-            className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors duration-200"
-          >
-            Sign In
-          </button>
-        </SignInButton>
+        <button
+          className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors duration-200"
+          onClick={() => navigate('/login')}
+        >
+          Sign In
+        </button>
         <button
           className="btn-secondary px-6 py-2 rounded-lg font-medium"
           onClick={() => navigate('/')}

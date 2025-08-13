@@ -18,18 +18,18 @@ const Header = () => {
     { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' }
   ];
 
-  // Add dashboard links based on user role, but always show base navigation
+  // Add dashboard links based on user role
   let navigationItems = [...baseNavigation];
   if (isLoggedIn) {
     if (user.role === 'admin') {
       navigationItems = [
         { label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' },
-        ...baseNavigation
+        { label: 'Home', path: '/landing-page', icon: 'Home' }
       ];
     } else if (user.role === 'staff') {
       navigationItems = [
-        { label: 'Staff Dashboard', path: '/staff-dashboard', icon: 'Briefcase' },
-        ...baseNavigation
+        { label: 'Home', path: '/landing-page', icon: 'Home' },
+        { label: 'Staff Dashboard', path: '/staff-dashboard', icon: 'Briefcase' }
       ];
     } else {
       navigationItems = [

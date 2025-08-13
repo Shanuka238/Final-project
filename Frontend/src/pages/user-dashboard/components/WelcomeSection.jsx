@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
+import AppIcon from 'components/AppIcon';
 import Image from 'components/AppImage';
 
 import ProfileEditModal from './ProfileEditModal';
@@ -22,7 +23,7 @@ const WelcomeSection = ({ user, setUser, stats }) => {
         username: form.name,
         email: form.email,
         password: form.password,
-        avatar: form.avatar
+        // avatar fully removed
       };
       await updateUserProfile(payload, token);
       setModalOpen(false);
@@ -48,17 +49,9 @@ const WelcomeSection = ({ user, setUser, stats }) => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div className="flex items-center space-x-4 mb-4 md:mb-0">
           <button onClick={handleProfileClick} className="relative w-16 h-16 focus:outline-none">
-            {user?.avatar && !user.avatar.includes('no_image') ? (
-              <Image
-                src={user.avatar}
-                alt={user?.name || 'User'}
-                className="w-16 h-16 rounded-full object-cover border-2 border-primary-200"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full border-2 border-primary-200 bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-              </div>
-            )}
+            <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary">
+              {(user?.name || 'U').charAt(0).toUpperCase()}
+            </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full border-2 border-surface flex items-center justify-center">
               <Icon name="Check" size={12} color="white" strokeWidth={3} />
             </div>

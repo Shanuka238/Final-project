@@ -1,21 +1,28 @@
+
 import React, { useEffect, useState } from 'react';
 import { fetchUserMessages } from 'api/userMessages';
 import Icon from 'components/AppIcon';
-// ...removed Clerk import...
+import { useAuth } from 'contexts/AuthContext';
+
+// Optionally accept userId for logged-in users
+// Usage: <UserMessagesModal email={email} userId={userId} ... />
 
 export default function UserMessagesModal({ onClose }) {
+  const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Clerk removed: use a placeholder user
-  const user = { id: 'test-user' };
 
   useEffect(() => {
-    if (!user) return;
     setLoading(true);
-    fetchUserMessages(user.id).then(msgs => {
-      setMessages(msgs);
+    if (user && user.email) {
+      fetchUserMessages({ email: user.email }).then(msgs => {
+        setMessages(msgs);
+        setLoading(false);
+      });
+    } else {
+      setMessages([]);
       setLoading(false);
-    });
+    }
   }, [user]);
 
   return (

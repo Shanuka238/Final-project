@@ -11,6 +11,7 @@ import { fetchUserProfile } from 'api/profile';
 import { getToken } from 'utils/auth';
 
 import WelcomeSection from './components/WelcomeSection';
+// import UserSentMessages removed
 import UpcomingEvents from './components/UpcomingEvents';
 import BookingManagement from './components/BookingManagement';
 import FavoritesSection from './components/FavoritesSection';
@@ -106,7 +107,6 @@ const UserDashboard = () => {
           id: profile._id || profile.id,
           name: profile.username || profile.name || 'User',
           email: profile.email || '',
-          avatar: profile.avatar || '',
           joinDate: prev?.joinDate || (profile.createdAt ? new Date(profile.createdAt).toISOString().split('T')[0] : ''),
           totalBookings: 0,
           upcomingEvents: 0,
@@ -141,6 +141,7 @@ const UserDashboard = () => {
         return (
           <div className="space-y-8">
             <WelcomeSection user={dashboardUser} setUser={setDashboardUser} stats={dashboardStats} />
+            {/* UserSentMessages removed */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <UpcomingEvents user={dashboardUser} setActiveTab={setActiveTab} />

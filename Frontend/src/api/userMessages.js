@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getToken } from 'utils/auth';
 
 const API_BASE = 'http://localhost:5000/api/user-messages';
 
@@ -7,8 +8,13 @@ export const sendUserMessage = async (data) => {
   return res.data;
 };
 
-export const fetchUserMessages = async (userId) => {
-  const res = await axios.get(API_BASE, { params: userId ? { userId } : {} });
+export const fetchUserMessages = async ({ userId, email } = {}) => {
+  const params = {};
+  if (userId) params.userId = userId;
+  if (email) params.email = email;
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await axios.get(API_BASE, { params, headers });
   return res.data;
 };
 

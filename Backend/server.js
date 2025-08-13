@@ -28,7 +28,9 @@ app.use('/api/user/profile', require('./routes/user/profile'));
 // Mount admin, services, and message routes
 app.use('/api/admin', require('./routes/admin/admin'));
 app.use('/api/admin', require('./routes/admin/admin-messages'));
-app.use('/api/admin/services', require('./routes/admin/services'));
+// Staff routes
+app.use('/api/staff/packages', require('./routes/staff/packages'));
+app.use('/api/staff/services', require('./routes/staff/services'));
 app.use('/api/user-messages', require('./routes/user-messages'));
 
 const PORT = process.env.PORT || 5000;

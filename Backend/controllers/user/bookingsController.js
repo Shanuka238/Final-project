@@ -1,6 +1,87 @@
+// Get all reviews from the new Review collection
+exports.getAllStoredReviews = async (req, res) => {
+  try {
+    const Review = require('../../models/Review');
+    const reviews = await Review.find({}).sort({ date: -1 });
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+// Get all reviews from all bookings
+exports.getAllReviews = async (req, res) => {
+  try {
+    const bookings = await Booking.find({}, 'reviews eventTitle package userId');
+    const userIds = [
+      ...new Set(
+        bookings.flatMap(booking => (booking.reviews || []).map(r => r.userId))
+      )
+    ];
+    const User = require('../../models/User');
+    const users = await User.find({ _id: { $in: userIds } }, 'username role');
+    const userMap = {};
+    users.forEach(u => {
+      userMap[String(u._id)] = u;
+    });
+    // Flatten all reviews and add event info and user details
+    const allReviews = bookings.flatMap(booking =>
+      (booking.reviews || []).map(r => ({
+        ...r,
+        eventTitle: booking.eventTitle,
+        package: booking.package,
+        userId: booking.userId,
+        userName: userMap[r.userId]?.username || '',
+        userImage: '',
+        userRole: userMap[r.userId]?.role || ''
+      }))
+    );
+    res.json(allReviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 const Booking = require('../../models/Booking');
 const Event = require('../../models/Event');
 const logActivity = require('../../utils/logActivity');
+// Add review to booking
+exports.addReviewToBooking = async (req, res) => {
+  try {
+    const { review, rating } = req.body;
+    const bookingId = req.params.bookingId;
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    if (!booking.reviews) booking.reviews = [];
+    booking.reviews.push({
+      userId: req.user.id,
+      review,
+      rating,
+      date: new Date().toISOString()
+    });
+    await booking.save();
+
+    // Save to Review collection
+    const User = require('../../models/User');
+    const Review = require('../../models/Review');
+    const user = await User.findById(req.user.id);
+    await Review.create({
+      userId: req.user.id,
+      userName: user?.username || '',
+      userImage: '',
+      userRole: user?.role || '',
+      eventTitle: booking.eventTitle,
+      package: booking.package,
+      review,
+      rating,
+      date: new Date()
+    });
+
+    res.json({ message: 'Review added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 exports.getUserBookings = async (req, res) => {
   try {

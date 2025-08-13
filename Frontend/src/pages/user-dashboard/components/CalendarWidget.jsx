@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 // ...removed Clerk import...
 import { fetchUserEvents } from 'api/dashboard';
+import { fetchAllEvents } from 'api/admin';
 
 const CalendarWidget = ({ user }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -10,14 +11,18 @@ const CalendarWidget = ({ user }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     if (user && user.id) {
       fetchUserEvents(user.id)
         .then((data) => setEvents(data))
         .catch(() => setEvents([]))
         .finally(() => setLoading(false));
     } else {
-      setEvents([]);
-      setLoading(true);
+      // If no user, load all events (for admin dashboard)
+      fetchAllEvents()
+        .then((data) => setEvents(data))
+        .catch(() => setEvents([]))
+        .finally(() => setLoading(false));
     }
   }, [user]);
 

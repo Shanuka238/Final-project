@@ -5,11 +5,7 @@ export default function MyProfile({ staff }) {
   return (
     <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center text-center">
       <div className="w-20 h-20 rounded-full bg-purple-200 flex items-center justify-center text-3xl font-bold text-purple-700 mb-3">
-        {staff.avatar ? (
-          <img src={staff.avatar} alt="avatar" className="w-full h-full rounded-full" />
-        ) : (
-          staff.name[0]
-        )}
+          <span className="text-4xl text-gray-400">+</span>
       </div>
       <div className="font-semibold text-lg text-purple-900">{staff.name}</div>
       <div className="text-gray-500 text-sm mb-1">{staff.email}</div>

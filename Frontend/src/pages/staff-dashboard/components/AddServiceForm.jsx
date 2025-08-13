@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
 
-const AddServiceForm = ({ onServiceAdded }) => {
+import React, { useState, useEffect } from 'react';
+
+const AddServiceForm = ({ onServiceAdded, service }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState('Catering');
   const [description, setDescription] = useState('');
@@ -13,6 +14,31 @@ const AddServiceForm = ({ onServiceAdded }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Pre-fill form fields when editing
+  useEffect(() => {
+    if (service) {
+      setName(service.name || '');
+      setType(service.type || 'Catering');
+      setDescription(service.description || '');
+      setDetails(service.details || '');
+      setImage(null);
+      setImageUrl(service.imageUrl || '');
+      setKeyFeatures(Array.isArray(service.keyFeatures) && service.keyFeatures.length > 0 ? service.keyFeatures : ['']);
+      setPhotographerName(service.photographer?.name || '');
+      setPhotographerRating(service.photographer?.rating?.toString() || '');
+    } else {
+      setName('');
+      setType('Catering');
+      setDescription('');
+      setDetails('');
+      setImage(null);
+      setImageUrl('');
+      setKeyFeatures(['']);
+      setPhotographerName('');
+      setPhotographerRating('');
+    }
+  }, [service]);
 
   // Simulate image upload (replace with real upload logic as needed)
   const uploadImage = async (file) => {
@@ -49,14 +75,25 @@ const AddServiceForm = ({ onServiceAdded }) => {
           rating: Number(photographerRating)
         };
       }
-      const res = await fetch('http://localhost:5000/api/admin/services', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
+      let res;
+      if (service && service._id) {
+        // Edit existing service
+        res = await fetch(`http://localhost:5000/api/staff/services/${service._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      } else {
+        // Add new service
+        res = await fetch('http://localhost:5000/api/staff/services', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to add service');
-      setSuccess('Service added!');
+      if (!res.ok) throw new Error(data.error || 'Failed to save service');
+      setSuccess(service && service._id ? 'Service updated!' : 'Service added!');
       setName('');
       setDescription('');
       setDetails('');
@@ -75,7 +112,7 @@ const AddServiceForm = ({ onServiceAdded }) => {
 
   return (
     <form onSubmit={handleSubmit} className="card p-6 space-y-4 max-w-md mx-auto mt-8">
-      <h2 className="font-heading text-xl font-semibold mb-2">Add New Service</h2>
+      <h2 className="font-heading text-xl font-semibold mb-2">{service && service._id ? 'Edit Service' : 'Add New Service'}</h2>
       <div>
         <label className="block text-sm font-medium mb-1">Service Type *</label>
         <select
@@ -200,7 +237,7 @@ const AddServiceForm = ({ onServiceAdded }) => {
       {error && <p className="text-error text-sm">{error}</p>}
       {success && <p className="text-success text-sm">{success}</p>}
       <button type="submit" className="btn-primary w-full" disabled={loading}>
-        {loading ? 'Adding...' : 'Add Service'}
+        {loading ? (service && service._id ? 'Saving...' : 'Adding...') : (service && service._id ? 'Save Details' : 'Add Service')}
       </button>
     </form>
   );

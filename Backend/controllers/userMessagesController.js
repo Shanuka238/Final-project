@@ -2,9 +2,6 @@ const UserMessage = require('../models/UserMessage');
 
 exports.createUserMessage = async (req, res) => {
   try {
-    if (!req.body.userId) {
-      return res.status(400).json({ error: 'userId is required' });
-    }
     const msg = await UserMessage.create(req.body);
     res.status(201).json(msg);
   } catch (err) {
@@ -14,7 +11,12 @@ exports.createUserMessage = async (req, res) => {
 
 exports.getAllUserMessages = async (req, res) => {
   try {
-    const filter = req.query.userId ? { userId: req.query.userId } : {};
+    let filter = {};
+    if (req.query.userId) {
+      filter.userId = req.query.userId;
+    } else if (req.query.email) {
+      filter.email = req.query.email;
+    }
     const messages = await UserMessage.find(filter).sort({ createdAt: -1 });
     res.json(messages);
   } catch (err) {

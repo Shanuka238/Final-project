@@ -20,10 +20,59 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 // ...removed Clerk import...
 import { fetchUserBookings } from 'api/dashboard';
-import axios from 'axios';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PaymentModal from './PaymentModal';
-import { payBooking, deleteBooking as apiDeleteBooking } from 'api/dashboard';
+
+// Simple Review Modal with saving message
+const ReviewModal = ({ open, booking, onSubmit, onClose }) => {
+  const [review, setReview] = React.useState('');
+  const [rating, setRating] = React.useState(5);
+  const [saving, setSaving] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  if (!open) return null;
+  const handleSubmit = async () => {
+    setSaving(true);
+    await onSubmit({ review, rating, bookingId: booking._id });
+    setSaving(false);
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+      onClose();
+    }, 1500);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        {saving && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10">
+            <span className="text-lg font-semibold text-primary">Saving...</span>
+          </div>
+        )}
+        {success && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-20">
+            <span className="text-lg font-semibold text-success">Review sent!</span>
+          </div>
+        )}
+        <h3 className="font-heading text-lg font-semibold mb-4">Add Review for {booking?.eventTitle}</h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Rating:</label>
+          <select value={rating} onChange={e => setRating(Number(e.target.value))} className="w-full border rounded px-2 py-1">
+            {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>)}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Review:</label>
+          <textarea value={review} onChange={e => setReview(e.target.value)} rows={4} className="w-full border rounded px-2 py-1" placeholder="Write your review..." />
+        </div>
+        <div className="flex justify-end space-x-2">
+          <button onClick={onClose} className="btn-secondary px-4 py-2" disabled={saving || success}>Cancel</button>
+          <button onClick={handleSubmit} className="btn-primary px-4 py-2" disabled={saving || success}>Submit</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+import { payBooking, deleteBooking as apiDeleteBooking, saveBookingReview } from 'api/dashboard';
 
 const formatCurrency = (estimatedCost) => `Rs ${estimatedCost.toLocaleString('en-LK') || 0}`;
 
@@ -33,6 +82,19 @@ const BookingManagement = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ open: false, bookingId: null });
   const [paymentModal, setPaymentModal] = useState({ open: false, booking: null });
+  const [reviewModal, setReviewModal] = useState({ open: false, booking: null });
+  // Save review to backend
+  const handleReviewSubmit = async ({ review, rating, bookingId }) => {
+    try {
+      await saveBookingReview(bookingId, review, rating);
+      alert('Review submitted successfully!');
+    } catch (err) {
+      alert('Failed to submit review.');
+    }
+    setReviewModal({ open: false, booking: null });
+  };
+  const handleOpenReview = (booking) => setReviewModal({ open: true, booking });
+  const handleCloseReview = () => setReviewModal({ open: false, booking: null });
 
   useEffect(() => {
     if (user && user.id) {
@@ -209,9 +271,12 @@ const BookingManagement = ({ user }) => {
               </div>
               
               <div className="flex items-center space-x-2 mt-4 lg:mt-0">
-                <button className="flex items-center space-x-1 px-3 py-2 text-sm text-primary hover:bg-primary-50 rounded-lg transition-colors duration-200">
-                  <Icon name="Eye" size={16} strokeWidth={2} />
-                  <span>View Contract</span>
+                <button
+                  className="flex items-center space-x-1 px-3 py-2 text-sm text-primary hover:bg-primary-50 rounded-lg transition-colors duration-200"
+                  onClick={() => handleOpenReview(booking)}
+                >
+                  <Icon name="Star" size={16} strokeWidth={2} />
+                  <span>Add Reviews</span>
                 </button>
                 <button className="flex items-center space-x-1 px-3 py-2 text-sm text-text-secondary hover:bg-surface-secondary rounded-lg transition-colors duration-200">
                   <Icon name="Edit" size={16} strokeWidth={2} />
@@ -338,6 +403,12 @@ const BookingManagement = ({ user }) => {
         amount={paymentModal.booking?.dueAmount || 0}
         onSuccess={handlePaymentSuccess}
         onClose={handleClosePayment}
+      />
+      <ReviewModal
+        open={reviewModal.open}
+        booking={reviewModal.booking}
+        onSubmit={handleReviewSubmit}
+        onClose={handleCloseReview}
       />
     </div>
   );

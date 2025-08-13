@@ -6,9 +6,9 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
     email: user?.email || '',
     name: user?.name || user?.username || '',
     password: '',
-    avatar: user?.avatar || ''
+    // avatar removed
   });
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');
+  // avatarPreview removed
 
   // Sync form state with user prop when modal opens
   useEffect(() => {
@@ -17,9 +17,9 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
         email: user?.email || '',
         name: user?.name || user?.username || '',
         password: '',
-        avatar: user?.avatar || ''
+          // avatar removed
       });
-      setAvatarPreview(user?.avatar || '');
+        // setAvatarPreview removed
     }
   }, [open, user]);
 
@@ -28,17 +28,7 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setAvatarPreview(ev.target.result);
-        setForm((prev) => ({ ...prev, avatar: ev.target.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // handleAvatarChange fully removed
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,16 +47,7 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex flex-col items-center mb-4">
-            <label htmlFor="avatar-upload" className="cursor-pointer">
-              <div className="w-20 h-20 rounded-full bg-primary-100 border-2 border-primary-200 flex items-center justify-center overflow-hidden">
-                {avatarPreview ? (
-                  <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <Icon name="User" size={40} className="text-primary" />
-                )}
-              </div>
-              <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-            </label>
+            {/* Avatar upload fully removed */}
             <span className="text-xs text-text-secondary mt-2">Click to change profile picture</span>
           </div>
           <div>

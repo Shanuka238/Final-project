@@ -3,12 +3,13 @@
 const express = require('express');
 const router = express.Router();
 const userMessagesController = require('../controllers/userMessagesController');
+const auth = require('../middleware/auth');
 
 // POST: Save a new user message
 router.post('/', userMessagesController.createUserMessage);
 
-// GET: Get all user messages
-router.get('/', userMessagesController.getAllUserMessages);
+// GET: Get all user messages (protected)
+router.get('/', auth, userMessagesController.getAllUserMessages);
 
 // POST: Add a reply to a user message
 router.post('/:id/reply', userMessagesController.addReplyToUserMessage);

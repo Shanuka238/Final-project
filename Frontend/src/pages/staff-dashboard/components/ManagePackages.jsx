@@ -77,16 +77,16 @@ export default function ManagePackages({ packages, setPackages }) {
             <button className="absolute top-3 right-3 text-gray-400 hover:text-purple-600" onClick={() => setShowForm(false)}>
               <span className="text-2xl">&times;</span>
             </button>
-            <h3 className="text-xl font-bold text-purple-800 mb-4">Add New Package</h3>
+            <h3 className="text-xl font-bold text-purple-800 mb-4">{editingId ? 'Edit Package' : 'Add New Package'}</h3>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              <input name="title" value={form.title} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Title*" required />
-              <input name="type" value={form.type} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Type*" required />
-              <input name="priceRange" value={form.priceRange} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price Range (e.g. 1000-2000)" />
-              <input name="price" value={form.price} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price*" type="number" required />
-              <input name="image" value={form.image} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Image URL" />
-              <input name="rating" value={form.rating} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Rating (e.g. 4.5)" />
-              <input name="reviewCount" value={form.reviewCount} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Review Count" />
-              <input name="availability" value={form.availability} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Availability*" required />
+              <input name="title" value={form.title ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Title*" required />
+              <input name="type" value={form.type ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Type*" required />
+              <input name="priceRange" value={form.priceRange ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price Range (e.g. 1000-2000)" />
+              <input name="price" value={form.price ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price*" type="number" required />
+              <input name="image" value={form.image ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Image URL" />
+              <input name="rating" value={form.rating ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Rating (e.g. 4.5)" />
+              <input name="reviewCount" value={form.reviewCount ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Review Count" />
+              <input name="availability" value={form.availability ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Availability*" required />
               <label className="font-medium">Key Features (4):</label>
               <div className="grid grid-cols-2 gap-2">
                 {featureInputs.map((val, idx) => (
@@ -95,16 +95,16 @@ export default function ManagePackages({ packages, setPackages }) {
                     type="text"
                     className="border rounded-lg px-4 py-2"
                     placeholder={`Feature ${idx + 1}`}
-                    value={val}
+                    value={val ?? ''}
                     onChange={e => handleFeatureChange(idx, e.target.value)}
                     maxLength={40}
                   />
                 ))}
               </div>
-              <textarea name="description" value={form.description} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Description" rows={2} />
-              <textarea name="timeline" value={form.timeline} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Timeline" rows={2} />
+              <textarea name="description" value={form.description ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Description" rows={2} />
+              <textarea name="timeline" value={form.timeline ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Timeline" rows={2} />
               {error && <div className="text-red-500">{error}</div>}
-              <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">Add Package</button>
+              <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">{editingId ? 'Save Details' : 'Add Package'}</button>
             </form>
           </div>
         </div>
@@ -131,7 +131,24 @@ export default function ManagePackages({ packages, setPackages }) {
                   onClick={() => {
                     setShowForm(true);
                     setEditingId(pkg._id);
-                    setForm({ ...pkg, features: Array.isArray(pkg.features) ? pkg.features.join(', ') : pkg.features });
+                    setForm({
+                      title: pkg.title ?? '',
+                      type: pkg.type ?? '',
+                      priceRange: pkg.priceRange ?? '',
+                      price: pkg.price !== undefined && pkg.price !== null ? String(pkg.price) : '',
+                      image: pkg.image ?? '',
+                      rating: pkg.rating !== undefined && pkg.rating !== null ? String(pkg.rating) : '',
+                      reviewCount: pkg.reviewCount !== undefined && pkg.reviewCount !== null ? String(pkg.reviewCount) : '',
+                      availability: pkg.availability ?? '',
+                      features: Array.isArray(pkg.features) ? pkg.features.join(', ') : (pkg.features ?? ''),
+                      description: pkg.description ?? '',
+                      timeline: pkg.timeline ?? ''
+                    });
+                    setFeatureInputs(
+                      Array.isArray(pkg.features)
+                        ? [...pkg.features, '', '', '', ''].slice(0, 4)
+                        : ['', '', '', '']
+                    );
                   }}
                 >
                   Edit

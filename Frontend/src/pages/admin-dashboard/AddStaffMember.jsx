@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Icon from "../../components/AppIcon";
-import { createClerkUser } from "../../api/admin";
+import { createUser } from "../../api/admin";
 
 const AddStaffMember = ({ onClose, onAdd }) => {
   const [username, setUsername] = useState("");
@@ -19,7 +19,7 @@ const AddStaffMember = ({ onClose, onAdd }) => {
       return;
     }
     try {
-      await createClerkUser(email, password, username, 'staff');
+      await createUser(email, password, username, 'staff');
       setSuccess("Staff member added!");
       setTimeout(() => {
         setSuccess("");
@@ -32,19 +32,6 @@ const AddStaffMember = ({ onClose, onAdd }) => {
       }, 1200);
     } catch (err) {
       let message = err?.response?.data?.error || err.message || "Failed to add staff member.";
-      // Clerk free tier user limit error handling
-      if (typeof message === 'object' && message.errors && Array.isArray(message.errors)) {
-        const limitError = message.errors.find(e => e.code === 'resource_limit_exceeded');
-        if (limitError) {
-          message = "User limit reached for your Clerk plan. Please upgrade your Clerk subscription to add more staff members.";
-        }
-      }
-      if (typeof message === 'object' && message.message) {
-        message = message.message;
-      }
-      if (typeof message !== 'string') {
-        message = JSON.stringify(message);
-      }
       setError(message);
     }
   };

@@ -31,7 +31,7 @@ const ServiceOptions = ({ type, selected, setSelected }) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch('http://localhost:5000/api/admin/services')
+    fetch('http://localhost:5000/api/staff/services')
       .then(res => res.json())
       .then(data => {
         setServices(data.filter(s => s.type === type));
