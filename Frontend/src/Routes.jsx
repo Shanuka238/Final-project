@@ -4,6 +4,7 @@ import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import Header from "components/ui/Header";
 import LandingPage from "pages/landing-page";
+import AboutPage from "pages/about-page";
 import EventBookingForm from "pages/event-booking-form";
 import EventPackages from "pages/event-packages";
 import UserDashboard from "pages/user-dashboard";
@@ -35,6 +36,7 @@ const Routes = () => {
               </ProtectedRoute>
             } />
             <Route path="/contact-page" element={<ContactPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             {/* <Route path="/login/sso-callback" element={<SsoCallback />} /> */}

@@ -176,16 +176,7 @@ const BusinessInfo = () => {
           )}
         </div>
       </div>
-
-      {/* Quick Actions */}
-      <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8">
-        <h3 className="font-heading text-xl font-bold text-text-primary mb-4">
-          Quick Actions
-        </h3>
-        <div className="space-y-3">
-          {/* Optionally keep or remove these if they are also mock */}
-        </div>
-      </div>
+    
     </div>
   );
 };

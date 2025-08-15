@@ -8,51 +8,53 @@ const LocationInput = ({ formData, updateFormData, errors }) => {
   const popularVenues = [
     {
       id: 1,
-      name: "Grand Ballroom Hotel",
-      address: "123 Main Street, Downtown",
+      name: "Shangri-La Hotel Colombo",
+      address: "1 Galle Face, Colombo 2",
       type: "Hotel",
-      capacity: "200-500 guests",
+      capacity: "200-1000 guests",
       rating: 4.8,
       image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400"
     },
     {
       id: 2,
-      name: "Sunset Garden Venue",
-      address: "456 Garden Lane, Suburbs",
-      type: "Outdoor",
-      capacity: "100-300 guests",
-      rating: 4.9,
+      name: "Cinnamon Grand Colombo",
+      address: "77 Galle Road, Colombo 3",
+      type: "Hotel",
+      capacity: "100-800 guests",
+      rating: 4.7,
       image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400"
     },
     {
       id: 3,
-      name: "Metropolitan Conference Center",
-      address: "789 Business District",
-      type: "Conference",
-      capacity: "50-200 guests",
-      rating: 4.7,
+      name: "Nelum Pokuna Mahinda Rajapaksa Theatre",
+      address: "Ananda Coomaraswamy Mawatha, Colombo 7",
+      type: "Theatre",
+      capacity: "500-1200 guests",
+      rating: 4.9,
       image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400"
     },
     {
       id: 4,
-      name: "Riverside Pavilion",
-      address: "321 Riverside Drive",
-      type: "Pavilion",
-      capacity: "150-400 guests",
+      name: "Galle Face Green",
+      address: "Galle Road, Colombo 3",
+      type: "Outdoor",
+      capacity: "100-2000 guests",
       rating: 4.6,
       image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400"
     }
   ];
 
   const locationSuggestions = [
-    "Grand Ballroom Hotel, 123 Main Street",
-    "Sunset Garden Venue, 456 Garden Lane",
-    "Metropolitan Conference Center, 789 Business District",
-    "Riverside Pavilion, 321 Riverside Drive",
-    "City Community Center, 555 Community Ave",
-    "Lakeside Resort, 777 Lake View Road",
-    "Historic Manor House, 888 Heritage Street",
-    "Rooftop Terrace, 999 Skyline Boulevard"
+    "Shangri-La Hotel Colombo, 1 Galle Face, Colombo 2",
+    "Cinnamon Grand Colombo, 77 Galle Road, Colombo 3",
+    "Nelum Pokuna Mahinda Rajapaksa Theatre, Ananda Coomaraswamy Mawatha, Colombo 7",
+    "Galle Face Green, Galle Road, Colombo 3",
+    "BMICH, Bauddhaloka Mawatha, Colombo 7",
+    "Taj Samudra Colombo, 25 Galle Face Center Rd, Colombo 3",
+    "Jetwing Blue, Negombo",
+    "Amaya Lake, Dambulla",
+    "Kandy City Centre, Kandy",
+    "Araliya Green City, Nuwara Eliya"
   ];
 
   const filteredSuggestions = locationSuggestions.filter(suggestion =>
@@ -225,7 +227,6 @@ const LocationInput = ({ formData, updateFormData, errors }) => {
           <h4 className="font-heading text-lg font-semibold text-text-primary">
             Location Preview
           </h4>
-          
           <div className="bg-surface border border-border rounded-xl overflow-hidden">
             <div className="h-64 bg-gray-100 flex items-center justify-center">
               <iframe
@@ -234,18 +235,17 @@ const LocationInput = ({ formData, updateFormData, errors }) => {
                 loading="lazy"
                 title="Event Location"
                 referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps?q=40.7128,-74.0060&z=14&output=embed"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(formData.location)}&z=15&output=embed`}
                 className="border-0"
               />
             </div>
-            
             <div className="p-4">
               <div className="flex items-start space-x-3">
                 <Icon name="MapPin" size={20} className="text-primary mt-1" strokeWidth={2} />
                 <div>
                   <p className="font-medium text-text-primary">{formData.location}</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    Click on the map to get directions
+                    The map above shows your selected location. You can zoom or pan for details.
                   </p>
                 </div>
               </div>

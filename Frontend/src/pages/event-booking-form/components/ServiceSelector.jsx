@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getToken } from 'utils/auth';
 
 const ServiceTypeSelector = ({ selectedTypes, setSelectedTypes, onTypeSelect }) => {
   const types = ['Catering', 'Decoration', 'Photography', 'Music', 'Lighting', 'Venue Setup'];
@@ -30,15 +31,35 @@ const ServiceTypeSelector = ({ selectedTypes, setSelectedTypes, onTypeSelect }) 
 const ServiceOptions = ({ type, selected, setSelected }) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   useEffect(() => {
-    fetch('http://localhost:5000/api/staff/services')
-      .then(res => res.json())
-      .then(data => {
-        setServices(data.filter(s => s.type === type));
-        setLoading(false);
-      });
+    const fetchServices = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = getToken();
+        const res = await fetch('http://localhost:5000/api/staff/services', {
+          headers: {
+            'Authorization': token ? `Bearer ${token}` : ''
+          }
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setServices(data.filter(s => s.type === type));
+        } else {
+          setError(data?.message || data?.error || 'Failed to load services');
+          setServices([]);
+        }
+      } catch (err) {
+        setError('Failed to load services');
+        setServices([]);
+      }
+      setLoading(false);
+    };
+    fetchServices();
   }, [type]);
   if (loading) return <div>Loading {type} options...</div>;
+  if (error) return <div className="text-sm text-red-500 mb-2">{error}</div>;
   if (!services.length) return <div className="text-sm text-gray-400 mb-2">No {type} services available.</div>;
   return (
     <div className="flex flex-wrap gap-3 mb-4">

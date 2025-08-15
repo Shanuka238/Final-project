@@ -15,7 +15,8 @@ const Header = () => {
     { label: 'Home', path: '/landing-page', icon: 'Home' },
     { label: 'Book Event', path: '/event-booking-form', icon: 'Calendar' },
     { label: 'Event Packages', path: '/event-packages', icon: 'Package' },
-    { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' }
+    { label: 'Contact', path: '/contact-page', icon: 'MessageCircle' },
+    { label: 'About', path: '/about', icon: 'Info' }
   ];
 
   // Add dashboard links based on user role

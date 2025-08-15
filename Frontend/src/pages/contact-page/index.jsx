@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import ContactForm from './components/ContactForm';
 import BusinessInfo from './components/BusinessInfo';
-import MapSection from './components/MapSection';
 import FAQSection from './components/FAQSection';
 import NotLoggedIn from './components/NotLoggedIn';
 
@@ -78,9 +77,6 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Map Section */}
-      <MapSection />
 
       {/* FAQ Section */}
       <FAQSection />
