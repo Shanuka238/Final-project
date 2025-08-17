@@ -11,6 +11,7 @@ import FilterPanel from './components/FilterPanel';
 import NotLoggedIn from './components/NotLoggedIn';
 
 import { bookUserPackage } from 'api/dashboard';
+import CenterPopup from 'components/CenterPopup';
 
 const EventPackages = () => {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ const EventPackages = () => {
     features: []
   });
   const [loading, setLoading] = useState(true);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -151,7 +153,10 @@ const EventPackages = () => {
     };
     try {
       await bookUserPackage(user.id, packagePayload);
-      // Optionally show a success message here
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 1800);
     } catch (e) {
       // Optionally show an error message here
     }
@@ -159,7 +164,12 @@ const EventPackages = () => {
   };
 
   return (
-    <motion.div
+    <>
+      <CenterPopup
+        message={showSuccessPopup ? 'Event package booked successfully!' : ''}
+        onClose={() => setShowSuccessPopup(false)}
+      />
+      <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -369,7 +379,8 @@ const EventPackages = () => {
           onBook={handleBookSubmit}
         />
       )}
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

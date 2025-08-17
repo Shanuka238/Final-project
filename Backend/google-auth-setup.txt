@@ -1,0 +1,79 @@
+# Google OAuth Setup for Node.js Backend
+
+1. Install dependencies:
+   npm install passport passport-google-oauth20 express-session
+
+2. Get Google OAuth credentials:
+   - Go to https://console.developers.google.com/
+   - Create a project, enable Google+ API, and create OAuth 2.0 credentials
+   - Set Authorized redirect URI to: http://localhost:5000/api/auth/google/callback
+   - Note your CLIENT_ID and CLIENT_SECRET
+
+3. Add to your .env file:
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+SESSION_SECRET=your_session_secret_here
+
+4. Add the following to Backend/server.js (before routes):
+
+const session = require('express-session');
+app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
+const passport = require('passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+5. Create Backend/auth/google.js with the following content:
+
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/api/auth/google/callback',
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ email: profile.emails[0].value });
+    if (!user) {
+      user = await User.create({
+        username: profile.displayName,
+        email: profile.emails[0].value,
+        password: '', // Not used for Google users
+        role: 'user',
+      });
+    }
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
+  }
+}));
+
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id);
+  done(null, user);
+});
+
+module.exports = passport;
+
+6. In Backend/routes/auth.js, add:
+
+const passport = require('../auth/google');
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', session: false }), (req, res) => {
+  // Issue JWT and redirect to frontend with token
+  const token = jwt.sign({ id: req.user._id, username: req.user.username, email: req.user.email, role: req.user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+  res.redirect(`http://localhost:5173/login?token=${token}`);
+});
+
+7. In Frontend/src/pages/login/index.jsx and register/index.jsx, add a button:
+
+<button onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'} className="btn-google">Continue with Google</button>
+
+8. In login/index.jsx, if window.location.search has a token, call login(token) and redirect to dashboard.
+
+# End of setup

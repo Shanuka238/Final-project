@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -37,6 +37,16 @@ const Register = () => {
     }
   };
 
+  // Handle Google OAuth redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      navigate('/user-dashboard');
+    }
+  }, [navigate]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F8F5FF] via-[#F4F1FF] to-[#FFF7ED] px-4 py-12">
       <motion.form
@@ -46,6 +56,14 @@ const Register = () => {
         className="max-w-md w-full card p-8 space-y-6 shadow-xl border-2 border-primary-100 bg-white/90 backdrop-blur-md"
         onSubmit={handleSubmit}
       >
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mb-4"
+          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+        >
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
+          Continue with Google
+        </button>
         <motion.h2
           className="font-heading text-3xl font-bold mb-4 text-primary"
           initial={{ opacity: 0, x: -30 }}

@@ -19,7 +19,7 @@ const EVENT_TYPE_ICONS = {
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 // ...removed Clerk import...
-import { fetchUserBookings } from 'api/dashboard';
+import { fetchUserBookings, fetchStaffServices } from 'api/dashboard';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PaymentModal from './PaymentModal';
 
@@ -83,6 +83,7 @@ const BookingManagement = ({ user }) => {
   const [deleteModal, setDeleteModal] = useState({ open: false, bookingId: null });
   const [paymentModal, setPaymentModal] = useState({ open: false, booking: null });
   const [reviewModal, setReviewModal] = useState({ open: false, booking: null });
+  const [allServices, setAllServices] = useState([]);
   // Save review to backend
   const handleReviewSubmit = async ({ review, rating, bookingId }) => {
     try {
@@ -97,15 +98,29 @@ const BookingManagement = ({ user }) => {
   const handleCloseReview = () => setReviewModal({ open: false, booking: null });
 
   useEffect(() => {
-    if (user && user.id) {
-      fetchUserBookings(user.id)
-        .then((data) => setBookings(data))
-        .catch(() => setBookings([]))
-        .finally(() => setLoading(false));
-    } else {
-      setBookings([]);
+    let mounted = true;
+    async function fetchData() {
       setLoading(true);
+      try {
+        const [bookingsData, servicesData] = await Promise.all([
+          user && user.id ? fetchUserBookings(user.id) : [],
+          fetchStaffServices()
+        ]);
+        if (mounted) {
+          setBookings(bookingsData);
+          setAllServices(servicesData);
+        }
+      } catch {
+        if (mounted) {
+          setBookings([]);
+          setAllServices([]);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
     }
+    fetchData();
+    return () => { mounted = false; };
   }, [user]);
 
   const isPartial = (b) => Number(b.dueAmount) > 0;
@@ -374,6 +389,26 @@ const BookingManagement = ({ user }) => {
                   <div><span className="font-medium">Guests:</span> {booking.guestCount}</div>
                   <div><span className="font-medium">Price:</span> {formatCurrency(booking.totalAmount)}</div>
                   <div><span className="font-medium">Status:</span> {booking.status || 'Booked'}</div>
+                  <div>
+                    <span className="font-medium">Services:</span>
+                    {Array.isArray(booking.services) && booking.services.length > 0 ? (
+                      <ul className="list-disc pl-5 mt-1">
+                        {booking.services.map(serviceId => {
+                          const service = allServices.find(s => s._id === serviceId);
+                          return service ? (
+                            <li key={serviceId} className="mb-1">
+                              <span className="font-semibold text-primary">{service.name}</span>
+                              {service.type && <span className="ml-2 text-xs text-text-secondary">({service.type})</span>}
+                            </li>
+                          ) : (
+                            <li key={serviceId} className="mb-1 text-text-tertiary">Service not found</li>
+                          );
+                        })}
+                      </ul>
+                    ) : (
+                      <span className="ml-2 text-text-tertiary">No services selected</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

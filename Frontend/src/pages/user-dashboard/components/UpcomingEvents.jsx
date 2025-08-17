@@ -140,15 +140,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
                     </span>
                   </div>
                 </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-text-primary">Planning Progress</span>
-                    <span className="text-sm text-text-secondary">{event.progress || 0}%</span>
-                  </div>
-                  <div className="w-full bg-surface-secondary rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{ width: `${event.progress || 0}%` }}></div>
-                  </div>
-                </div>
+                {/* Removed planning progress bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-border">
                   <div className="flex items-center space-x-4 mb-4 sm:mb-0">
                     <div className="text-sm text-text-secondary">

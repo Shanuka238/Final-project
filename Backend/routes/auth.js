@@ -3,6 +3,15 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const passport = require('../auth/google');
+// Google OAuth login
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', session: false }), (req, res) => {
+  // Issue JWT and redirect to frontend with token
+  const token = jwt.sign({ id: req.user._id, username: req.user.username, email: req.user.email, role: req.user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+  res.redirect(`http://localhost:4028/login?token=${token}`);
+});
 
 // Register
 router.post('/register', async (req, res) => {

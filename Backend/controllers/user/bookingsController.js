@@ -94,9 +94,11 @@ exports.getUserBookings = async (req, res) => {
 
 exports.bookEvent = async (req, res) => {
   try {
-    const { userId, eventData, bookingData } = req.body;
-    const event = await Event.create({ ...eventData, userId });
-    const booking = await Booking.create({ ...bookingData, userId });
+  const { userId, eventData, bookingData } = req.body;
+  // Ensure services are included if sent
+  const services = bookingData.services || [];
+  const event = await Event.create({ ...eventData, userId });
+  const booking = await Booking.create({ ...bookingData, userId, services });
     await logActivity({
       userId,
       type: 'booking',

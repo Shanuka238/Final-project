@@ -7,6 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Google OAuth session and passport setup
+const session = require('express-session');
+app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
+const passport = require('./auth/google');
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject.cicv4nv.mongodb.net/?retryWrites=true&w=majority&appName=Finalproject', {
   useNewUrlParser: true,

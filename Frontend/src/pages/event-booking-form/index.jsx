@@ -13,6 +13,7 @@ import BookingSummary from './components/BookingSummary';
 import NotLoggedIn from './components/NotLoggedIn';
 import { useAuth } from 'contexts/AuthContext';
 import { bookEvent as apiBookEvent } from 'api/dashboard';
+import CenterPopup from 'components/CenterPopup';
 
 const EventBookingForm = () => {
   const { user } = useAuth();
@@ -41,6 +42,7 @@ const EventBookingForm = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [progress, setProgress] = useState(0);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   // --- Service selection state for step 2 ---
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
@@ -233,7 +235,8 @@ const EventBookingForm = () => {
       bookingDate: new Date().toISOString(),
       eventDate: eventData.date, // Use formatted date
       paymentSchedule: [],
-      documents: []
+      documents: [],
+      services: formData.services // <-- Store selected service IDs
     };
     try {
       if (!user || !user.id) {
@@ -242,7 +245,11 @@ const EventBookingForm = () => {
       }
       const data = await apiBookEvent(user.id, eventData, bookingData);
       localStorage.removeItem('eventBookingForm');
-      navigate('/user-dashboard');
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+        navigate('/user-dashboard');
+      }, 1800);
     } catch (err) {
       console.error('Booking error:', err);
       alert('Failed to book event. Please try again. ' + (err.message || ''));
@@ -422,7 +429,12 @@ const EventBookingForm = () => {
   // ...removed Clerk logic...
 
   return (
-    <motion.div
+    <>
+      <CenterPopup
+        message={showSuccessPopup ? 'Event booked successfully!' : ''}
+        onClose={() => setShowSuccessPopup(false)}
+      />
+      <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -599,7 +611,8 @@ const EventBookingForm = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'contexts/AuthContext';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const Login = () => {
@@ -9,6 +10,16 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Handle Google OAuth redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      login(token);
+      navigate('/user-dashboard');
+    }
+  }, [login, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -53,6 +64,14 @@ const Login = () => {
         className="max-w-md w-full card p-8 space-y-6 shadow-xl border-2 border-primary-100 bg-white/90 backdrop-blur-md"
         onSubmit={handleSubmit}
       >
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mb-4"
+          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+        >
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
+          Continue with Google
+        </button>
         <motion.h2
           className="font-heading text-3xl font-bold mb-4 text-primary"
           initial={{ opacity: 0, x: -30 }}

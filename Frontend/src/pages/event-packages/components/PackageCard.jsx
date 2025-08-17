@@ -227,24 +227,6 @@ const PackageCard = ({
                 <h3 className="font-semibold text-text-primary mb-3">Description</h3>
                 <p className="text-text-secondary leading-relaxed">{pkg.description}</p>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
-                <Link
-                  to="/event-booking-form"
-                  state={{ selectedPackage: pkg }}
-                  className="btn-primary flex-1 text-center"
-                >
-                  Book This Package
-                </Link>
-                <Link
-                  to="/contact-page"
-                  state={{ inquiryType: 'package', packageId: pkg.id }}
-                  className="btn-secondary flex-1 text-center"
-                >
-                  Get Custom Quote
-                </Link>
-              </div>
             </div>
           </div>
         </div>
