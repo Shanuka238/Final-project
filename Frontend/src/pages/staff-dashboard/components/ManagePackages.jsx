@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CenterPopup from 'components/CenterPopup';
 import { addNewPackage, deletePackage, updatePackage } from 'api/dashboard';
 
 export default function ManagePackages({ packages, setPackages }) {
@@ -19,6 +20,9 @@ export default function ManagePackages({ packages, setPackages }) {
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [featureInputs, setFeatureInputs] = useState(['', '', '', '']);
+  const [deleteId, setDeleteId] = useState(null);
+  const [popupMessage, setPopupMessage] = useState(''); // for add/edit
+  const [deletePopupMessage, setDeletePopupMessage] = useState(''); // for delete
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,6 +54,7 @@ export default function ManagePackages({ packages, setPackages }) {
       } else {
         pkgResult = await addNewPackage(payload);
         setPackages([pkgResult, ...packages]);
+        setPopupMessage('Package added successfully!');
       }
       setForm({ title: '', type: '', priceRange: '', price: '', image: '', rating: '', reviewCount: '', availability: '', features: '', description: '', timeline: '' });
       setFeatureInputs(['', '', '', '']);
@@ -62,6 +67,7 @@ export default function ManagePackages({ packages, setPackages }) {
 
   return (
     <div>
+  <CenterPopup message={popupMessage} onClose={() => setPopupMessage('')} />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-purple-800">Manage Packages</h2>
         <button
@@ -81,14 +87,14 @@ export default function ManagePackages({ packages, setPackages }) {
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input name="title" value={form.title ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Title*" required />
               <input name="type" value={form.type ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Type*" required />
-              <input name="priceRange" value={form.priceRange ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price Range (e.g. 1000-2000)" />
+              <input name="priceRange" value={form.priceRange ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price Range (e.g. Rs1,000 - Rs2,000)" />
               <input name="price" value={form.price ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price*" type="number" required />
               <input name="image" value={form.image ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Image URL" />
               <input name="rating" value={form.rating ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Rating (e.g. 4.5)" />
               <input name="reviewCount" value={form.reviewCount ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Review Count" />
               <input name="availability" value={form.availability ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Availability*" required />
-              <label className="font-medium">Key Features (4):</label>
-              <div className="grid grid-cols-2 gap-2">
+              <label className="font-medium">Key Features ({featureInputs.length}):</label>
+              <div className="grid grid-cols-2 gap-2 mb-2">
                 {featureInputs.map((val, idx) => (
                   <input
                     key={idx}
@@ -101,7 +107,14 @@ export default function ManagePackages({ packages, setPackages }) {
                   />
                 ))}
               </div>
-              <textarea name="description" value={form.description ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Description" rows={2} />
+              <button
+                type="button"
+                className="bg-blue-500 text-white px-3 py-1 rounded mb-2 hover:bg-blue-600 transition"
+                onClick={() => setFeatureInputs([...featureInputs, ''])}
+              >
+                Another Feature
+              </button>
+              <textarea name="description" value={form.description ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2 break-all" placeholder="Description" rows={2} style={{ wordBreak: 'break-all' }} />
               <textarea name="timeline" value={form.timeline ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Timeline" rows={2} />
               {error && <div className="text-red-500">{error}</div>}
               <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition">{editingId ? 'Save Details' : 'Add Package'}</button>
@@ -123,7 +136,7 @@ export default function ManagePackages({ packages, setPackages }) {
               <div className="text-xs text-gray-700">Availability: {pkg.availability}</div>
               {pkg.features && <div className="text-xs text-purple-700 mt-1">Features: {pkg.features}</div>}
               {pkg.image && <img src={pkg.image} alt={pkg.title} className="w-full h-32 object-cover rounded mt-2" />}
-              {pkg.description && <div className="text-sm text-gray-600 mt-2">{pkg.description}</div>}
+              {pkg.description && <div className="text-sm text-gray-600 mt-2 break-all" style={{ wordBreak: 'break-all' }}>{pkg.description}</div>}
               {pkg.timeline && <div className="text-xs text-gray-500 mt-1">Timeline: {pkg.timeline}</div>}
               <div className="flex gap-2 mt-2 self-end">
                 <button
@@ -155,15 +168,9 @@ export default function ManagePackages({ packages, setPackages }) {
                 </button>
                 <button
                   className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-                  onClick={async () => {
-                    if(window.confirm('Are you sure you want to delete this package?')) {
-                      try {
-                        await deletePackage(pkg._id);
-                        setPackages(packages.filter((p) => p._id !== pkg._id));
-                      } catch (err) {
-                        alert('Failed to delete package.');
-                      }
-                    }
+                  onClick={() => {
+                    setDeleteId(pkg._id);
+                    setDeletePopupMessage('Are you sure you want to delete this package?');
                   }}
                 >
                   Delete
@@ -173,6 +180,23 @@ export default function ManagePackages({ packages, setPackages }) {
           ))}
         </div>
       )}
+      <CenterPopup
+        message={deletePopupMessage}
+        confirm={!!deleteId && deletePopupMessage === 'Are you sure you want to delete this package?'}
+        onConfirm={async () => {
+          try {
+            await deletePackage(deleteId);
+            setPackages(packages.filter((p) => p._id !== deleteId));
+            setDeletePopupMessage('Package deleted successfully!');
+          } catch {
+            setDeletePopupMessage('Failed to delete package.');
+          } finally {
+            setDeleteId(null);
+          }
+        }}
+        onCancel={() => { setDeleteId(null); setDeletePopupMessage(''); }}
+        onClose={() => setDeletePopupMessage('')}
+      />
     </div>
   );
 }

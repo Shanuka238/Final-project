@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import CenterPopup from 'components/CenterPopup';
 import AddServiceForm from './AddServiceForm';
 import {
   fetchStaffServices,
@@ -41,18 +42,37 @@ export default function ManageServices() {
   };
 
   // Delete service
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this service?')) return;
+  const [deleteId, setDeleteId] = useState(null);
+  const [popupMessage, setPopupMessage] = useState('');
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setPopupMessage('Are you sure you want to delete this service?');
+  };
+  const handleDeleteConfirm = async () => {
     try {
-      await deleteStaffService(id);
-      setServices(services.filter(s => s._id !== id));
+      await deleteStaffService(deleteId);
+      setServices(services.filter(s => s._id !== deleteId));
+      setPopupMessage('Service deleted successfully!');
     } catch {
-      alert('Failed to delete service');
+      setPopupMessage('Failed to delete service');
+    } finally {
+      setDeleteId(null);
     }
+  };
+  const handlePopupClose = () => {
+    // Only close if not a confirm dialog
+    if (!deleteId) setPopupMessage('');
   };
 
   return (
     <div>
+      <CenterPopup
+        message={popupMessage}
+        confirm={!!deleteId}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => { setDeleteId(null); setPopupMessage(''); }}
+        onClose={handlePopupClose}
+      />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-purple-800">Manage Services</h2>
         <button

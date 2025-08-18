@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
+import CenterPopup from 'components/CenterPopup';
+import { getToken } from '../../../utils/auth';
 
 const AddServiceForm = ({ onServiceAdded, service }) => {
   const [name, setName] = useState('');
@@ -14,6 +16,8 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
+  const [pendingService, setPendingService] = useState(null);
 
   // Pre-fill form fields when editing
   useEffect(() => {
@@ -76,33 +80,41 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
         };
       }
       let res;
+      const token = getToken();
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       if (service && service._id) {
         // Edit existing service
         res = await fetch(`http://localhost:5000/api/staff/services/${service._id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(body)
         });
       } else {
         // Add new service
         res = await fetch('http://localhost:5000/api/staff/services', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(body)
         });
       }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save service');
-      setSuccess(service && service._id ? 'Service updated!' : 'Service added!');
-      setName('');
-      setDescription('');
-      setDetails('');
-      setImage(null);
-      setImageUrl('');
-      setPhotographerName('');
-      setPhotographerRating('');
-      setKeyFeatures(['']);
-      if (onServiceAdded) onServiceAdded(data);
+  setSuccess(service && service._id ? 'Service updated!' : 'Service added!');
+  if (!service || !service._id) {
+    setPopupMessage('Service added successfully!');
+    setPendingService(data);
+  } else {
+    setName('');
+    setDescription('');
+    setDetails('');
+    setImage(null);
+    setImageUrl('');
+    setPhotographerName('');
+    setPhotographerRating('');
+    setKeyFeatures(['']);
+    if (onServiceAdded) onServiceAdded(data);
+  }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -110,25 +122,40 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
     }
   };
 
+  const handlePopupClose = () => {
+    setPopupMessage('');
+    setName('');
+    setDescription('');
+    setDetails('');
+    setImage(null);
+    setImageUrl('');
+    setPhotographerName('');
+    setPhotographerRating('');
+    setKeyFeatures(['']);
+    if (onServiceAdded && pendingService) onServiceAdded(pendingService);
+    setPendingService(null);
+  };
   return (
-    <form onSubmit={handleSubmit} className="card p-6 space-y-4 max-w-md mx-auto mt-8">
-      <h2 className="font-heading text-xl font-semibold mb-2">{service && service._id ? 'Edit Service' : 'Add New Service'}</h2>
-      <div>
-        <label className="block text-sm font-medium mb-1">Service Type *</label>
-        <select
-          value={type}
-          onChange={e => setType(e.target.value)}
-          className="input-field w-full"
-          required
-        >
-          <option value="Catering">Catering</option>
-          <option value="Decoration">Decoration</option>
-          <option value="Photography">Photographer</option>
-          <option value="Music">Music</option>
-          <option value="Lighting">Lighting</option>
-          <option value="Venue Setup">Venue Setup</option>
-        </select>
-      </div>
+    <>
+      <CenterPopup message={popupMessage} onClose={handlePopupClose} />
+      <form onSubmit={handleSubmit} className="card p-6 space-y-4 max-w-md mx-auto mt-8">
+        <h2 className="font-heading text-xl font-semibold mb-2">{service && service._id ? 'Edit Service' : 'Add New Service'}</h2>
+        <div>
+          <label className="block text-sm font-medium mb-1">Service Type *</label>
+          <select
+            value={type}
+            onChange={e => setType(e.target.value)}
+            className="input-field w-full"
+            required
+          >
+            <option value="Catering">Catering</option>
+            <option value="Decoration">Decoration</option>
+            <option value="Photography">Photographer</option>
+            <option value="Music">Music</option>
+            <option value="Lighting">Lighting</option>
+            <option value="Venue Setup">Venue Setup</option>
+          </select>
+        </div>
       <div>
         <label className="block text-sm font-medium mb-1">Service Name *</label>
         <input
@@ -240,6 +267,7 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
         {loading ? (service && service._id ? 'Saving...' : 'Adding...') : (service && service._id ? 'Save Details' : 'Add Service')}
       </button>
     </form>
+    </>
   );
 };
 

@@ -56,14 +56,6 @@ const Register = () => {
         className="max-w-md w-full card p-8 space-y-6 shadow-xl border-2 border-primary-100 bg-white/90 backdrop-blur-md"
         onSubmit={handleSubmit}
       >
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mb-4"
-          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
-        >
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
-          Continue with Google
-        </button>
         <motion.h2
           className="font-heading text-3xl font-bold mb-4 text-primary"
           initial={{ opacity: 0, x: -30 }}
@@ -111,6 +103,14 @@ const Register = () => {
         >
           Register
         </motion.button>
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mt-4"
+          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+        >
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
+          Continue with Google
+        </button>
         <motion.div className="text-sm text-center mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
           Already have an account? <a href="/login" className="text-primary underline">Login</a>
         </motion.div>
