@@ -135,24 +135,13 @@ const ContactForm = ({ onSubmit }) => {
 
   return (
     <div className="bg-surface rounded-2xl shadow-primary p-8">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="font-heading text-3xl font-bold text-text-primary mb-4">
-            Send Us a Message
-          </h2>
-          <p className="text-text-secondary">
-            Fill out the form below and we'll get back to you within 24 hours. We're excited to help plan your special event!
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-purple-100 text-purple-700 font-semibold py-2 px-4 rounded-lg border border-purple-200 transition-all text-base"
-            onClick={handleShowMessages}
-          >
-            <Icon name="Mail" size={20} /> View My Messages
-          </button>
-        </div>
+      <div className="mb-8">
+        <h2 className="font-heading text-3xl font-bold text-text-primary mb-4">
+          Send Us a Message
+        </h2>
+        <p className="text-text-secondary">
+          Fill out the form below and we'll get back to you within 24 hours. We're excited to help plan your special event!
+        </p>
       </div>
       {showUserMessages && (
         <UserMessagesModal email={formData.email} onClose={() => setShowUserMessages(false)} />
@@ -363,6 +352,16 @@ const ContactForm = ({ onSubmit }) => {
             </>
           )}
         </button>
+        <div className="flex flex-col items-end gap-2 mt-4">
+          <button
+            type="button"
+            className="w-full btn-primary flex items-center justify-center space-x-2 font-semibold py-3 px-4 rounded-lg border border-primary-200 transition-all text-base mt-2"
+            style={{ backgroundColor: '#ede9fe', color: '#6d28d9', borderColor: '#c4b5fd' }}
+            onClick={handleShowMessages}
+          >
+            <Icon name="Mail" size={20} /> View My Messages
+          </button>
+        </div>
 
         {/* Response Time Info */}
         <div className="bg-primary-50 rounded-lg p-4">

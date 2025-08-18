@@ -8,9 +8,7 @@ const Footer = () => {
   const footerLinks = {
     company: [
       { label: "About Us", href: "/about" },
-      { label: "Our Team", href: "/team" },
-      { label: "Careers", href: "/careers" },
-      { label: "Press", href: "/press" }
+      { label: "Our Team", href: "/team" }
     ],
     services: [
       { label: "Wedding Planning", href: "/event-packages" },
@@ -26,9 +24,7 @@ const Footer = () => {
     ],
     legal: [
       { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
-      { label: "Cookie Policy", href: "/cookies" },
-      { label: "Refund Policy", href: "/refunds" }
+      { label: "Terms of Service", href: "/terms" }
     ]
   };
 
@@ -44,20 +40,20 @@ const Footer = () => {
     {
       icon: "Phone",
       label: "Call Us",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "Main: +94 11 2345678 | Emergency: +94 77 1234567 | Hotline: 1919",
+      href: "tel:+94112345678"
     },
     {
       icon: "Mail",
       label: "Email Us",
-      value: "hello@partynest.com",
-      href: "mailto:hello@partynest.com"
+      value: "General: hello@partynest.lk | Bookings: events@partynest.lk | Support: support@partynest.lk",
+      href: "mailto:hello@partynest.lk"
     },
     {
       icon: "MapPin",
       label: "Visit Us",
-      value: "123 Event Plaza, Suite 456, Los Angeles, CA 90210",
-      href: "https://maps.google.com/?q=123+Event+Plaza+Los+Angeles+CA"
+      value: "No. 45, Lotus Road, Colombo 01, Sri Lanka",
+      href: "https://maps.google.com/?q=No.+45+Lotus+Road+Colombo+Sri+Lanka"
     }
   ];
 
@@ -222,31 +218,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Newsletter Section */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <div className="text-center md:text-left">
-              <h3 className="font-heading font-semibold text-white mb-2">Stay Updated</h3>
-              <p className="text-gray-300 text-sm">
-                Get the latest event planning tips and exclusive offers delivered to your inbox.
-              </p>
-            </div>
-            
-            <div className="flex w-full md:w-auto max-w-md">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-              <button className="px-6 py-3 bg-primary hover:bg-primary-700 text-white rounded-r-lg transition-colors duration-200 flex items-center space-x-2">
-                <span className="hidden sm:inline">Subscribe</span>
-                <Icon name="Send" size={18} strokeWidth={2} />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Bottom Footer */}
       <div className="border-t border-gray-800">

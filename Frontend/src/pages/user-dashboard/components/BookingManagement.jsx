@@ -73,11 +73,13 @@ const ReviewModal = ({ open, booking, onSubmit, onClose }) => {
   );
 };
 import { payBooking, deleteBooking as apiDeleteBooking, saveBookingReview } from 'api/dashboard';
+import CenterPopup from 'components/CenterPopup';
 
 const formatCurrency = (estimatedCost) => `Rs ${estimatedCost.toLocaleString('en-LK') || 0}`;
 
 const BookingManagement = ({ user }) => {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [popupMessage, setPopupMessage] = useState('');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ open: false, bookingId: null });
@@ -88,9 +90,9 @@ const BookingManagement = ({ user }) => {
   const handleReviewSubmit = async ({ review, rating, bookingId }) => {
     try {
       await saveBookingReview(bookingId, review, rating);
-      alert('Review submitted successfully!');
+      setPopupMessage('Review submitted successfully!');
     } catch (err) {
-      alert('Failed to submit review.');
+      setPopupMessage('Failed to submit review.');
     }
     setReviewModal({ open: false, booking: null });
   };
@@ -444,6 +446,10 @@ const BookingManagement = ({ user }) => {
         booking={reviewModal.booking}
         onSubmit={handleReviewSubmit}
         onClose={handleCloseReview}
+      />
+      <CenterPopup
+        message={popupMessage}
+        onClose={() => setPopupMessage('')}
       />
     </div>
   );

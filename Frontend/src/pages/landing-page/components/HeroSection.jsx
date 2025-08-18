@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from 'contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import { fetchAllReviews } from 'api/reviews';
 
 const HeroSection = () => {
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+  const [averageRating, setAverageRating] = useState(null);
+  useEffect(() => {
+    fetchAllReviews().then((reviews) => {
+      if (reviews && reviews.length > 0) {
+        const avg = (
+          reviews.reduce((sum, r) => sum + (parseFloat(r.rating) || 0), 0) / reviews.length
+        ).toFixed(1);
+        setAverageRating(avg);
+      } else {
+        setAverageRating(null);
+      }
+    }).catch(() => setAverageRating(null));
+  }, []);
   const heroStats = [
     { number: "10K+", label: "Events Planned" },
     { number: "5K+", label: "Happy Clients" },
@@ -122,10 +139,11 @@ const HeroSection = () => {
 
               {/* Floating Cards */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-                className="absolute -top-6 -left-6 bg-surface rounded-xl shadow-primary p-4 border border-border"
+                initial={{ opacity: 1, scale: 1, y: 0 }}
+                animate={isLoggedIn ? { y: [0, -12, 0] } : { y: 0 }}
+                transition={isLoggedIn ? { duration: 1.6, delay: 1.2, repeat: Infinity, repeatType: "loop" } : { duration: 0.6, delay: 1.2 }}
+                className="absolute -top-6 -left-6 bg-surface rounded-xl shadow-lg shadow-primary/40 p-4 border border-border"
+                style={{ zIndex: 20 }}
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center">
@@ -139,21 +157,23 @@ const HeroSection = () => {
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 1.4 }}
-                className="absolute -bottom-6 -right-6 bg-surface rounded-xl shadow-primary p-4 border border-border"
+                initial={{ opacity: 1, scale: 1, y: 0 }}
+                animate={isLoggedIn ? { y: [0, -12, 0] } : { y: 0 }}
+                transition={isLoggedIn ? { duration: 1.6, delay: 1.4, repeat: Infinity, repeatType: "loop" } : { duration: 0.6, delay: 1.4 }}
+                className="absolute -bottom-6 -right-6 bg-surface rounded-xl shadow-lg shadow-accent/40 p-4 border border-border"
+                style={{ zIndex: 20 }}
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center">
                     <Icon name="Star" size={20} className="text-accent" strokeWidth={2} />
                   </div>
                   <div>
-                    <div className="font-semibold text-text-primary text-sm">5.0 Rating</div>
-                    <div className="text-xs text-text-secondary">From 2,500+ reviews</div>
+                    <div className="font-semibold text-text-primary text-sm">{averageRating ? `${averageRating} Rating` : 'No Rating'}</div>
+                    <div className="text-xs text-text-secondary">Average Rating</div>
                   </div>
                 </div>
               </motion.div>
+
             </div>
 
             {/* Background Decorative Elements */}

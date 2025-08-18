@@ -7,6 +7,7 @@ import { fetchAllReviews } from 'api/reviews';
 const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(null);
   // ...removed static testimonials, only real reviews will be shown...
 
   // Only use real reviews from backend
@@ -23,6 +24,16 @@ const TestimonialsSection = () => {
 
   useEffect(() => {
     fetchAllReviews().then(setReviews).catch(() => setReviews([]));
+    fetchAllReviews().then((reviews) => {
+      if (reviews && reviews.length > 0) {
+        const avg = (
+          reviews.reduce((sum, r) => sum + (parseFloat(r.rating) || 0), 0) / reviews.length
+        ).toFixed(1);
+        setAverageRating(avg);
+      } else {
+        setAverageRating(null);
+      }
+    }).catch(() => setAverageRating(null));
   }, []);
 
   useEffect(() => {
@@ -183,7 +194,7 @@ const TestimonialsSection = () => {
             <div className="text-sm text-text-secondary font-medium">Events Completed</div>
           </div>
           <div className="space-y-2">
-            <div className="font-heading text-3xl md:text-4xl font-bold text-primary">4.9</div>
+            <div className="font-heading text-3xl md:text-4xl font-bold text-primary">{averageRating ? averageRating : 'N/A'}</div>
             <div className="text-sm text-text-secondary font-medium">Average Rating</div>
           </div>
           <div className="space-y-2">

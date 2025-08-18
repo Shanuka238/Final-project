@@ -8,48 +8,48 @@ const BusinessInfo = () => {
       icon: 'MapPin',
       title: 'Office Address',
       details: [
-        '123 Event Plaza, Suite 456',
-        'Downtown District',
-        'New York, NY 10001'
+        'No. 45, Lotus Road',
+        'Colombo 01',
+        'Sri Lanka'
       ],
       action: {
         label: 'Get Directions',
-        href: 'https://maps.google.com/?q=123+Event+Plaza+New+York+NY'
+        href: 'https://maps.google.com/?q=No.+45+Lotus+Road+Colombo+Sri+Lanka'
       }
     },
     {
       icon: 'Phone',
       title: 'Phone Numbers',
       details: [
-        'Main: +1 (555) PARTY-01',
-        'Emergency: +1 (555) PARTY-02',
-        'Toll-Free: 1-800-PARTYNEST'
+        'Main: +94 11 2345678',
+        'Emergency: +94 77 1234567',
+        'Hotline: 1919'
       ],
       action: {
         label: 'Call Now',
-        href: 'tel:+1-555-PARTY-01'
+        href: 'tel:+94112345678'
       }
     },
     {
       icon: 'Mail',
       title: 'Email Addresses',
       details: [
-        'General: hello@partynest.com',
-        'Bookings: events@partynest.com',
-        'Support: support@partynest.com'
+        'General: hello@partynest.lk',
+        'Bookings: events@partynest.lk',
+        'Support: support@partynest.lk'
       ],
       action: {
         label: 'Send Email',
-        href: 'mailto:hello@partynest.com'
+        href: 'mailto:hello@partynest.lk'
       }
     },
     {
       icon: 'Clock',
       title: 'Business Hours',
       details: [
-        'Monday - Friday: 9:00 AM - 8:00 PM',
-        'Saturday: 10:00 AM - 6:00 PM',
-        'Sunday: 12:00 PM - 5:00 PM'
+        'Monday - Friday: 8:30 AM - 6:00 PM',
+        'Saturday: 9:00 AM - 4:00 PM',
+        'Sunday: Closed'
       ],
       note: 'Extended hours available for events'
     }
