@@ -19,6 +19,15 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
     .map(slot => slot.time);
 
   const timeSlots = [
+    { value: '00:00', label: '12:00 AM', available: true },
+    { value: '01:00', label: '1:00 AM', available: true },
+    { value: '02:00', label: '2:00 AM', available: true },
+    { value: '03:00', label: '3:00 AM', available: true },
+    { value: '04:00', label: '4:00 AM', available: true },
+    { value: '05:00', label: '5:00 AM', available: true },
+    { value: '06:00', label: '6:00 AM', available: true },
+    { value: '07:00', label: '7:00 AM', available: true },
+    { value: '08:00', label: '8:00 AM', available: true },
     { value: '09:00', label: '9:00 AM', available: true },
     { value: '10:00', label: '10:00 AM', available: true },
     { value: '11:00', label: '11:00 AM', available: true },
@@ -30,7 +39,10 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
     { value: '17:00', label: '5:00 PM', available: true },
     { value: '18:00', label: '6:00 PM', available: true },
     { value: '19:00', label: '7:00 PM', available: true },
-    { value: '20:00', label: '8:00 PM', available: true }
+    { value: '20:00', label: '8:00 PM', available: true },
+    { value: '21:00', label: '9:00 PM', available: true },
+    { value: '22:00', label: '10:00 PM', available: true },
+    { value: '23:00', label: '11:00 PM', available: true }
   ];
 
   const months = [
