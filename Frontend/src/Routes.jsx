@@ -12,9 +12,7 @@ import ContactPage from "pages/contact-page";
 import Login from "pages/login";
 const Register = React.lazy(() => import('pages/register'));
 import AdminDashboard from "pages/admin-dashboard";
-import ServiceList from "pages/services/ServiceList";
 import ProtectedRoute from 'components/ProtectedRoute';
-// ...removed Clerk import...
 
 
 
@@ -45,8 +43,7 @@ const Routes = () => {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/services" element={<ServiceList />} />
-            {/* Correct lazy loading for StaffDashboard */}
+
             {(() => {
               const StaffDashboard = React.lazy(() => import('pages/staff-dashboard'));
               return <Route path="/staff-dashboard" element={

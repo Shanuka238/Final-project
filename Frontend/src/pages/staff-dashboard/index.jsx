@@ -4,10 +4,8 @@ import StaffCalendarWidget from './components/StaffCalendarWidget';
 import ManagePackages from './components/ManagePackages';
 import ManageServices from './components/ManageServices.jsx';
 import { useState as useServicesState, useEffect as useServicesEffect } from 'react';
-import { fetchStaffServices } from '../../api/dashboard';
+import { fetchStaffServices } from '../../api/staff';
 import { CalendarDays, Mail } from "lucide-react";
-// ...removed Clerk import...
-
 import { fetchUserEvents } from 'api/dashboard';
 import StaffMessagesModal from "./StaffMessagesModal";
 import { fetchStaffMessages } from 'api/admin';

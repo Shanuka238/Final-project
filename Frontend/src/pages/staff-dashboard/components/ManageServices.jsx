@@ -4,11 +4,10 @@ import CenterPopup from 'components/CenterPopup';
 import AddServiceForm from './AddServiceForm';
 import {
   fetchStaffServices,
-  fetchStaffService,
   addStaffService,
   updateStaffService,
   deleteStaffService
-} from '../../../api/dashboard';
+} from '../../../api/staff';
 
 export default function ManageServices() {
   const [services, setServices] = useState([]);

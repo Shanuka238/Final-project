@@ -24,12 +24,10 @@ const Header = () => {
   if (isLoggedIn) {
     if (user.role === 'admin') {
       navigationItems = [
-        { label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' },
-        { label: 'Home', path: '/landing-page', icon: 'Home' }
+        { label: 'Admin Dashboard', path: '/admin-dashboard', icon: 'Shield' }
       ];
     } else if (user.role === 'staff') {
       navigationItems = [
-        { label: 'Home', path: '/landing-page', icon: 'Home' },
         { label: 'Staff Dashboard', path: '/staff-dashboard', icon: 'Briefcase' }
       ];
     } else {

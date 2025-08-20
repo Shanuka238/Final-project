@@ -68,7 +68,7 @@ const PackageComparison = ({ packages, onClose }) => {
                   <h3 className="font-heading text-lg font-semibold text-text-primary mb-2">
                     {pkg.title}
                   </h3>
-                  <div className="text-xl font-bold text-primary mb-2">{pkg.priceRange}</div>
+                  <div className="text-xl font-bold text-primary mb-2">{pkg.price ? `Rs ${pkg.price.toLocaleString()}` : 'N/A'}</div>
                   <div className="flex items-center justify-center space-x-1 mb-2">
                     <Icon name="Star" size={16} className="text-accent fill-current" strokeWidth={2} />
                     <span className="text-sm font-medium">{pkg.rating}</span>
@@ -89,10 +89,10 @@ const PackageComparison = ({ packages, onClose }) => {
                 <div className="space-y-3">
                   {/* Price */}
                   <div className="grid gap-6" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
-                    <div className="font-medium text-text-secondary">Price Range</div>
+                    <div className="font-medium text-text-secondary">Price</div>
                     {packages.map((pkg) => (
                       <div key={pkg.id} className="text-center font-semibold text-primary">
-                        {pkg.priceRange}
+                        {pkg.price ? `Rs ${pkg.price.toLocaleString()}` : 'N/A'}
                       </div>
                     ))}
                   </div>

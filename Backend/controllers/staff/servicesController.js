@@ -1,22 +1,3 @@
-// Get a single service by ID
-exports.getServiceById = async (req, res) => {
-  try {
-    const service = await Service.findById(req.params.serviceId);
-    if (!service) return res.status(404).json({ error: 'Service not found' });
-    res.json(service);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch service' });
-  }
-};
-// Get all services
-exports.getAllServices = async (req, res) => {
-  try {
-    const services = await Service.find();
-    res.json(services);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch services' });
-  }
-};
 const Service = require('../../models/Service');
 
 // Add a new service
@@ -72,5 +53,25 @@ exports.editService = async (req, res) => {
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: 'Failed to edit service' });
+  }
+};
+
+// Get a single service by ID
+exports.getServiceById = async (req, res) => {
+  try {
+    const service = await Service.findById(req.params.serviceId);
+    if (!service) return res.status(404).json({ error: 'Service not found' });
+    res.json(service);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch service' });
+  }
+};
+// Get all services
+exports.getAllServices = async (req, res) => {
+  try {
+    const services = await Service.find();
+    res.json(services);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch services' });
   }
 };

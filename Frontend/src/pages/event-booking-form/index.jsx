@@ -9,7 +9,6 @@ import LocationInput from './components/LocationInput';
 import GuestCountSelection from './components/GuestCountSelection';
 import BudgetEstimation from './components/BudgetEstimation';
 import BookingSummary from './components/BookingSummary';
-// ...removed Clerk import...
 import NotLoggedIn from './components/NotLoggedIn';
 import { useAuth } from 'contexts/AuthContext';
 import { bookEvent as apiBookEvent } from 'api/dashboard';
@@ -234,6 +233,7 @@ const EventBookingForm = () => {
       status: 'active',
       bookingDate: new Date().toISOString(),
       eventDate: eventData.date, // Use formatted date
+      eventTime: formData.eventTime, // <-- Add event time to bookingData
       paymentSchedule: [],
       documents: [],
       services: formData.services // <-- Store selected service IDs

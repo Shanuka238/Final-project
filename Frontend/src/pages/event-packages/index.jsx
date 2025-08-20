@@ -3,8 +3,6 @@ import { useAuth } from 'contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { motion } from 'framer-motion';
-// ...removed Clerk import...
-
 import PackageCard from './components/PackageCard';
 import PackageBookingPopup from './components/PackageBookingPopup';
 import FilterPanel from './components/FilterPanel';
@@ -18,7 +16,7 @@ const EventPackages = () => {
   if (!user) {
     return <NotLoggedIn />;
   }
-  // Clerk removed: use AuthContext or fallback
+
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [selectedPackages, setSelectedPackages] = useState([]);

@@ -13,31 +13,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Staff Services API
-export const fetchStaffServices = async () => {
-  const res = await api.get(`${API_BASE}/staff/services`);
+
+export const fetchEventTypes = async () => {
+  const res = await api.get(`${API_BASE}/event-types`);
   return res.data;
 };
 
-export const fetchStaffService = async (serviceId) => {
-  const res = await api.get(`${API_BASE}/staff/services/${serviceId}`);
-  return res.data;
-};
-
-export const addStaffService = async (service) => {
-  const res = await api.post(`${API_BASE}/staff/services`, service);
-  return res.data;
-};
-
-export const updateStaffService = async (serviceId, service) => {
-  const res = await api.put(`${API_BASE}/staff/services/${serviceId}`, service);
-  return res.data;
-};
-
-export const deleteStaffService = async (serviceId) => {
-  const res = await api.delete(`${API_BASE}/staff/services/${serviceId}`);
-  return res.data;
-};
 // Save a review for a booking
 export const saveBookingReview = async (bookingId, review, rating) => {
   const res = await api.post(`${API_BASE}/bookings/${bookingId}/review`, { review, rating });
@@ -70,7 +51,6 @@ export const bookEvent = async (userId, eventData, bookingData) => {
   const res = await api.post(`${API_BASE}/bookings/book-event`, { userId, eventData, bookingData });
   return res.data;
 };
-
 
 export const fetchUserEvents = async (userId) => {
   const res = await api.get(`${API_BASE}/events/${userId}`);
@@ -113,26 +93,23 @@ export const removeFavorite = async (favoriteId) => {
   return res.data;
 };
 
+// Delete a user package booking
+export const deleteUserPackage = async (userPackageId) => {
+  const res = await api.delete(`${API_BASE}/packages/user-booking/${userPackageId}`);
+  return res.data;
+};
 
-export const addNewPackage = async (pkg) => {
-  const res = await api.post(`${API_BASE}/staff/packages`, pkg);
+// Pay for a user package booking
+export const payUserPackage = async (userPackageId, amount, paymentIntentId) => {
+  const res = await api.patch(`${API_BASE}/packages/user-booking/${userPackageId}/pay`, { amount, paymentIntentId });
+  return res.data;
+};
+
+// Submit a review for a user package booking
+export const submitPackageReview = async (userPackageId, review, rating) => {
+  const res = await api.post(`${API_BASE}/packages/${userPackageId}/review`, { review, rating });
   return res.data;
 };
 
 
-export const deletePackage = async (packageId) => {
-  const res = await api.delete(`${API_BASE}/staff/packages/${packageId}`);
-  return res.data;
-};
 
-
-export const updatePackage = async (packageId, pkg) => {
-  const res = await api.put(`${API_BASE}/staff/packages/${packageId}`, pkg);
-  return res.data;
-};
-
-
-export const fetchEventTypes = async () => {
-  const res = await api.get(`${API_BASE}/event-types`);
-  return res.data;
-};

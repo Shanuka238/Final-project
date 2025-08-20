@@ -12,6 +12,7 @@ const BookingSchema = new mongoose.Schema({
   status: String,
   bookingDate: String,
   eventDate: String,
+  eventTime: String,
   services: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }], // <-- Added field
   paymentSchedule: [
     {

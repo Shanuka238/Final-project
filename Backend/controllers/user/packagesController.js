@@ -1,3 +1,44 @@
+const Review = require('../../models/Review');
+// Add review for a package
+exports.addReviewToPackage = async (req, res) => {
+  try {
+    const { userPackageId } = req.params;
+    const { review, rating } = req.body;
+    const userId = req.user.id;
+
+    // Find the user package
+    const userPackage = await UserPackage.findById(userPackageId);
+    if (!userPackage) {
+      return res.status(404).json({ error: 'User package booking not found' });
+    }
+
+    // Optionally, check if user has already reviewed this package
+    // (not implemented for simplicity)
+
+    // Get user info for review
+    const User = require('../../models/User');
+    const user = await User.findById(userId);
+
+    // Find the package for title
+    const Package = require('../../models/Package');
+    const pkg = await Package.findById(userPackage.packageId);
+
+    const newReview = new Review({
+      userId,
+      userName: user?.username || '',
+      userImage: user?.image || '',
+      userRole: user?.role || '',
+      package: pkg?.title || '',
+      review,
+      rating
+    });
+    await newReview.save();
+
+    res.status(201).json(newReview);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 const logActivity = require('../../utils/logActivity');
 // Delete a user package booking
 exports.deleteUserPackage = async (req, res) => {

@@ -3,12 +3,23 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import PaymentModal from './PaymentModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { payUserPackage, deleteUserPackage } from 'api/packageBookings';
+import { payUserPackage, deleteUserPackage, submitPackageReview } from 'api/dashboard';
 
 const formatCurrency = (amount) => `Rs ${Number(amount || 0).toLocaleString('en-LK')}`;
 
 const PackageManagement = ({ packages: initialPackages }) => {
   const [packages, setPackages] = useState(initialPackages);
+  const [reviewModal, setReviewModal] = useState({ open: false, pkg: null });
+  // Submit review to backend
+  const handleReviewSubmit = async ({ review, rating, packageId }) => {
+    if (!review || !rating || !review.trim()) return;
+    try {
+      await submitPackageReview(packageId, review, rating);
+      setReviewModal({ open: false, pkg: null });
+    } catch (err) {
+      alert('Failed to submit review.');
+    }
+  };
   const [paymentModal, setPaymentModal] = useState({ open: false, pkg: null });
   const [deleteModal, setDeleteModal] = useState({ open: false, pkgId: null });
 
@@ -46,28 +57,37 @@ const PackageManagement = ({ packages: initialPackages }) => {
         const dueAmount = Math.max(Number(pkg.price) - paidAmount, 0);
         return (
           <div key={pkg._id || pkg.id} className="card">
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center space-x-3 mb-2">
-              {pkg.image && (
-                <div className="h-20 w-20 rounded overflow-hidden mr-4">
-                  <Image src={pkg.image} alt={pkg.packageTitle || pkg.title} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <div>
-                <h4 className="font-heading text-lg font-semibold text-text-primary">
-                  {pkg.packageTitle || pkg.title}
-                </h4>
-                <div className="flex items-center space-x-4 text-sm text-text-secondary">
-                  <span>Package ID: {pkg.packageId}</span>
-                  <span>Date: {pkg.eventDate}</span>
-                  <span>Guests: {pkg.guestCount}</span>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center space-x-3 mb-2">
+                {pkg.image && (
+                  <div className="h-20 w-20 rounded overflow-hidden mr-4">
+                    <Image src={pkg.image} alt={pkg.packageTitle || pkg.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-heading text-lg font-semibold text-text-primary">
+                    {pkg.packageTitle || pkg.title}
+                  </h4>
+                  <div className="flex items-center space-x-4 text-sm text-text-secondary">
+                    <span>Package ID: {pkg.packageId}</span>
+                    <span>Date: {pkg.eventDate}</span>
+                    <span>Guests: {pkg.guestCount}</span>
+                  </div>
                 </div>
               </div>
+              <div className="flex items-center gap-3">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${pkg.status === 'paid' ? 'text-success bg-success-50 border-success-200' : pkg.status === 'partial' ? 'text-warning bg-warning-50 border-warning-200' : 'text-text-secondary bg-gray-50 border-gray-200'}`}>
+                  {pkg.status === 'partial' ? 'PARTIAL' : (pkg.status?.replace('_', ' ').toUpperCase() || 'BOOKED')}
+                </span>
+                <button
+                  className="ml-2 flex items-center gap-1 text-purple-500 hover:text-purple-600 focus:outline-none bg-transparent shadow-none px-0 py-0 text-sm"
+                  style={{ background: 'none', boxShadow: 'none' }}
+                  onClick={() => setReviewModal({ open: true, pkg })}
+                >
+                  <Icon name="Star" size={16} /> Add Review
+                </button>
+              </div>
             </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${pkg.status === 'paid' ? 'text-success bg-success-50 border-success-200' : pkg.status === 'partial' ? 'text-warning bg-warning-50 border-warning-200' : 'text-text-secondary bg-gray-50 border-gray-200'}`}>
-              {pkg.status === 'partial' ? 'PARTIAL' : (pkg.status?.replace('_', ' ').toUpperCase() || 'BOOKED')}
-            </span>
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Payment Summary */}
             <div className="lg:col-span-2 xl:col-span-2 min-w-0 xl:min-w-[480px]">
@@ -133,6 +153,12 @@ const PackageManagement = ({ packages: initialPackages }) => {
         </div>
         );
       })}
+      <PackageReviewModal
+        open={reviewModal.open}
+        pkg={reviewModal.pkg}
+        onSubmit={handleReviewSubmit}
+        onClose={() => setReviewModal({ open: false, pkg: null })}
+      />
       <PaymentModal
         open={paymentModal.open}
         amount={paymentModal.pkg ? Math.max(Number(paymentModal.pkg.price) - Number(paymentModal.pkg.paidAmount || 0), 0) : 0}
@@ -144,6 +170,55 @@ const PackageManagement = ({ packages: initialPackages }) => {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
+    </div>
+  );
+};
+// Simple Review Modal for packages
+const PackageReviewModal = ({ open, pkg, onSubmit, onClose }) => {
+  const [review, setReview] = React.useState('');
+  const [rating, setRating] = React.useState(5);
+  const [saving, setSaving] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  if (!open) return null;
+  const handleSubmit = async () => {
+    setSaving(true);
+    await onSubmit({ review, rating, packageId: pkg._id || pkg.id });
+    setSaving(false);
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+      onClose();
+    }, 1500);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+        {saving && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10">
+            <span className="text-lg font-semibold text-primary">Saving...</span>
+          </div>
+        )}
+        {success && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-20">
+            <span className="text-lg font-semibold text-success">Review sent!</span>
+          </div>
+        )}
+        <h3 className="font-heading text-lg font-semibold mb-4">Add Review for {pkg?.packageTitle || pkg?.title}</h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Rating:</label>
+          <select value={rating} onChange={e => setRating(Number(e.target.value))} className="w-full border rounded px-2 py-1">
+            {[5,4,3,2,1].map(r => <option key={r} value={r}>{r} Star{r > 1 ? 's' : ''}</option>)}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Review:</label>
+          <textarea value={review} onChange={e => setReview(e.target.value)} rows={4} className="w-full border rounded px-2 py-1" placeholder="Write your review..." />
+        </div>
+        <div className="flex justify-end space-x-2">
+          <button onClick={onClose} className="btn-secondary px-4 py-2" disabled={saving || success}>Cancel</button>
+          <button onClick={handleSubmit} className="btn-primary px-4 py-2" disabled={saving || success}>Submit</button>
+        </div>
+      </div>
     </div>
   );
 };

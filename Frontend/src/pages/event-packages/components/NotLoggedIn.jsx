@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-// ...removed Clerk import...
 
 const NotLoggedIn = () => {
   const navigate = useNavigate();

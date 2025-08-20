@@ -28,7 +28,14 @@ const ContactForm = ({ onSubmit }) => {
   const [userReplies, setUserReplies] = useState([]);
   const [showUserMessages, setShowUserMessages] = useState(false);
   const [showEmailWarning, setShowEmailWarning] = useState(false);
-  const contactMethods = [];
+  const contactMethods = [
+    {
+      value: 'email',
+      label: 'Email',
+      icon: 'Mail',
+    },
+    // Add more methods here if needed (e.g., phone, WhatsApp)
+  ];
 
   useEffect(() => {
     fetchEventTypes().then(data => {

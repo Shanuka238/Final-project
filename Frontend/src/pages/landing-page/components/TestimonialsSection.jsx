@@ -8,7 +8,6 @@ const TestimonialsSection = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(null);
-  // ...removed static testimonials, only real reviews will be shown...
 
   // Only use real reviews from backend
   const testimonials = reviews.map((r, idx) => ({

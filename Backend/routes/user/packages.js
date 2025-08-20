@@ -8,6 +8,9 @@ const requireAuth = require('../../middleware/auth');
 // Delete a user package booking
 router.delete('/user-booking/:userPackageId', requireAuth, packagesController.deleteUserPackage);
 
+// Add review for a package
+router.post('/:userPackageId/review', requireAuth, packagesController.addReviewToPackage);
+
 // Pay for a user package booking
 router.patch('/user-booking/:userPackageId/pay', packagesController.payUserPackage);
 

@@ -1,25 +1,9 @@
-// Event type color mapping (should match event booking form)
-const EVENT_TYPE_COLORS = {
-  wedding: 'from-pink-500 to-rose-500',
-  birthday: 'from-blue-500 to-cyan-500',
-  corporate: 'from-green-500 to-emerald-500',
-  anniversary: 'from-purple-500 to-violet-500',
-  graduation: 'from-yellow-500 to-orange-500',
-  custom: 'from-indigo-500 to-purple-500',
-};
-// Event type icon mapping (should match event booking form)
-const EVENT_TYPE_ICONS = {
-  wedding: 'Heart',
-  birthday: 'Gift',
-  corporate: 'Briefcase',
-  anniversary: 'Star',
-  graduation: 'Award',
-  custom: 'Sparkles',
-};
+
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 // ...removed Clerk import...
-import { fetchUserBookings, fetchStaffServices } from 'api/dashboard';
+import { fetchUserBookings } from 'api/dashboard';
+import { fetchStaffServices } from 'api/staff';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PaymentModal from './PaymentModal';
 
@@ -212,27 +196,39 @@ const BookingManagement = ({ user }) => {
       ? bookings.filter(isPartial)
       : bookings.filter(booking => booking.status === activeFilter);
 
+
+      // Format time string (e.g., '13:00') to AM/PM
+  function formatTimeAMPM(time24) {
+  if (!time24) return '';
+  const [hourStr, minuteStr] = time24.split(":");
+  let hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12;
+  if (hour === 0) hour = 12;
+  return `${hour}:${minute.toString().padStart(2, '0')} ${ampm}`;
+}
+// Event type color mapping (should match event booking form)
+  const EVENT_TYPE_COLORS = {
+  wedding: 'from-pink-500 to-rose-500',
+  birthday: 'from-blue-500 to-cyan-500',
+  corporate: 'from-green-500 to-emerald-500',
+  anniversary: 'from-purple-500 to-violet-500',
+  graduation: 'from-yellow-500 to-orange-500',
+  custom: 'from-indigo-500 to-purple-500',
+};
+// Event type icon mapping (should match event booking form)
+  const EVENT_TYPE_ICONS = {
+  wedding: 'Heart',
+  birthday: 'Gift',
+  corporate: 'Briefcase',
+  anniversary: 'Star',
+  graduation: 'Award',
+  custom: 'Sparkles',
+};
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="card">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="font-heading text-xl font-semibold text-text-primary">
-              Booking Management
-            </h3>
-            <p className="text-text-secondary text-sm mt-1">
-              Track payments, contracts, and documentation
-            </p>
-          </div>
-          <div className="flex items-center space-x-2 mt-4 sm:mt-0">
-            <button className="btn-secondary flex items-center space-x-2">
-              <Icon name="Download" size={18} strokeWidth={2} />
-              <span>Export</span>
-            </button>
-          </div>
-        </div>
-      </div>
+  <div className="space-y-6">
       {/* Filter Tabs */}
       <div className="card">
         <div className="flex flex-wrap gap-2">
@@ -283,7 +279,7 @@ const BookingManagement = ({ user }) => {
                 <div className="flex items-center space-x-4 text-sm text-text-secondary">
                   <span>Booking ID: {booking._id}</span>
                   <span>Package: {booking.package}</span>
-                  <span>Event Date: {new Date(booking.eventDate).toLocaleDateString()}</span>
+                  <span>Event Date: {new Date(booking.eventDate).toLocaleDateString()}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</span>
                 </div>
               </div>
               
@@ -387,7 +383,7 @@ const BookingManagement = ({ user }) => {
                 </h5>
                 <div className="space-y-2 text-sm text-text-secondary">
                   <div><span className="font-medium">Title:</span> {booking.eventTitle}</div>
-                  <div><span className="font-medium">Date:</span> {new Date(booking.eventDate).toLocaleDateString()}</div>
+                  <div><span className="font-medium">Date:</span> {new Date(booking.eventDate).toLocaleDateString()}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</div>
                   <div><span className="font-medium">Guests:</span> {booking.guestCount}</div>
                   <div><span className="font-medium">Price:</span> {formatCurrency(booking.totalAmount)}</div>
                   <div><span className="font-medium">Status:</span> {booking.status || 'Booked'}</div>

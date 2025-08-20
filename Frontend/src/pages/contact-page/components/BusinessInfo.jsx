@@ -140,42 +140,7 @@ const BusinessInfo = () => {
         </div>
       </div>
 
-      {/* Social Media */}
-      <div className="bg-surface rounded-2xl shadow-primary p-8">
-        <h2 className="font-heading text-2xl font-bold text-text-primary mb-6">
-          Follow Us
-        </h2>
-        <p className="text-text-secondary mb-6">
-          Stay connected for event inspiration, behind-the-scenes content, and exclusive offers!
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {socialMedia.length === 0 ? (
-            <div className="text-gray-400">No social media links available.</div>
-          ) : (
-            socialMedia.map((social, index) => (
-              <a
-                key={index}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-4 p-4 border border-border rounded-lg hover:border-primary-300 hover:bg-primary-50/50 transition-all duration-200 group"
-              >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${social.color} bg-gray-100 group-hover:bg-white`}>
-                  <Icon name={social.icon} size={20} strokeWidth={2} />
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-text-primary">{social.platform}</p>
-                  <p className="text-sm text-text-secondary">{social.handle}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-text-primary">{social.followers}</p>
-                  <p className="text-xs text-text-secondary">followers</p>
-                </div>
-              </a>
-            ))
-          )}
-        </div>
-      </div>
+  {/* Social Media section removed as requested */}
     
     </div>
   );

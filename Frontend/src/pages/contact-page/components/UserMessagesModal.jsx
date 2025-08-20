@@ -1,11 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { fetchUserMessages } from 'api/userMessages';
 import Icon from 'components/AppIcon';
 import { useAuth } from 'contexts/AuthContext';
-
-// Optionally accept userId for logged-in users
-// Usage: <UserMessagesModal email={email} userId={userId} ... />
 
 export default function UserMessagesModal({ onClose }) {
   const { user } = useAuth();

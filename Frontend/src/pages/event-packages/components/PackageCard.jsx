@@ -3,7 +3,6 @@ import { useAuth } from 'contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
-// ...removed Clerk import...
 import CenterPopup from 'components/CenterPopup';
 import { addPackageToFavorites } from 'api/dashboard';
 
@@ -95,11 +94,6 @@ const PackageCard = ({
               {pkg.title}
             </h3>
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-1">
-                <Icon name="Star" size={16} className="text-accent fill-current" strokeWidth={2} />
-                <span className="text-sm font-medium text-text-primary">{pkg.rating}</span>
-                <span className="text-sm text-text-secondary">({pkg.reviewCount} reviews)</span>
-              </div>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(pkg.availability)}`}>
                 {getAvailabilityText(pkg.availability)}
               </span>
@@ -109,7 +103,7 @@ const PackageCard = ({
           {/* Price */}
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-2xl font-bold text-primary">{pkg.priceRange}</span>
+              <span className="text-2xl font-bold text-primary">{pkg.price ? `Rs ${pkg.price.toLocaleString()}` : 'N/A'}</span>
               <p className="text-sm text-text-secondary">{pkg.timeline}</p>
             </div>
           </div>
@@ -186,20 +180,14 @@ const PackageCard = ({
                   <h3 className="font-semibold text-text-primary mb-3">Package Details</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-text-secondary">Price Range:</span>
-                      <span className="font-semibold text-primary">{pkg.priceRange}</span>
+                      <span className="text-text-secondary">Price:</span>
+                      <span className="font-semibold text-primary">{pkg.price ? `Rs ${pkg.price.toLocaleString()}` : 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-secondary">Planning Period:</span>
                       <span className="text-text-primary">{pkg.timeline}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-text-secondary">Rating:</span>
-                      <div className="flex items-center space-x-1">
-                        <Icon name="Star" size={16} className="text-accent fill-current" strokeWidth={2} />
-                        <span className="text-text-primary">{pkg.rating} ({pkg.reviewCount} reviews)</span>
-                      </div>
-                    </div>
+                    {/* Rating and reviews removed */}
                     <div className="flex justify-between">
                       <span className="text-text-secondary">Availability:</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(pkg.availability)}`}>

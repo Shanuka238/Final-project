@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import CenterPopup from 'components/CenterPopup';
-import { addNewPackage, deletePackage, updatePackage } from 'api/dashboard';
+import { addNewPackage, deletePackage, updatePackage } from 'api/staff';
 
 export default function ManagePackages({ packages, setPackages }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     title: '',
     type: '',
-    priceRange: '',
-    price: '',
-    image: '',
-    rating: '',
-    reviewCount: '',
-    availability: '',
-    features: '',
-    description: '',
-    timeline: ''
+  // priceRange removed
+  price: '',
+  image: '',
+  availability: '',
+  features: '',
+  description: '',
+  timeline: ''
   });
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -56,7 +54,7 @@ export default function ManagePackages({ packages, setPackages }) {
         setPackages([pkgResult, ...packages]);
         setPopupMessage('Package added successfully!');
       }
-      setForm({ title: '', type: '', priceRange: '', price: '', image: '', rating: '', reviewCount: '', availability: '', features: '', description: '', timeline: '' });
+  setForm({ title: '', type: '', price: '', image: '', rating: '', reviewCount: '', availability: '', features: '', description: '', timeline: '' });
       setFeatureInputs(['', '', '', '']);
       setShowForm(false);
       setEditingId(null);
@@ -72,7 +70,12 @@ export default function ManagePackages({ packages, setPackages }) {
         <h2 className="text-xl font-bold text-purple-800">Manage Packages</h2>
         <button
           className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition"
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setForm({ title: '', type: '', price: '', image: '', availability: '', features: '', description: '', timeline: '' });
+            setFeatureInputs(['', '', '', '']);
+            setEditingId(null);
+            setShowForm(true);
+          }}
         >
           Add New Package
         </button>
@@ -87,11 +90,10 @@ export default function ManagePackages({ packages, setPackages }) {
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input name="title" value={form.title ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Title*" required />
               <input name="type" value={form.type ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Type*" required />
-              <input name="priceRange" value={form.priceRange ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price Range (e.g. Rs1,000 - Rs2,000)" />
+              {/* Price range removed */}
               <input name="price" value={form.price ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price*" type="number" required />
               <input name="image" value={form.image ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Image URL" />
-              <input name="rating" value={form.rating ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Rating (e.g. 4.5)" />
-              <input name="reviewCount" value={form.reviewCount ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Review Count" />
+              {/* Rating and reviewCount fields removed */}
               <input name="availability" value={form.availability ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Availability*" required />
               <label className="font-medium">Key Features ({featureInputs.length}):</label>
               <div className="grid grid-cols-2 gap-2 mb-2">
@@ -130,9 +132,8 @@ export default function ManagePackages({ packages, setPackages }) {
             <div key={pkg._id || idx} className="p-4 rounded-lg border bg-purple-50 flex flex-col gap-1">
               <div className="font-semibold text-lg">{pkg.title}</div>
               <div className="text-sm text-gray-500">{pkg.type} • Rs {pkg.price}</div>
-              {pkg.priceRange && <div className="text-xs text-gray-700">Price Range: {pkg.priceRange}</div>}
-              {pkg.rating && <div className="text-xs text-yellow-600">Rating: {pkg.rating} ⭐</div>}
-              {pkg.reviewCount && <div className="text-xs text-gray-500">Reviews: {pkg.reviewCount}</div>}
+              {/* Price range removed */}
+              {/* Rating and reviews display removed */}
               <div className="text-xs text-gray-700">Availability: {pkg.availability}</div>
               {pkg.features && <div className="text-xs text-purple-700 mt-1">Features: {pkg.features}</div>}
               {pkg.image && <img src={pkg.image} alt={pkg.title} className="w-full h-32 object-cover rounded mt-2" />}
@@ -147,11 +148,8 @@ export default function ManagePackages({ packages, setPackages }) {
                     setForm({
                       title: pkg.title ?? '',
                       type: pkg.type ?? '',
-                      priceRange: pkg.priceRange ?? '',
                       price: pkg.price !== undefined && pkg.price !== null ? String(pkg.price) : '',
                       image: pkg.image ?? '',
-                      rating: pkg.rating !== undefined && pkg.rating !== null ? String(pkg.rating) : '',
-                      reviewCount: pkg.reviewCount !== undefined && pkg.reviewCount !== null ? String(pkg.reviewCount) : '',
                       availability: pkg.availability ?? '',
                       features: Array.isArray(pkg.features) ? pkg.features.join(', ') : (pkg.features ?? ''),
                       description: pkg.description ?? '',

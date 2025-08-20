@@ -64,13 +64,7 @@ const FavoritesSection = ({ showAll = false, user }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-2 mb-3">
-            <div className="flex items-center space-x-1">
-              <Icon name="Star" size={14} className="text-accent fill-current" strokeWidth={0} />
-              <span className="text-sm font-medium text-text-primary">{pkg.rating}</span>
-            </div>
-            <span className="text-sm text-text-secondary">({pkg.reviews} reviews)</span>
-          </div>
+          {/* Rating and reviews removed */}
           <div className="flex flex-wrap gap-1 mb-4">
             {pkg.features?.slice(0, 3).map((feature, index) => (
               <span key={index} className="text-xs bg-surface-secondary text-text-secondary px-2 py-1 rounded-full">

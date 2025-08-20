@@ -6,7 +6,7 @@ import { useAuth } from 'contexts/AuthContext';
 
 import Icon from 'components/AppIcon';
 import { fetchUserBookings, fetchUserUpcomingEvents, fetchUserFavorites } from 'api/dashboard';
-import { fetchUserPackages } from 'api/packageBookings';
+import { fetchUserPackages } from 'api/dashboard';
 import { fetchUserProfile } from 'api/profile';
 import { getToken } from 'utils/auth';
 
