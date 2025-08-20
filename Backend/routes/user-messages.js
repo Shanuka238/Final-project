@@ -1,5 +1,3 @@
-// This file is deprecated. Use routes/user-messages.js with controllers/userMessagesController.js instead.
-
 const express = require('express');
 const router = express.Router();
 const userMessagesController = require('../controllers/userMessagesController');

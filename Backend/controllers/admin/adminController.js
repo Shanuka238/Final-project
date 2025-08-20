@@ -32,7 +32,7 @@ exports.getDashboardSummary = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const User = require('../../models/User');
-    const users = await User.find({}, '-password'); // Exclude password field
+    const users = await User.find({}, '-password'); 
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });

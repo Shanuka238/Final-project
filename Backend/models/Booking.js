@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, // Clerk user ID
+  userId: { type: String, required: true }, 
   eventTitle: String,
   package: String,
-  guestCount: Number, // Number of guests
-  price: Number, // Price for selected number of guests
+  guestCount: Number, 
+  price: Number, 
   totalAmount: Number,
   paidAmount: Number,
   dueAmount: Number,
@@ -13,7 +13,7 @@ const BookingSchema = new mongoose.Schema({
   bookingDate: String,
   eventDate: String,
   eventTime: String,
-  services: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }], // <-- Added field
+  services: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }], 
   paymentSchedule: [
     {
       description: String,

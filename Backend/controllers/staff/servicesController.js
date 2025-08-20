@@ -38,7 +38,6 @@ exports.deleteService = async (req, res) => {
 exports.editService = async (req, res) => {
   try {
     const updateData = { ...req.body };
-    // Only update keyFeatures if provided
     if (req.body.keyFeatures && Array.isArray(req.body.keyFeatures)) {
       updateData.keyFeatures = req.body.keyFeatures;
     }

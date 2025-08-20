@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const FavoriteSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, // Clerk user ID
+  userId: { type: String, required: true }, 
   type: { type: String, enum: ['package', 'venue'], required: true },
-  data: { type: Object, required: true }, // Store package or venue info
+  data: { type: Object, required: true }, 
   savedDate: String
 });
 

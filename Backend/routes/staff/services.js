@@ -5,7 +5,6 @@ const servicesController = require('../../controllers/staff/servicesController')
 const requireAuth = require('../../middleware/auth');
 // Get a single service by ID
 router.get('/:serviceId', requireAuth, servicesController.getServiceById);
-
 // Get all services
 router.get('/', requireAuth, servicesController.getAllServices);
 // Add a service

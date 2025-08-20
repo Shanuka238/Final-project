@@ -20,9 +20,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject
   useUnifiedTopology: true,
 });
 
-// Mount auth route
+// Auth route
 app.use('/api/auth', require('./routes/auth'));
-// Mount user routes
+// User routes
 app.use('/api/events', require('./routes/user/events'));
 app.use('/api/bookings', require('./routes/user/bookings'));
 app.use('/api/favorites', require('./routes/user/favorites'));
@@ -32,7 +32,7 @@ app.use('/api/event-types', require('./routes/user/eventTypes'));
 app.use('/api/payments', require('./routes/user/payments'));
 app.use('/api/user/profile', require('./routes/user/profile'));
 
-// Mount admin, services, and message routes
+// Admin routes
 app.use('/api/admin', require('./routes/admin/admin'));
 app.use('/api/admin', require('./routes/admin/admin-messages'));
 // Staff routes

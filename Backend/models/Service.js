@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ServiceSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  type: { type: String, required: true }, // e.g., Photographer, Catering
+  type: { type: String, required: true }, 
   description: { type: String },
   imageUrl: { type: String },
   details: { type: String },

@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// Middleware to verify JWT and attach user to req
 module.exports = function (req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
