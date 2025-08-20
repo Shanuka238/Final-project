@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
-// ...removed Clerk import...
 import { fetchUserBookings } from 'api/dashboard';
 import { fetchStaffServices } from 'api/staff';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -226,6 +225,13 @@ const BookingManagement = ({ user }) => {
   graduation: 'Award',
   custom: 'Sparkles',
 };
+// Format a date string (YYYY-MM-DD or ISO) to local YYYY-MM-DD (no timezone shift)
+function formatLocalDate(dateStr) {
+  if (!dateStr) return '';
+  // Handles both 'YYYY-MM-DD' and ISO strings
+  const [yyyy, mm, dd] = dateStr.split('T')[0].split('-');
+  return `${yyyy}-${mm}-${dd}`;
+}
 
   return (
   <div className="space-y-6">
@@ -279,7 +285,7 @@ const BookingManagement = ({ user }) => {
                 <div className="flex items-center space-x-4 text-sm text-text-secondary">
                   <span>Booking ID: {booking._id}</span>
                   <span>Package: {booking.package}</span>
-                  <span>Event Date: {new Date(booking.eventDate).toLocaleDateString()}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</span>
+                  <span>Event Date: {formatLocalDate(booking.eventDate)}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</span>
                 </div>
               </div>
               
@@ -358,7 +364,7 @@ const BookingManagement = ({ user }) => {
                         <div>
                           <p className="font-medium text-text-primary">{payment.description}</p>
                           <p className="text-sm text-text-secondary">
-                            Due: {new Date(payment.dueDate).toLocaleDateString()}
+                            Due: {formatLocalDate(payment.dueDate)}
                           </p>
                         </div>
                       </div>
@@ -383,7 +389,7 @@ const BookingManagement = ({ user }) => {
                 </h5>
                 <div className="space-y-2 text-sm text-text-secondary">
                   <div><span className="font-medium">Title:</span> {booking.eventTitle}</div>
-                  <div><span className="font-medium">Date:</span> {new Date(booking.eventDate).toLocaleDateString()}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</div>
+                  <div><span className="font-medium">Date:</span> {formatLocalDate(booking.eventDate)}{booking.eventTime ? `, ${formatTimeAMPM(booking.eventTime)}` : ''}</div>
                   <div><span className="font-medium">Guests:</span> {booking.guestCount}</div>
                   <div><span className="font-medium">Price:</span> {formatCurrency(booking.totalAmount)}</div>
                   <div><span className="font-medium">Status:</span> {booking.status || 'Booked'}</div>

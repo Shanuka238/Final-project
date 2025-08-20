@@ -42,8 +42,8 @@ const CalendarWidget = ({ user }) => {
   };
 
   const getEventsForDate = (date) => {
-    const dateString = date.toISOString().split('T')[0];
-    return events.filter(event => event.date === dateString);
+    const dateString = formatLocalDate(date);
+    return events.filter(event => formatLocalDate(event.date) === dateString);
   };
 
   const navigateMonth = (direction) => {
@@ -60,6 +60,17 @@ const CalendarWidget = ({ user }) => {
   const isSelected = (date) => {
     return selectedDate && date.toDateString() === selectedDate.toDateString();
   };
+
+  // Format a date object or string to local YYYY-MM-DD (no timezone shift)
+function formatLocalDate(date) {
+  if (!date) return '';
+  if (typeof date === 'string') return date.split('T')[0];
+  // JS Date object
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
 
   const renderCalendarDays = () => {
     const daysInMonth = getDaysInMonth(currentDate);
@@ -147,7 +158,7 @@ const CalendarWidget = ({ user }) => {
       {selectedDate && (
         <div className="mt-4">
           <h4 className="font-semibold text-text-primary mb-2">
-            Events on {selectedDate.toLocaleDateString()}
+            Events on {formatLocalDate(selectedDate)}
           </h4>
           {getEventsForDate(selectedDate).length === 0 ? (
             <div className="text-text-secondary text-sm">No events for this day.</div>

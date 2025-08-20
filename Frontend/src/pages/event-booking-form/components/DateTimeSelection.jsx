@@ -69,8 +69,10 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
   };
 
   const handleDateSelect = (date) => {
-    const selectedDate = new Date(selectedYear, selectedMonth, date);
-    const formattedDate = selectedDate.toISOString().split('T')[0];
+    // Format as YYYY-MM-DD in local time
+    const mm = String(selectedMonth + 1).padStart(2, '0');
+    const dd = String(date).padStart(2, '0');
+    const formattedDate = `${selectedYear}-${mm}-${dd}`;
     updateFormData('eventDate', formattedDate);
   };
 
@@ -87,7 +89,11 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
     // Days of the month
     for (let date = 1; date <= daysInMonth; date++) {
       const isAvailable = isDateAvailable(date);
-      const isSelected = formData.eventDate === new Date(selectedYear, selectedMonth, date).toISOString().split('T')[0];
+  // Format as YYYY-MM-DD in local time to match formData.eventDate
+  const mm = String(selectedMonth + 1).padStart(2, '0');
+  const dd = String(date).padStart(2, '0');
+  const localDateStr = `${selectedYear}-${mm}-${dd}`;
+  const isSelected = formData.eventDate === localDateStr;
       
       days.push(
         <button
