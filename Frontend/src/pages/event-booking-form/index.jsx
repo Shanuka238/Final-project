@@ -42,17 +42,14 @@ const EventBookingForm = () => {
   const [progress, setProgress] = useState(0);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  // --- Service selection state for step 2 ---
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedServiceIds, setSelectedServiceIds] = useState([]);
 
-  // Sync selectedServiceIds to formData.services
   useEffect(() => {
     setFormData(prev => ({
       ...prev,
       services: selectedServiceIds
     }));
-    // eslint-disable-next-line
   }, [selectedServiceIds]);
 
   const steps = [
@@ -66,7 +63,6 @@ const EventBookingForm = () => {
   ];
 
   useEffect(() => {
-    // Load saved form data from localStorage
     const savedData = localStorage.getItem('eventBookingForm');
     if (savedData) {
       setFormData(JSON.parse(savedData));
@@ -74,14 +70,12 @@ const EventBookingForm = () => {
   }, []);
 
   useEffect(() => {
-    // Save form data to localStorage
     localStorage.setItem('eventBookingForm', JSON.stringify(formData));
     validateForm();
     calculateProgress();
   }, [formData, currentStep]);
 
   useEffect(() => {
-    // Fetch all booked event dates and times from backend
     fetch('http://localhost:5000/api/events/booked-slots/all')
       .then(res => res.json())
       .then(data => setBookedSlots(data))
@@ -130,7 +124,6 @@ const EventBookingForm = () => {
   };
 
   const calculateProgress = () => {
-    // Each field contributes equally to progress (7 fields: eventType, eventSubType, eventDate, eventTime, location, guestCount, budget, contactInfo.name, contactInfo.email, contactInfo.phone)
     let total = 11;
     let filled = 0;
     if (formData.eventType) filled++;
@@ -167,7 +160,6 @@ const EventBookingForm = () => {
 
   const goToStep = (step) => {
     setCurrentStep(step);
-    // Reset price-related fields when entering the Budget step (step 5)
     if (step === 5) {
       setFormData(prev => ({
         ...prev,
@@ -180,7 +172,6 @@ const EventBookingForm = () => {
 
   const nextStep = () => {
     validateForm();
-    // Only allow next if no errors for the current step
     const stepFields = [
       ['eventType', 'eventSubType'],
       ['services'],
@@ -192,7 +183,6 @@ const EventBookingForm = () => {
     ];
     const currentFields = stepFields[currentStep - 1];
     const hasError = currentFields.some(field => errors[field]);
-    // If no error and not last step, go next
     if (!hasError && currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
@@ -206,37 +196,35 @@ const EventBookingForm = () => {
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
-    // Assume userId is available from authentication context (replace as needed)
     const userId = 'test-user';
     const eventData = {
       title: formData.eventType + (formData.eventSubType ? ` - ${formData.eventSubType}` : ''),
       type: formData.eventType,
-      date: formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : '', // Ensure YYYY-MM-DD
+      date: formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : '', 
       time: formData.eventTime,
       location: formData.location,
       status: 'pending',
       guests: formData.guestCount,
-      image: '', // Optionally set image
+      image: '', 
       progress: 0,
       nextAction: '',
       daysUntil: 0
     };
-    // Calculate estimated total
     const estimatedTotal = calculateEstimatedCost();
     const bookingData = {
       eventTitle: eventData.title,
-      package: '', // Optionally set package
+      package: '', 
       guestCount: formData.guestCount,
       totalAmount: estimatedTotal,
       paidAmount: 0,
       dueAmount: estimatedTotal,
       status: 'active',
       bookingDate: new Date().toISOString(),
-      eventDate: eventData.date, // Use formatted date
-      eventTime: formData.eventTime, // <-- Add event time to bookingData
+      eventDate: eventData.date, 
+      eventTime: formData.eventTime, 
       paymentSchedule: [],
       documents: [],
-      services: formData.services // <-- Store selected service IDs
+      services: formData.services 
     };
     try {
       if (!user || !user.id) {
@@ -256,7 +244,6 @@ const EventBookingForm = () => {
     }
   };
 
-  // --- Unified per-guest cost for all calculations ---
   const getPerGuestCost = () => {
     const basePrice = 20;
     let multiplier = 1;
@@ -268,7 +255,6 @@ const EventBookingForm = () => {
     return Math.round(basePrice * multiplier);
   };
 
-  // Estimated total = (per guest cost * guest count) + budget
   const calculateEstimatedCost = () => {
     const perGuest = getPerGuestCost();
     return (perGuest * (formData.guestCount || 0)) + (formData.budget || 0);
@@ -426,8 +412,6 @@ const EventBookingForm = () => {
     }
   };
 
-  // ...removed Clerk logic...
-
   return (
     <>
       <CenterPopup
@@ -441,7 +425,6 @@ const EventBookingForm = () => {
       viewport={{ once: true }}
       className="min-h-screen bg-background"
     >
-      {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary-50 to-accent-50 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -457,7 +440,6 @@ const EventBookingForm = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Progress Steps - Desktop Sidebar */}
           <div className="lg:col-span-1">
             <div className="card sticky top-24">
               <h3 className="font-heading text-xl font-semibold text-text-primary mb-6">
@@ -506,14 +488,11 @@ const EventBookingForm = () => {
                 ))}
               </div>
 
-              {/* Booking Summary */}
               <BookingSummary formData={formData} estimatedCost={calculateEstimatedCost()} formatCurrency={formatCurrency} />
             </div>
           </div>
 
-          {/* Main Form Content */}
           <div className="lg:col-span-2">
-            {/* Mobile Progress Bar */}
             <div className="lg:hidden mb-8">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-text-secondary">
@@ -534,7 +513,6 @@ const EventBookingForm = () => {
             <div className="card">
               {renderStepContent()}
 
-              {/* Navigation Buttons */}
               <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <button
                   onClick={prevStep}
@@ -576,26 +554,26 @@ const EventBookingForm = () => {
                       onClick={nextStep}
                       disabled={(() => {
                         const stepFields = [
-                          ['eventType', 'eventSubType'], // 1
-                          ['services'],                  // 2
-                          ['eventDate', 'eventTime'],    // 3
-                          ['location'],                  // 4
-                          ['guestCount'],                // 5
-                          ['budget'],                    // 6
-                          ['contactName', 'contactEmail', 'contactPhone'] // 7
+                          ['eventType', 'eventSubType'], 
+                          ['services'],                  
+                          ['eventDate', 'eventTime'],    
+                          ['location'],                  
+                          ['guestCount'],                
+                          ['budget'],                    
+                          ['contactName', 'contactEmail', 'contactPhone'] 
                         ];
                         const currentFields = stepFields[currentStep - 1];
                         return currentFields.some(field => errors[field]);
                       })()}
                       className={`flex items-center space-x-2 btn-primary ${(() => {
                         const stepFields = [
-                          ['eventType', 'eventSubType'], // 1
-                          ['services'],                  // 2
-                          ['eventDate', 'eventTime'],    // 3
-                          ['location'],                  // 4
-                          ['guestCount'],                // 5
-                          ['budget'],                    // 6
-                          ['contactName', 'contactEmail', 'contactPhone'] // 7
+                          ['eventType', 'eventSubType'], 
+                          ['services'],                  
+                          ['eventDate', 'eventTime'],    
+                          ['location'],                  
+                          ['guestCount'],               
+                          ['budget'],                    
+                          ['contactName', 'contactEmail', 'contactPhone'] 
                         ];
                         const currentFields = stepFields[currentStep - 1];
                         return currentFields.some(field => errors[field]) ? 'opacity-50 cursor-not-allowed' : '';

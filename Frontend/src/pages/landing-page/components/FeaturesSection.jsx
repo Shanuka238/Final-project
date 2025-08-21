@@ -86,7 +86,7 @@ const FeaturesSection = () => {
   return (
     <section id="features" className="py-20 bg-gradient-to-br from-primary-50 to-accent-50" data-animate>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Features Section */}
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -108,7 +108,6 @@ const FeaturesSection = () => {
           </p>
         </motion.div>
 
-        {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {features.map((feature, index) => (
             <motion.div
@@ -136,7 +135,7 @@ const FeaturesSection = () => {
           ))}
         </div>
 
-        {/* Process Section */}
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -152,7 +151,6 @@ const FeaturesSection = () => {
           </p>
         </motion.div>
 
-        {/* Process Steps */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {processSteps.map((step, index) => (
             <motion.div
@@ -177,7 +175,6 @@ const FeaturesSection = () => {
                 </p>
               </div>
 
-              {/* Connector Line */}
               {index < processSteps.length - 1 && (
                 <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-primary to-primary-300 transform translate-x-4"></div>
               )}

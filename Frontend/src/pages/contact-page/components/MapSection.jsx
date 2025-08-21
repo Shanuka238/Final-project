@@ -2,7 +2,6 @@ import React from 'react';
 import Icon from 'components/AppIcon';
 
 const MapSection = () => {
-  // TODO: Replace with real data from backend or config
   const officeLocation = {};
   const nearbyLandmarks = [];
   const parkingInfo = [];
@@ -15,17 +14,13 @@ const MapSection = () => {
             Visit Our Office
           </h2>
           <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-            {/* Office description here */}
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Map */}
           <div className="lg:col-span-2">
             <div className="bg-surface rounded-2xl shadow-primary overflow-hidden">
               <div className="aspect-w-16 aspect-h-12 lg:aspect-h-10">
-                {/* Map iframe removed until real data is provided */}
               </div>
-              {/* Map Overlay Info */}
               <div className="p-6 border-t border-border">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -45,14 +40,12 @@ const MapSection = () => {
                       </div>
                     </div>
                   </div>
-                  {/* Directions button placeholder */}
                 </div>
               </div>
             </div>
           </div>
-          {/* Location Details */}
+
           <div className="space-y-6">
-            {/* Nearby Landmarks */}
             <div className="bg-surface rounded-2xl shadow-primary p-6">
               <h3 className="font-heading text-xl font-bold text-text-primary mb-4">
                 Nearby Landmarks
@@ -65,7 +58,6 @@ const MapSection = () => {
                 ))}
               </div>
             </div>
-            {/* Parking Information */}
             <div className="bg-surface rounded-2xl shadow-primary p-6">
               <h3 className="font-heading text-xl font-bold text-text-primary mb-4">
                 Parking & Transit
@@ -78,7 +70,6 @@ const MapSection = () => {
                 ))}
               </div>
             </div>
-            {/* Schedule Visit */}
             <div className="bg-gradient-to-br from-primary to-accent rounded-2xl p-6 text-white">
               <h3 className="font-heading text-xl font-bold mb-3">
                 Schedule a Visit

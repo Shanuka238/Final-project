@@ -9,7 +9,6 @@ const TestimonialsSection = () => {
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(null);
 
-  // Only use real reviews from backend
   const testimonials = reviews.map((r, idx) => ({
     id: r._id || `review-${idx}`,
     name: r.userName || (r.userId ? `User ${r.userId.slice(-4)}` : 'Anonymous'),
@@ -66,7 +65,6 @@ const TestimonialsSection = () => {
   return (
     <section id="testimonials" className="py-20 bg-surface" data-animate>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -88,7 +86,6 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        {/* Main Testimonial Display */}
         <div className="relative max-w-4xl mx-auto mb-12">
           {testimonials.length === 0 ? (
             <div className="text-center text-text-secondary py-12">No testimonials yet.</div>
@@ -102,24 +99,20 @@ const TestimonialsSection = () => {
                 transition={{ duration: 0.5 }}
                 className="card text-center p-8 md:p-12"
               >
-                {/* Quote Icon */}
                 <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Icon name="Quote" size={32} className="text-primary" strokeWidth={2} />
                 </div>
 
-                {/* Rating */}
                 <div className="flex justify-center space-x-1 mb-6">
                   {renderStars(testimonials[currentTestimonial].rating)}
                 </div>
 
-                {/* Testimonial Content */}
                 <blockquote className="text-lg md:text-xl text-text-primary leading-relaxed mb-8 font-medium">
                   {testimonials[currentTestimonial].content && testimonials[currentTestimonial].content.trim() !== ''
                     ? `"${testimonials[currentTestimonial].content}"`
                     : <span className="italic text-text-tertiary">No review message provided.</span>}
                 </blockquote>
 
-                {/* Client Info */}
                 <div className="flex items-center justify-center space-x-4">
                   <div className="relative">
                     <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary border-4 border-primary-100">
@@ -146,7 +139,6 @@ const TestimonialsSection = () => {
             </AnimatePresence>
           )}
 
-          {/* Navigation Buttons */}
           <button
             onClick={prevTestimonial}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-surface border border-border rounded-full flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 shadow-secondary"
@@ -162,7 +154,6 @@ const TestimonialsSection = () => {
           </button>
         </div>
 
-        {/* Testimonial Indicators */}
         <div className="flex justify-center space-x-2 mb-12">
           {testimonials.map((_, index) => (
             <button
@@ -176,7 +167,6 @@ const TestimonialsSection = () => {
           ))}
         </div>
 
-        {/* Stats Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -33,19 +33,14 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
       <HeroSection />
       
-      {/* Event Types Section */}
       <EventTypesSection />
       
-      {/* Features Section */}
       <FeaturesSection />
       
-      {/* Testimonials Section */}
       <TestimonialsSection />
       
-      {/* CTA Section */}
       <section className="py-16 bg-gradient-to-br from-primary-50 to-accent-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -81,7 +76,6 @@ const LandingPage = () => {
         </div>
       </section>
       
-      {/* Footer */}
       <Footer />
     </div>
   );

@@ -4,7 +4,6 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 
 const PackageComparison = ({ packages, onClose }) => {
-  // Get all unique features from selected packages
   const allFeatures = [...new Set(packages.flatMap(pkg => pkg.features))].sort();
 
   const getAvailabilityColor = (availability) => {
@@ -37,7 +36,6 @@ const PackageComparison = ({ packages, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-surface rounded-xl shadow-accent max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="sticky top-0 bg-surface border-b border-border p-6 flex items-center justify-between">
           <div>
             <h2 className="font-heading text-2xl font-semibold text-text-primary">Package Comparison</h2>
@@ -53,7 +51,6 @@ const PackageComparison = ({ packages, onClose }) => {
 
         <div className="overflow-auto max-h-[calc(90vh-120px)]">
           <div className="p-6">
-            {/* Package Headers */}
             <div className="grid gap-6 mb-8" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
               <div></div>
               {packages.map((pkg) => (
@@ -81,13 +78,10 @@ const PackageComparison = ({ packages, onClose }) => {
               ))}
             </div>
 
-            {/* Comparison Table */}
             <div className="space-y-6">
-              {/* Basic Information */}
               <div>
                 <h4 className="font-semibold text-text-primary mb-4 text-lg">Basic Information</h4>
                 <div className="space-y-3">
-                  {/* Price */}
                   <div className="grid gap-6" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
                     <div className="font-medium text-text-secondary">Price</div>
                     {packages.map((pkg) => (
@@ -97,7 +91,6 @@ const PackageComparison = ({ packages, onClose }) => {
                     ))}
                   </div>
 
-                  {/* Timeline */}
                   <div className="grid gap-6" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
                     <div className="font-medium text-text-secondary">Planning Period</div>
                     {packages.map((pkg) => (
@@ -107,7 +100,6 @@ const PackageComparison = ({ packages, onClose }) => {
                     ))}
                   </div>
 
-                  {/* Event Type */}
                   <div className="grid gap-6" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
                     <div className="font-medium text-text-secondary">Event Type</div>
                     {packages.map((pkg) => (
@@ -121,7 +113,6 @@ const PackageComparison = ({ packages, onClose }) => {
                 </div>
               </div>
 
-              {/* Features Comparison */}
               <div>
                 <h4 className="font-semibold text-text-primary mb-4 text-lg">Features Included</h4>
                 <div className="space-y-2">
@@ -142,7 +133,6 @@ const PackageComparison = ({ packages, onClose }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="grid gap-6 pt-6 border-t border-border" style={{ gridTemplateColumns: `300px repeat(${packages.length}, 1fr)` }}>
                 <div className="font-medium text-text-secondary">Select Package</div>
                 {packages.map((pkg) => (

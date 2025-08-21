@@ -50,11 +50,9 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
     return <div className="text-center py-12">Loading events...</div>;
   }
 
-  // Compute daysUntil and completed status for each event
   const today = new Date();
   const computedEvents = events.map(event => {
     const eventDate = new Date(event.date);
-    // Calculate days until event
     const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
     let status = event.status;
     if (daysUntil < 0) {
@@ -114,7 +112,6 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
                         <span>{event.location}</span>
                       </div>
                     </div>
-                    {/* Key Features Section */}
                     {Array.isArray(event.features) && event.features.length > 0 && (
                       <div className="mt-2">
                         <h5 className="text-xs font-semibold text-text-primary mb-1">Key Features:</h5>
@@ -128,7 +125,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
                         </div>
                       </div>
                     )}
-                  {/* End Key Features Section */}
+
                 </div>
                 <div className="flex items-center space-x-2 mt-2 sm:mt-0">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(event.status)}`}>
@@ -140,7 +137,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
                     </span>
                   </div>
                 </div>
-                {/* Removed planning progress bar */}
+
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-border">
                   <div className="flex items-center space-x-4 mb-4 sm:mb-0">
                     <div className="text-sm text-text-secondary">
@@ -172,7 +169,7 @@ const UpcomingEvents = ({ showAll = false, setActiveTab, user }) => {
           </div>
         ))}
       </div>
-      {/* End of event cards */}
+
       {displayEvents.length === 0 && (
         <div className="text-center py-12">
           <Icon name="Calendar" size={64} className="text-text-tertiary mx-auto mb-4" />

@@ -5,7 +5,6 @@ const PackageBookingPopup = ({ pkg, onClose, onBook }) => {
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [guestCount, setGuestCount] = useState(1);
-  // Use price as a fixed value
   const minPrice = pkg && pkg.price ? pkg.price : 0;
   const maxPrice = minPrice;
   const [budget, setBudget] = useState(minPrice || '');

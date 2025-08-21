@@ -8,10 +8,10 @@ const CenterPopup = ({ message, onClose, confirm, onConfirm, onCancel }) => {
   useEffect(() => {
     if (message) {
       setShouldRender(true);
-      setTimeout(() => setVisible(true), 10); // trigger fade-in
+      setTimeout(() => setVisible(true), 10); 
     } else if (shouldRender) {
       setVisible(false);
-      timeoutRef.current = setTimeout(() => setShouldRender(false), 300); // match transition duration
+      timeoutRef.current = setTimeout(() => setShouldRender(false), 300); 
     }
     return () => clearTimeout(timeoutRef.current);
   }, [message]);

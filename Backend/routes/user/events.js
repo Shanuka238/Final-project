@@ -4,7 +4,7 @@ const eventsController = require('../../controllers/user/eventsController');
 
 
 const auth = require('../../middleware/auth');
-// Order matters: place more specific routes first to avoid conflicts
+
 router.get('/upcoming/:userId', auth, (req, res, next) => {
   const tokenId = String(req.user.id).trim();
   const paramId = String(req.params.userId).trim();

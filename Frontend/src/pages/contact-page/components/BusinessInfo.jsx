@@ -2,7 +2,6 @@ import React from 'react';
 import Icon from 'components/AppIcon';
 
 const BusinessInfo = () => {
-  // Restored mock data
   const contactInfo = [
     {
       icon: 'MapPin',
@@ -92,7 +91,6 @@ const BusinessInfo = () => {
 
   return (
     <div className="space-y-8">
-      {/* Contact Information */}
       <div className="bg-surface rounded-2xl shadow-primary p-8">
         <h2 className="font-heading text-3xl font-bold text-text-primary mb-6">
           Contact Information
@@ -139,8 +137,6 @@ const BusinessInfo = () => {
           )}
         </div>
       </div>
-
-  {/* Social Media section removed as requested */}
     
     </div>
   );

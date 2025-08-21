@@ -29,7 +29,6 @@ const ContactPage = () => {
       viewport={{ once: true }}
       className="min-h-screen bg-background"
     >
-      {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-50 to-secondary-100 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -46,7 +45,6 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* Success Message */}
       {formSubmitted && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
           <div className="bg-success-50 border border-success-200 rounded-lg p-4 shadow-lg">
@@ -61,16 +59,13 @@ const ContactPage = () => {
         </div>
       )}
 
-      {/* Main Content */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Contact Form */}
             <div className="order-2 lg:order-1">
               <ContactForm onSubmit={handleFormSubmit} />
             </div>
 
-            {/* Business Information */}
             <div className="order-1 lg:order-2">
               <BusinessInfo />
             </div>
@@ -78,10 +73,8 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
       <FAQSection />
 
-      {/* Call to Action */}
       <section className="bg-gradient-to-r from-primary to-accent py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-heading text-3xl lg:text-4xl font-bold text-white mb-6">

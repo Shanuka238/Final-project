@@ -11,7 +11,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Handle Google OAuth redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
@@ -30,7 +29,6 @@ const Login = () => {
     setError('');
     setLoading(true);
     try {
-      // Replace with your backend endpoint
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +36,6 @@ const Login = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Login failed');
-      // Save JWT and optionally user info
       login(data.token);
       const userData = JSON.parse(atob(data.token.split('.')[1]));
       if (userData.role === 'admin') {

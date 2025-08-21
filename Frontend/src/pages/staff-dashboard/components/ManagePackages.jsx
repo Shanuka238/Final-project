@@ -90,10 +90,8 @@ export default function ManagePackages({ packages, setPackages }) {
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input name="title" value={form.title ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Title*" required />
               <input name="type" value={form.type ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Type*" required />
-              {/* Price range removed */}
               <input name="price" value={form.price ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Price*" type="number" required />
               <input name="image" value={form.image ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Image URL" />
-              {/* Rating and reviewCount fields removed */}
               <input name="availability" value={form.availability ?? ''} onChange={handleChange} className="border rounded-lg px-4 py-2" placeholder="Availability*" required />
               <label className="font-medium">Key Features ({featureInputs.length}):</label>
               <div className="grid grid-cols-2 gap-2 mb-2">
@@ -132,8 +130,6 @@ export default function ManagePackages({ packages, setPackages }) {
             <div key={pkg._id || idx} className="p-4 rounded-lg border bg-purple-50 flex flex-col gap-1">
               <div className="font-semibold text-lg">{pkg.title}</div>
               <div className="text-sm text-gray-500">{pkg.type} • Rs {pkg.price}</div>
-              {/* Price range removed */}
-              {/* Rating and reviews display removed */}
               <div className="text-xs text-gray-700">Availability: {pkg.availability}</div>
               {pkg.features && <div className="text-xs text-purple-700 mt-1">Features: {pkg.features}</div>}
               {pkg.image && <img src={pkg.image} alt={pkg.title} className="w-full h-32 object-cover rounded mt-2" />}

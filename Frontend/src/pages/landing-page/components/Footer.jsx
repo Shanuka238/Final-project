@@ -75,10 +75,8 @@ const Footer = () => {
 
   return (
     <footer className="bg-text-primary text-white">
-      {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Company Info */}
           <div className="lg:col-span-4 space-y-6">
             <div className="text-white">
               <div className="flex items-center space-x-2 mb-4">
@@ -101,7 +99,6 @@ const Footer = () => {
               gatherings to grand celebrations, we bring your vision to life with precision and style.
             </p>
 
-            {/* Contact Info */}
             <div className="space-y-3">
               {contactInfo.map((contact, index) => (
                 <a
@@ -123,7 +120,6 @@ const Footer = () => {
               ))}
             </div>
 
-            {/* Social Links */}
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
                 <a
@@ -145,9 +141,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Footer Links */}
           <div className="lg:col-span-8 grid md:grid-cols-4 gap-8">
-            {/* Company Links */}
             <div>
               <h3 className="font-heading font-semibold text-white mb-4">Company</h3>
               <ul className="space-y-3">
@@ -164,7 +158,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Services Links */}
             <div>
               <h3 className="font-heading font-semibold text-white mb-4">Services</h3>
               <ul className="space-y-3">
@@ -181,7 +174,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Support Links */}
             <div>
               <h3 className="font-heading font-semibold text-white mb-4">Support</h3>
               <ul className="space-y-3">
@@ -198,7 +190,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Legal Links */}
             <div>
               <h3 className="font-heading font-semibold text-white mb-4">Legal</h3>
               <ul className="space-y-3">
@@ -218,8 +209,6 @@ const Footer = () => {
         </div>
       </div>
 
-
-      {/* Bottom Footer */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">

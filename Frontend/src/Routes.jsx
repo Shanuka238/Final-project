@@ -19,7 +19,6 @@ import ProtectedRoute from 'components/ProtectedRoute';
 const Routes = () => {
   return (
     <BrowserRouter>
-      {/* <ErrorBoundary> */}
         <ScrollToTop />
         <Header />
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-lg">Loading...</div>}>
@@ -37,7 +36,6 @@ const Routes = () => {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/* <Route path="/login/sso-callback" element={<SsoCallback />} /> */}
             <Route path="/admin-dashboard" element={
               <ProtectedRoute role="admin">
                 <AdminDashboard />
@@ -54,7 +52,6 @@ const Routes = () => {
             })()}
           </RouterRoutes>
         </Suspense>
-      {/* </ErrorBoundary> */}
     </BrowserRouter>
   );
 };

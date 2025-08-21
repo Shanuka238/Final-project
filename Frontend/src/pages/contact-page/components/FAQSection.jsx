@@ -3,7 +3,6 @@ import Icon from 'components/AppIcon';
 
 const FAQSection = () => {
   const [openFAQ, setOpenFAQ] = useState(0);
-  // Restored FAQ mock data
   const faqs = [
     {
       question: "How far in advance should I book my event?",
@@ -87,7 +86,6 @@ const FAQSection = () => {
           ))}
         </div>
 
-        {/* Still Have Questions */}
         <div className="mt-12 text-center">
           <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8">
             <Icon name="HelpCircle" size={48} className="text-primary mx-auto mb-4" strokeWidth={1.5} />

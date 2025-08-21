@@ -4,7 +4,6 @@ import Icon from 'components/AppIcon';
 import { fetchEventTypes } from 'api/dashboard';
 import { sendUserMessage, fetchUserMessages } from 'api/userMessages';
 import UserMessagesModal from './UserMessagesModal';
-// ...removed Clerk import...
 
 const ContactForm = ({ onSubmit }) => {
   const { user } = useAuth();
@@ -16,7 +15,6 @@ const ContactForm = ({ onSubmit }) => {
     contactMethod: 'email',
     message: ''
   });
-  // Autofill email if user is logged in
   useEffect(() => {
     if (user && user.email) {
       setFormData(prev => ({ ...prev, email: user.email }));
@@ -34,12 +32,10 @@ const ContactForm = ({ onSubmit }) => {
       label: 'Email',
       icon: 'Mail',
     },
-    // Add more methods here if needed (e.g., phone, WhatsApp)
   ];
 
   useEffect(() => {
     fetchEventTypes().then(data => {
-      // Map Mongo event types to select options
       if (Array.isArray(data)) {
         setEventTypes(data.map(type => ({ value: type.id, label: type.name })));
       } else {
@@ -49,7 +45,6 @@ const ContactForm = ({ onSubmit }) => {
   }, []);
 
   useEffect(() => {
-    // Fetch user's own messages and replies by email (if available)
     if (formData.email) {
       fetchUserMessages().then(msgs => {
         const myMsgs = msgs.filter(m => m.email === formData.email);
@@ -98,7 +93,6 @@ const ContactForm = ({ onSubmit }) => {
       [name]: value
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -155,7 +149,6 @@ const ContactForm = ({ onSubmit }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name Field */}
         <div>
           <label htmlFor="name" className="block text-sm font-semibold text-text-primary mb-2">
             Full Name *
@@ -185,7 +178,6 @@ const ContactForm = ({ onSubmit }) => {
           )}
         </div>
 
-        {/* Email Field */}
         <div>
           <label htmlFor="email" className="block text-sm font-semibold text-text-primary mb-2">
             Email Address *
@@ -217,7 +209,6 @@ const ContactForm = ({ onSubmit }) => {
           )}
         </div>
 
-        {/* Phone Field */}
         <div>
           <label htmlFor="phone" className="block text-sm font-semibold text-text-primary mb-2">
             Phone Number *
@@ -247,7 +238,6 @@ const ContactForm = ({ onSubmit }) => {
           )}
         </div>
 
-        {/* Event Type Field */}
         <div>
           <label htmlFor="eventType" className="block text-sm font-semibold text-text-primary mb-2">
             Event Type *
@@ -283,7 +273,6 @@ const ContactForm = ({ onSubmit }) => {
           )}
         </div>
 
-        {/* Preferred Contact Method */}
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-3">
             Preferred Contact Method
@@ -314,7 +303,6 @@ const ContactForm = ({ onSubmit }) => {
           </div>
         </div>
 
-        {/* Message Field */}
         <div>
           <label htmlFor="message" className="block text-sm font-semibold text-text-primary mb-2">
             Message *
@@ -341,7 +329,6 @@ const ContactForm = ({ onSubmit }) => {
           </p>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={isSubmitting}
@@ -370,7 +357,6 @@ const ContactForm = ({ onSubmit }) => {
           </button>
         </div>
 
-        {/* Response Time Info */}
         <div className="bg-primary-50 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <Icon name="Clock" size={20} className="text-primary mt-0.5" strokeWidth={2} />

@@ -5,7 +5,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  // Compute unavailable dates from bookedSlots
   const unavailableDates = bookedSlots
     .filter(slot => slot.date)
     .map(slot => {
@@ -13,7 +12,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
       return d.getDate();
     });
 
-  // Compute unavailable times for selected date
   const unavailableTimes = bookedSlots
     .filter(slot => slot.date === formData.eventDate)
     .map(slot => slot.time);
@@ -64,7 +62,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
     if (selectedDate < today.setHours(0, 0, 0, 0)) {
       return false;
     }
-    // Use unavailableDates from backend
     return !unavailableDates.includes(date);
   };
 
@@ -81,19 +78,16 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
     const firstDay = getFirstDayOfMonth(selectedMonth, selectedYear);
     const days = [];
 
-    // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} className="h-10"></div>);
     }
 
-    // Days of the month
     for (let date = 1; date <= daysInMonth; date++) {
       const isAvailable = isDateAvailable(date);
-  // Format as YYYY-MM-DD in local time to match formData.eventDate
-  const mm = String(selectedMonth + 1).padStart(2, '0');
-  const dd = String(date).padStart(2, '0');
-  const localDateStr = `${selectedYear}-${mm}-${dd}`;
-  const isSelected = formData.eventDate === localDateStr;
+      const mm = String(selectedMonth + 1).padStart(2, '0');
+      const dd = String(date).padStart(2, '0');
+      const localDateStr = `${selectedYear}-${mm}-${dd}`;
+      const isSelected = formData.eventDate === localDateStr;
       
       days.push(
         <button
@@ -127,7 +121,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Calendar */}
         <div className="space-y-4">
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-heading text-lg font-semibold text-text-primary">
@@ -171,7 +164,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
           </div>
 
           <div className="bg-surface border border-border rounded-xl p-4">
-            {/* Calendar Header */}
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                 <div key={day} className="h-8 flex items-center justify-center text-xs font-medium text-text-secondary">
@@ -180,7 +172,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
               ))}
             </div>
             
-            {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-1">
               {renderCalendar()}
             </div>
@@ -189,11 +180,8 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
           {errors.eventDate && (
             <p className="text-error text-sm">{errors.eventDate}</p>
           )}
-
-      {/* Legend removed as requested */}
         </div>
 
-        {/* Time Selection */}
         <div className="space-y-4">
           <h4 className="font-heading text-lg font-semibold text-text-primary">
             Select Time
@@ -226,7 +214,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
             </div>
           </div>
 
-          {/* Selected Date & Time Summary */}
           {formData.eventDate && (
             <div className="bg-primary-50 p-4 rounded-xl">
               <h5 className="font-medium text-primary mb-2">Selected Date & Time:</h5>
@@ -252,7 +239,6 @@ const DateTimeSelection = ({ formData, updateFormData, errors, bookedSlots = [] 
         </div>
       </div>
 
-      {/* Additional Information */}
       <div className="bg-accent-50 p-6 rounded-xl">
         <div className="flex items-start space-x-3">
           <Icon name="Info" size={20} className="text-accent-600 mt-1" strokeWidth={2} />

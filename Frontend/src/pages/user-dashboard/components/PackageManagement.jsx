@@ -10,7 +10,6 @@ const formatCurrency = (amount) => `Rs ${Number(amount || 0).toLocaleString('en-
 const PackageManagement = ({ packages: initialPackages }) => {
   const [packages, setPackages] = useState(initialPackages);
   const [reviewModal, setReviewModal] = useState({ open: false, pkg: null });
-  // Submit review to backend
   const handleReviewSubmit = async ({ review, rating, packageId }) => {
     if (!review || !rating || !review.trim()) return;
     try {
@@ -89,7 +88,6 @@ const PackageManagement = ({ packages: initialPackages }) => {
               </div>
             </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Payment Summary */}
             <div className="lg:col-span-2 xl:col-span-2 min-w-0 xl:min-w-[480px]">
               <h5 className="font-semibold text-text-primary mb-4 flex items-center space-x-2">
                 <Icon name="CreditCard" size={18} strokeWidth={2} />
@@ -127,14 +125,14 @@ const PackageManagement = ({ packages: initialPackages }) => {
                   </button>
                 )}
                 <button
-                  className="btn-danger flex items-center gap-1 px-4 py-2 rounded"
+                  className={`btn-danger flex items-center gap-1 px-4 py-2 rounded ${paidAmount > 0 ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                   onClick={() => handleDelete(pkg._id || pkg.id)}
+                  disabled={paidAmount > 0}
                 >
                   <Icon name="Trash" size={16} /> Delete
                 </button>
               </div>
             </div>
-            {/* Package Details */}
             <div className="lg:col-span-1">
               <h5 className="font-semibold text-text-primary mb-4 flex items-center space-x-2">
                 <Icon name="Info" size={18} strokeWidth={2} />
@@ -173,7 +171,7 @@ const PackageManagement = ({ packages: initialPackages }) => {
     </div>
   );
 };
-// Simple Review Modal for packages
+
 const PackageReviewModal = ({ open, pkg, onSubmit, onClose }) => {
   const [review, setReview] = React.useState('');
   const [rating, setRating] = React.useState(5);

@@ -17,7 +17,6 @@ const Register = () => {
     setError('');
     setSuccess('');
     try {
-      // Replace with your backend endpoint
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,7 +36,6 @@ const Register = () => {
     }
   };
 
-  // Handle Google OAuth redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');

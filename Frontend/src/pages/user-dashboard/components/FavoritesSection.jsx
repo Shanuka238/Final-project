@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
-// ...removed Clerk import...
 import { fetchUserFavorites, removeFavorite } from 'api/dashboard';
 
 const FavoritesSection = ({ showAll = false, user }) => {
@@ -22,7 +21,6 @@ const FavoritesSection = ({ showAll = false, user }) => {
     }
   }, [user]);
 
-  // Show all favorites in a vertical list (no categories)
   const favoriteItems = favorites;
 
   const handleRemoveFavorite = async (id) => {
@@ -35,7 +33,6 @@ const FavoritesSection = ({ showAll = false, user }) => {
     return (
       <div key={fav._id} className="border border-border rounded-xl overflow-hidden hover:shadow-secondary transition-all duration-200 bg-white w-full max-w-xs mx-auto" style={{ minWidth: '260px' }}>
         <div className="relative">
-          {/* Remove Favorite Button */}
           <button
             onClick={() => handleRemoveFavorite(fav._id)}
             className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-white/90 px-3 py-1 rounded-full text-error border border-error hover:bg-error hover:text-white transition-all"
@@ -56,15 +53,15 @@ const FavoritesSection = ({ showAll = false, user }) => {
               <p className="text-sm text-text-secondary truncate">{pkg.type} Event</p>
             </div>
             <div className="text-right flex-shrink-0">
-              <p className="font-bold text-primary">${pkg.price?.toLocaleString() || 0}</p>
+              <p className="font-bold text-primary">Rs{pkg.price?.toLocaleString() || 0}</p>
               {pkg.originalPrice > pkg.price && (
                 <p className="text-xs text-text-secondary line-through">
-                  ${pkg.originalPrice?.toLocaleString()}
+                  Rs{pkg.originalPrice?.toLocaleString()}
                 </p>
               )}
             </div>
           </div>
-          {/* Rating and reviews removed */}
+
           <div className="flex flex-wrap gap-1 mb-4">
             {pkg.features?.slice(0, 3).map((feature, index) => (
               <span key={index} className="text-xs bg-surface-secondary text-text-secondary px-2 py-1 rounded-full">
@@ -79,14 +76,12 @@ const FavoritesSection = ({ showAll = false, user }) => {
             <span className="text-xs text-text-secondary">
               Saved {fav.savedDate ? new Date(fav.savedDate).toLocaleDateString() : ''}
             </span>
-            <Link to="/event-booking-form" className="btn-primary text-sm px-4 py-2">Book Now</Link>
+            <Link to="/event-packages" className="btn-primary text-sm px-4 py-2">Book Now</Link>
           </div>
         </div>
       </div>
     );
   };
-
-  // ...removed renderVenueCard...
 
   if (loading) {
     return <div className="text-center py-12">Loading favorites...</div>;

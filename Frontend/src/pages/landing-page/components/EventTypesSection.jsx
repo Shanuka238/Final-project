@@ -55,7 +55,6 @@ const EventTypesSection = () => {
   return (
     <section id="event-types" className="py-20 bg-surface" data-animate>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -77,7 +76,6 @@ const EventTypesSection = () => {
           </p>
         </motion.div>
 
-        {/* Event Types Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {eventTypes.map((eventType, index) => (
             <motion.div
@@ -89,7 +87,6 @@ const EventTypesSection = () => {
               className="group"
             >
               <div className="card hover:shadow-accent transition-all duration-300 transform hover:-translate-y-2 h-full">
-                {/* Image */}
                 <div className="relative overflow-hidden rounded-lg mb-6">
                   <Image
                     src={eventType.image}
@@ -98,13 +95,11 @@ const EventTypesSection = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  {/* Icon Overlay */}
                   <div className={`absolute top-4 right-4 w-12 h-12 ${eventType.bgColor} rounded-full flex items-center justify-center shadow-lg`}>
                     <Icon name={eventType.icon} size={24} className={eventType.textColor} strokeWidth={2} />
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="space-y-4">
                   <h3 className="font-heading text-xl font-bold text-text-primary group-hover:text-primary transition-colors duration-200">
                     {eventType.title}
@@ -114,7 +109,6 @@ const EventTypesSection = () => {
                     {eventType.description}
                   </p>
 
-                  {/* Features */}
                   <div className="space-y-2">
                     {eventType.features.map((feature, featureIndex) => (
                       <div key={featureIndex} className="flex items-center space-x-2">
@@ -124,7 +118,6 @@ const EventTypesSection = () => {
                     ))}
                   </div>
 
-                  {/* CTA Button */}
                   <Link
                     to="/event-booking-form"
                     className="inline-flex items-center space-x-2 text-primary hover:text-primary-700 font-medium text-sm group-hover:translate-x-1 transition-all duration-200"
@@ -138,7 +131,6 @@ const EventTypesSection = () => {
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
-// ...removed Clerk import...
 import { fetchUserActivities } from 'api/dashboard';
 
 const RecentActivity = ({ user }) => {
@@ -25,7 +24,6 @@ const RecentActivity = ({ user }) => {
     return <div className="text-center py-12">Loading recent activity...</div>;
   }
 
-  // Only show activities from today
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayActivities = activities.filter(activity => {
@@ -69,7 +67,6 @@ const RecentActivity = ({ user }) => {
               <p className="text-sm text-text-secondary mt-1">{activity.description}</p>
               {activity.actionBy && (
                 <div className="flex items-center space-x-2 mt-2">
-                  {/* Avatar removed */}
                   <span className="text-xs text-text-secondary">{activity.actionBy.name} ({activity.actionBy.role})</span>
                 </div>
               )}

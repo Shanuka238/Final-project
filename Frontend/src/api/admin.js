@@ -3,7 +3,6 @@ import { getToken } from '../utils/auth';
 
 const API_BASE = 'http://localhost:5000/api/admin';
 
-// Axios instance with JWT
 const api = axios.create();
 api.interceptors.request.use((config) => {
   const token = getToken();
@@ -13,7 +12,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Staff messaging API
 export const fetchStaffMessages = async (staffId) => {
   const res = await api.get(`${API_BASE}/messages/${staffId}`);
   return res.data;
@@ -39,7 +37,7 @@ export const deleteClerkUser = async (userId) => {
   return res.data;
 };
 
-// Dashboard summary API
+
 export const fetchDashboardSummary = async () => {
   const res = await api.get(`${API_BASE}/dashboard-summary`);
   return res.data;

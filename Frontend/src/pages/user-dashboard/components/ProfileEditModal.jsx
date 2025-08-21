@@ -6,20 +6,16 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
     email: user?.email || '',
     name: user?.name || user?.username || '',
     password: '',
-    // avatar removed
-  });
-  // avatarPreview removed
 
-  // Sync form state with user prop when modal opens
+  });
+
   useEffect(() => {
     if (open) {
       setForm({
         email: user?.email || '',
         name: user?.name || user?.username || '',
         password: '',
-          // avatar removed
       });
-        // setAvatarPreview removed
     }
   }, [open, user]);
 
@@ -28,12 +24,10 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // handleAvatarChange fully removed
-
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(form);
-    setForm((prev) => ({ ...prev, password: '' })); // clear password after save
+    setForm((prev) => ({ ...prev, password: '' })); 
   };
 
   if (!open) return null;
@@ -47,7 +41,6 @@ const ProfileEditModal = ({ user, open, onClose, onSave }) => {
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex flex-col items-center mb-4">
-            {/* Avatar upload fully removed */}
             <span className="text-xs text-text-secondary mt-2">Click to change profile picture</span>
           </div>
           <div>

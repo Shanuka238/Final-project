@@ -3,7 +3,6 @@ const router = express.Router();
 const activitiesController = require('../../controllers/user/activitiesController');
 const auth = require('../../middleware/auth');
 
-// Only allow access if JWT is valid and userId matches token
 router.get('/:userId', auth, (req, res, next) => {
   const tokenId = String(req.user.id).trim();
   const paramId = String(req.params.userId).trim();

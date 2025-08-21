@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
-// ...removed Clerk import...
 import { fetchUserEvents } from 'api/dashboard';
 import { fetchAllEvents } from 'api/admin';
 
@@ -61,11 +60,9 @@ const CalendarWidget = ({ user }) => {
     return selectedDate && date.toDateString() === selectedDate.toDateString();
   };
 
-  // Format a date object or string to local YYYY-MM-DD (no timezone shift)
 function formatLocalDate(date) {
   if (!date) return '';
   if (typeof date === 'string') return date.split('T')[0];
-  // JS Date object
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, '0');
   const dd = String(date.getDate()).padStart(2, '0');
@@ -77,7 +74,6 @@ function formatLocalDate(date) {
     const firstDay = getFirstDayOfMonth(currentDate);
     const days = [];
 
-    // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(
         <div key={`empty-${i}`} className="h-10 flex items-center justify-center">
@@ -85,7 +81,6 @@ function formatLocalDate(date) {
       );
     }
 
-    // Days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       const eventsForDay = getEventsForDate(date);
@@ -140,7 +135,6 @@ function formatLocalDate(date) {
         </div>
       </div>
 
-      {/* Days of Week Header */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {daysOfWeek.map((day) => (
           <div key={day} className="text-xs text-text-tertiary text-center py-1">
@@ -149,12 +143,10 @@ function formatLocalDate(date) {
         ))}
       </div>
 
-      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1">
         {renderCalendarDays()}
       </div>
 
-      {/* Events for selected date */}
       {selectedDate && (
         <div className="mt-4">
           <h4 className="font-semibold text-text-primary mb-2">

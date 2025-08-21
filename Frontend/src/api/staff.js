@@ -13,7 +13,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Staff Services API
+
 export const fetchStaffServices = async () => {
   const res = await api.get(`${API_BASE}/staff/services`);
   return res.data;

@@ -10,7 +10,6 @@ export default function ProtectedRoute({ children, role }) {
   }
 
   if (role && user.role !== role) {
-    // If user is logged in but not the right role, redirect to their dashboard
     if (user.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
     if (user.role === 'staff') return <Navigate to="/staff-dashboard" replace />;
     return <Navigate to="/user-dashboard" replace />;

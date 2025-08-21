@@ -9,7 +9,6 @@ import { getToken } from 'utils/auth';
 
 const WelcomeSection = ({ user, setUser, stats }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  // const [saving, setSaving] = useState(false);
 
   const handleProfileClick = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
@@ -18,12 +17,10 @@ const WelcomeSection = ({ user, setUser, stats }) => {
   const handleProfileSave = async (form) => {
     try {
       const token = getToken();
-      // Map frontend 'name' to backend 'username'
       const payload = {
         username: form.name,
         email: form.email,
         password: form.password,
-        // avatar fully removed
       };
       await updateUserProfile(payload, token);
       setModalOpen(false);

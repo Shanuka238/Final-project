@@ -19,7 +19,6 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
   const [popupMessage, setPopupMessage] = useState('');
   const [pendingService, setPendingService] = useState(null);
 
-  // Pre-fill form fields when editing
   useEffect(() => {
     if (service) {
       setName(service.name || '');
@@ -44,9 +43,7 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
     }
   }, [service]);
 
-  // Simulate image upload (replace with real upload logic as needed)
   const uploadImage = async (file) => {
-    // For demo, use a local URL. Replace with real upload logic (e.g., Cloudinary, S3) in production.
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
@@ -84,14 +81,12 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
       if (service && service._id) {
-        // Edit existing service
         res = await fetch(`http://localhost:5000/api/staff/services/${service._id}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify(body)
         });
       } else {
-        // Add new service
         res = await fetch('http://localhost:5000/api/staff/services', {
           method: 'POST',
           headers,

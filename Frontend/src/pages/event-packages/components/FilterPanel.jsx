@@ -4,7 +4,6 @@ import Icon from 'components/AppIcon';
 const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
-  // Get unique features from all packages
   const allFeatures = [...new Set(packages.flatMap(pkg => pkg.features))].sort();
 
   const eventTypes = [
@@ -60,7 +59,6 @@ const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
     <div className="fixed inset-0 z-50 lg:hidden">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-xl shadow-accent max-h-[80vh] overflow-hidden animate-slide-in">
-        {/* Header */}
         <div className="sticky top-0 bg-surface border-b border-border p-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <h2 className="font-heading text-xl font-semibold text-text-primary">Filters</h2>
@@ -79,7 +77,6 @@ const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
         </div>
 
         <div className="overflow-y-auto max-h-[calc(80vh-140px)] p-4 space-y-6">
-          {/* Event Type Filter */}
           <div>
             <h3 className="font-semibold text-text-primary mb-3">Event Type</h3>
             <div className="space-y-2">
@@ -104,7 +101,6 @@ const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
             </div>
           </div>
 
-          {/* Budget Range Filter */}
           <div>
             <h3 className="font-semibold text-text-primary mb-3">Budget Range</h3>
             <div className="space-y-2">
@@ -129,7 +125,6 @@ const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
             </div>
           </div>
 
-          {/* Features Filter */}
           <div>
             <h3 className="font-semibold text-text-primary mb-3">Features</h3>
             <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -156,7 +151,6 @@ const FilterPanel = ({ filters, onFilterChange, onClose, packages }) => {
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className="sticky bottom-0 bg-surface border-t border-border p-4 flex space-x-3">
           <button
             onClick={handleClearFilters}

@@ -19,7 +19,6 @@ const tabs = [
 ];
 
 export default function StaffDashboard() {
-  // Service counter state
   const [serviceCount, setServiceCount] = useServicesState(0);
   useServicesEffect(() => {
     fetchStaffServices()
@@ -32,7 +31,6 @@ export default function StaffDashboard() {
   const [events, setEvents] = useState([]);
   const [packages, setPackages] = useState([]);
   const [newAdminMessages, setNewAdminMessages] = useState(0);
-  // Staff messaging modal state
   const [showMessagesModal, setShowMessagesModal] = useState(false);
 
   useEffect(() => {
@@ -44,18 +42,14 @@ export default function StaffDashboard() {
         since: user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '',
       });
 
-      // Fetch all packages
       fetchAllPackages().then(setPackages).catch(() => setPackages([]));
-      // Fetch staff messages and count new admin messages
       fetchStaffMessages(user.id).then(messages => {
-        // Count all messages from admin (no read-tracking yet)
         const adminMsgs = Array.isArray(messages) ? messages.filter(m => m.sender === 'admin') : [];
         setNewAdminMessages(adminMsgs.length);
       }).catch(() => setNewAdminMessages(0));
     }
   }, [user]);
 
-  // Summary cards
   const summary = [
     { label: "Active Packages", value: packages.length, icon: <span className="text-purple-500">📦</span>, bg: "bg-purple-50" },
     { label: "New Admin Messages", value: newAdminMessages, icon: <Mail className="text-blue-500" />, bg: "bg-blue-50" },
@@ -68,7 +62,6 @@ export default function StaffDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
-      {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between px-8 py-6 border-b bg-white shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-purple-800 mb-1">
@@ -86,7 +79,6 @@ export default function StaffDashboard() {
             <Mail size={18} /> Messages
           </button>
         </div>
-        {/* Staff Messages Modal */}
         {showMessagesModal && (
           <StaffMessagesModal staff={{
             id: user?.id,
@@ -96,7 +88,6 @@ export default function StaffDashboard() {
         )}
       </header>
 
-      {/* Navigation Tabs */}
       <nav className="flex gap-4 px-8 pt-6 pb-2 border-b bg-white">
         {tabs.map(tab => (
           <button
@@ -110,9 +101,7 @@ export default function StaffDashboard() {
       </nav>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8 py-8 px-4">
-        {/* Left: Profile & Summary */}
         <div className="col-span-1 flex flex-col gap-8">
-          {/* Profile Card */}
           <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center text-center">
             <div className="w-20 h-20 rounded-full bg-purple-200 flex items-center justify-center text-3xl font-bold text-purple-700 mb-3">
               <span className="text-4xl">
@@ -126,7 +115,6 @@ export default function StaffDashboard() {
               Staff Member since {staff.since}
             </span>
           </div>
-          {/* Summary Cards */}
           <div className="grid grid-cols-2 gap-4">
             {summary.map(card => (
               <div
@@ -143,7 +131,6 @@ export default function StaffDashboard() {
           </div>
         </div>
 
-        {/* Center: Tab Content */}
         <div className="col-span-3 flex flex-col gap-8">
           {activeTab === "Overview" && (
             <div className="bg-white rounded-2xl shadow p-6 mb-2">

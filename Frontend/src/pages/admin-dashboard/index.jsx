@@ -6,7 +6,6 @@ import AddStaffMember from './AddStaffMember';
 import { fetchMongoUsers, fetchDashboardSummary, fetchAllEvents, fetchAllBookings, fetchAllPackages, fetchStaffMessages, sendStaffMessage } from 'api/admin';
 import { fetchUserMessages, sendAdminReply } from 'api/userMessages';
 
-// StaffMessagesModal component
 function StaffMessagesModal({ staff, onClose }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +14,6 @@ function StaffMessagesModal({ staff, onClose }) {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-	// Try both _id and id for robustness
 	const staffId = staff?._id || staff?.id || staff?.email || '';
 	if (staffId) {
 	  setLoading(true);
@@ -150,30 +148,25 @@ const AdminDashboard = () => {
   const [allPackages, setAllPackages] = useState([]);
   const [userMessages, setUserMessages] = useState([]);
   const [showOnlyUnreplied, setShowOnlyUnreplied] = useState(true);
-  // Staff messages modal state
   const [viewMessagesStaff, setViewMessagesStaff] = useState(null);
   const [replyingId, setReplyingId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
 
-	// Fetch staff from Clerk
 	const loadStaff = useCallback(() => {
 	  fetchMongoUsers()
 			.then(users => {
-	// Filter users with role 'staff' (MongoDB)
 	const staff = users.filter(u => u.role === 'staff');
 	setStaffMembers(staff);
 			})
 			.catch(() => setStaffMembers([]));
 	}, []);
 
-  // Fetch staff and user accounts once on mount
   useEffect(() => {
 	const fetchAll = () => {
 	  loadStaff();
 	  fetchMongoUsers()
 		.then(users => {
 		  const arr = Array.isArray(users) ? users : (Array.isArray(users.data) ? users.data : []);
-		  // Only count users with role 'user' or 'staff' (not admin)
 		  const filtered = arr.filter(u => u.role === 'user' || u.role === 'staff');
 		  setSummary(prev => ({
 			...prev,
@@ -182,10 +175,9 @@ const AdminDashboard = () => {
 		})
 		.catch(() => setSummary(prev => ({ ...prev, totalAccounts: 0 })));
 	};
-	fetchAll(); // initial fetch only
+	fetchAll(); 
   }, [loadStaff]);
 
-	// Fetch dashboard summary
 	useEffect(() => {
 		fetchDashboardSummary()
 			.then(data => setSummary({
@@ -198,7 +190,6 @@ const AdminDashboard = () => {
 	}, [loadStaff]);
 
 
-	// Users tab: show list of all users (not just role: user)
 	const [userList, setUserList] = useState([]);
   useEffect(() => {
 	if (activeTab === 'Users') {
@@ -211,7 +202,6 @@ const AdminDashboard = () => {
 	}
   }, [activeTab]);
 
-	// Fetch events, bookings, and packages
 	useEffect(() => {
 		if (activeTab === 'Events') {
 			fetchAllEvents().then(setAllEvents).catch(() => setAllEvents([]));
@@ -228,7 +218,6 @@ const AdminDashboard = () => {
 	}
 	}, [activeTab, showOnlyUnreplied]);
 
-	// Avatar removed
 	const adminName = 'Admin';
 	const adminEmail = 'admin@partynest.com';
 	const initials = adminName.split(' ').map((n) => n[0]).join('');
@@ -243,7 +232,6 @@ const AdminDashboard = () => {
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-purple-50 to-white px-2 pb-10">
-			{/* Header */}
 			<div className="flex flex-col md:flex-row md:items-center md:justify-between pt-8 pb-4 gap-4 max-w-7xl mx-auto">
 				<div>
 					<h1 className="text-3xl md:text-4xl font-extrabold text-purple-800 mb-1">
@@ -264,7 +252,6 @@ const AdminDashboard = () => {
 				</div>
 			</div>
 
-			{/* Navigation Tabs */}
 			<div className="max-w-7xl mx-auto border-b border-purple-100 mb-8">
 				<div className="flex gap-2 md:gap-6">
 					{tabs.map((tab) => (
@@ -283,7 +270,6 @@ const AdminDashboard = () => {
 				</div>
 			</div>
 
-	  {/* Main Content */}
 	  {activeTab === 'Users' ? (
 		<div className="max-w-7xl mx-auto bg-white rounded-2xl shadow p-6 mt-6">
 		  <h2 className="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
@@ -499,9 +485,7 @@ const AdminDashboard = () => {
 	  </div>
 	) : (
 		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-		  {/* Left: Profile & KPIs */}
 		  <div className="col-span-1 flex flex-col gap-8">
-			{/* Admin Profile Card */}
 			<div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center text-center">
 			  <div className="w-20 h-20 rounded-full bg-purple-200 flex items-center justify-center text-3xl font-bold text-purple-700 mb-3">
 				{initials}
@@ -521,7 +505,6 @@ const AdminDashboard = () => {
 				</span>
 			  </div>
 			</div>
-			{/* Summary Cards */}
 			<div className="grid grid-cols-2 gap-4">
 			  {summaryTemplate.map((card) => (
 				<div
@@ -545,9 +528,8 @@ const AdminDashboard = () => {
 			  ))}
 			</div>
 		  </div>
-		  {/* Center: Service Providers & Calendar */}
+
 		  <div className="col-span-2 flex flex-col gap-8">
-			{/* Staff Member Management */}
 			<div className="bg-white rounded-2xl shadow p-6 mb-2">
 			  <div className="flex items-center justify-between mb-2">
 				<div>
@@ -579,7 +561,6 @@ const AdminDashboard = () => {
 						<th className="py-2 px-4">Email</th>
 						<th className="py-2 px-4">Role</th>
 						<th className="py-2 px-4">Action</th>
-						{/* <th className="py-2 px-4">Contact</th> */}
 						<th className="py-2 px-4">Messages</th>
 					  </tr>
 					</thead>
@@ -607,15 +588,6 @@ const AdminDashboard = () => {
 							<Icon name="Trash2" size={18} /> Delete
 						  </button>
 						</td>
-						{/* <td className="py-2 px-4">
-						  <button
-							className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded transition-all border border-blue-200 hover:bg-blue-50"
-							title="Contact Staff"
-							onClick={() => window.location = `mailto:${(staff.emailAddresses && staff.emailAddresses[0]?.emailAddress) || (staff.email_addresses && staff.email_addresses[0]?.email_address) || ''}`}
-						  >
-							<Icon name="Mail" size={18} /> Contact
-						  </button>
-						</td> */}
 						<td className="py-2 px-4">
 						  <button
 							className="flex items-center gap-1 text-purple-600 hover:text-purple-800 font-medium px-2 py-1 rounded transition-all border border-purple-200 hover:bg-purple-50"
@@ -625,7 +597,7 @@ const AdminDashboard = () => {
 							<Icon name="MessageCircle" size={18} /> View Messages
 						  </button>
 						</td>
-	  {/* Staff Messages Modal */}
+
 	  {viewMessagesStaff && (
 		<StaffMessagesModal staff={viewMessagesStaff} onClose={() => setViewMessagesStaff(null)} />
 	  )}
@@ -660,7 +632,6 @@ const AdminDashboard = () => {
 		}} />
 			  )}
 			</div>
-			{/* Calendar Widget */}
 			<div className="bg-white rounded-2xl shadow p-6">
 			  <h2 className="text-xl font-bold text-purple-800 mb-4 flex items-center gap-2">
 				<Icon name="CalendarDays" size={22} /> Calendar
@@ -671,14 +642,13 @@ const AdminDashboard = () => {
 		</div>
 	  )}
 
-	  {/* Popup for button actions */}
 	  {popupMessage && (
 		<CenterPopup
 		  message={popupMessage}
 		  onClose={() => setPopupMessage('')}
 		/>
 	  )}
-	  {/* Add Staff Member Modal */}
+
 	  {showAddStaff && (
 	<AddStaffMember onClose={() => setShowAddStaff(false)} onAdd={() => {
 	  loadStaff();
@@ -703,7 +673,7 @@ const AdminDashboard = () => {
 		.catch(() => setSummary({}));
 	}} />
 	  )}
-	  {/* CenterPopup for delete confirmation */}
+
 	  {deleteConfirm.open && (
 		<CenterPopup
 		  message="Do you want to delete this user? This action cannot be undone."

@@ -59,14 +59,12 @@ const PackageCard = ({
   return (
     <>
       <div className="card group hover:shadow-accent transition-all duration-300 relative overflow-hidden">
-        {/* Popular Badge */}
         {pkg.isPopular && (
           <div className="absolute top-4 left-4 z-10 bg-accent text-white px-3 py-1 rounded-full text-sm font-medium">
             Most Popular
           </div>
         )}
 
-        {/* Favorite Button */}
         <button
           onClick={handleAddFavorite}
           className={`absolute top-4 right-4 z-10 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 hover:bg-white transition-all duration-200 shadow-secondary`}
@@ -76,7 +74,6 @@ const PackageCard = ({
           <span className={`text-sm font-semibold ${pkg.isFavorite ? 'text-error' : 'text-black'}`}>Favourite</span>
         </button>
 
-        {/* Package Image */}
         <div className="relative h-48 overflow-hidden rounded-lg mb-4">
           <Image
             src={pkg.image}
@@ -86,9 +83,7 @@ const PackageCard = ({
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
         </div>
 
-        {/* Package Content */}
         <div className="space-y-4">
-          {/* Title and Rating */}
           <div>
             <h3 className="font-heading text-xl font-semibold text-text-primary mb-2 group-hover:text-primary transition-colors duration-200">
               {pkg.title}
@@ -100,7 +95,6 @@ const PackageCard = ({
             </div>
           </div>
 
-          {/* Price */}
           <div className="flex items-center justify-between">
             <div>
               <span className="text-2xl font-bold text-primary">{pkg.price ? `Rs ${pkg.price.toLocaleString()}` : 'N/A'}</span>
@@ -108,7 +102,6 @@ const PackageCard = ({
             </div>
           </div>
 
-          {/* Key Features */}
           <div>
             <h4 className="text-sm font-semibold text-text-primary mb-2">Key Features:</h4>
             <div className="grid grid-cols-2 gap-1">
@@ -129,7 +122,6 @@ const PackageCard = ({
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col space-y-3 pt-4 border-t border-border">
             <div className="flex items-center space-x-3">
           <button
@@ -149,7 +141,6 @@ const PackageCard = ({
         </div>
       </div>
 
-      {/* Package Details Modal */}
       {showDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowDetails(false)} />
@@ -165,7 +156,6 @@ const PackageCard = ({
             </div>
             
             <div className="p-6 space-y-6">
-              {/* Package Image */}
               <div className="h-64 overflow-hidden rounded-lg">
                 <Image
                   src={pkg.image}
@@ -174,7 +164,6 @@ const PackageCard = ({
                 />
               </div>
 
-              {/* Package Info */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold text-text-primary mb-3">Package Details</h3>
@@ -187,7 +176,6 @@ const PackageCard = ({
                       <span className="text-text-secondary">Planning Period:</span>
                       <span className="text-text-primary">{pkg.timeline}</span>
                     </div>
-                    {/* Rating and reviews removed */}
                     <div className="flex justify-between">
                       <span className="text-text-secondary">Availability:</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAvailabilityColor(pkg.availability)}`}>
@@ -210,7 +198,6 @@ const PackageCard = ({
                 </div>
               </div>
 
-              {/* Description */}
               <div>
                 <h3 className="font-semibold text-text-primary mb-3">Description</h3>
                 <p className="text-text-secondary leading-relaxed">{pkg.description}</p>
@@ -220,7 +207,6 @@ const PackageCard = ({
         </div>
       )}
 
-      {/* CenterPopup for feedback */}
       {popup && (
         <CenterPopup message={popup} onClose={() => setPopup('')} />
       )}

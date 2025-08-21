@@ -85,7 +85,6 @@ const BookingSummary = ({ formData, estimatedCost }) => {
 
   return (
     <div className="mt-8 space-y-4">
-      {/* Progress Indicator */}
       <div className="p-4 bg-primary-50 rounded-xl">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-primary">Form Progress</span>
@@ -99,7 +98,6 @@ const BookingSummary = ({ formData, estimatedCost }) => {
         </div>
       </div>
 
-      {/* Booking Summary */}
       <div className="p-6 bg-surface border border-border rounded-xl">
         <h4 className="font-heading text-lg font-semibold text-text-primary mb-4 flex items-center">
           <Icon name="FileText" size={20} className="mr-2" strokeWidth={2} />
@@ -123,7 +121,6 @@ const BookingSummary = ({ formData, estimatedCost }) => {
           ))}
         </div>
 
-        {/* Estimated Cost */}
         {estimatedCost > 0 && (
           <div className="mt-6 pt-4 border-t border-border">
             <div className="flex items-center justify-between">
@@ -145,7 +142,6 @@ const BookingSummary = ({ formData, estimatedCost }) => {
           </div>
         )}
 
-        {/* Next Steps */}
         <div className="mt-6 pt-4 border-t border-border">
           <div className="flex items-start space-x-2">
             <Icon name="Info" size={16} className="text-primary mt-0.5" strokeWidth={2} />
@@ -161,7 +157,6 @@ const BookingSummary = ({ formData, estimatedCost }) => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="p-4 bg-accent-50 rounded-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

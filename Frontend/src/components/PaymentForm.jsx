@@ -24,13 +24,12 @@ const PaymentForm = ({ amount, onSuccess }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    // Validation: must be >0 and <= due
     if (payAmount < 1 || payAmount > amount) {
       setError('Please enter a valid amount to pay.');
       setLoading(false);
       return;
     }
-    // Simulate payment success without real card check
+
     setTimeout(() => {
       onSuccess && onSuccess({ id: 'fake_payment_intent', status: 'succeeded', amount: payAmount });
       setLoading(false);

@@ -17,12 +17,10 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
 
   const handleEventTypeSelect = (eventType) => {
     updateFormData('eventType', eventType.id);
-    updateFormData('eventSubType', ''); // Reset sub-type when main type changes
+    updateFormData('eventSubType', ''); 
   };
-
   const selectedEventType = eventTypes.find(type => type.id === formData.eventType);
 
-  // Map eventType.id to a hardcoded gradient class
   const colorMap = {
     wedding: 'from-pink-500 to-rose-500',
     birthday: 'from-blue-500 to-cyan-500',
@@ -46,7 +44,6 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
         </p>
       </div>
 
-      {/* Event Type Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {eventTypes.map((eventType) => (
           <div
@@ -85,7 +82,6 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
         <p className="text-error text-sm text-center">{errors.eventType}</p>
       )}
 
-      {/* Sub-type Selection */}
       {selectedEventType && (
         <div className="mt-8 p-6 bg-primary-50 rounded-xl">
           <h4 className="font-heading text-lg font-semibold text-text-primary mb-4">
@@ -113,7 +109,6 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
         </div>
       )}
 
-      {/* Additional Information */}
       <div className="bg-accent-50 p-6 rounded-xl">
         <div className="flex items-start space-x-3">
           <Icon name="Info" size={20} className="text-accent-600 mt-1" strokeWidth={2} />

@@ -50,7 +50,6 @@ const EventPackages = () => {
   useEffect(() => {
     let filtered = [...packages];
 
-    // Apply filters
     if (filters.eventType !== 'all') {
       filtered = filtered.filter(pkg => pkg.type === filters.eventType);
     }
@@ -72,7 +71,6 @@ const EventPackages = () => {
       );
     }
 
-    // Apply sorting
     switch (sortBy) {
       case 'price-low':
         filtered.sort((a, b) => a.price - b.price);
@@ -131,8 +129,6 @@ const EventPackages = () => {
     { label: 'Packages', path: '/event-packages', current: true }
   ];
 
-  // ...removed Clerk logic...
-
   const handleBookPackage = (pkg) => {
     setBookingPopupPkg(pkg);
   };
@@ -142,10 +138,10 @@ const EventPackages = () => {
       setBookingPopupPkg(null);
       return;
     }
-    // Compose package booking data
+
     const packagePayload = {
       ...bookingData,
-      price: bookingData.budget, // ensure price is set from selected budget
+      price: bookingData.budget, 
       packageId: bookingPopupPkg._id || bookingPopupPkg.id,
       packageTitle: bookingPopupPkg.title,
     };
@@ -156,7 +152,6 @@ const EventPackages = () => {
         setShowSuccessPopup(false);
       }, 1800);
     } catch (e) {
-      // Optionally show an error message here
     }
     setBookingPopupPkg(null);
   };
@@ -174,7 +169,6 @@ const EventPackages = () => {
       viewport={{ once: true }}
       className="min-h-screen bg-background"
     >
-      {/* Breadcrumb */}
       <div className="bg-surface border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm">
@@ -199,7 +193,6 @@ const EventPackages = () => {
         </div>
       </div>
 
-      {/* Header Section */}
       <div className="bg-gradient-to-br from-primary-50 to-accent-50 py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -223,11 +216,9 @@ const EventPackages = () => {
         </div>
       </div>
 
-      {/* Filter and Sort Controls */}
       <div className="sticky top-16 z-40 bg-surface/95 backdrop-blur-sm border-b border-border shadow-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            {/* Mobile Filter Chips */}
             <div className="lg:hidden">
               <div className="flex items-center space-x-3 overflow-x-auto pb-2">
                 <button
@@ -250,7 +241,6 @@ const EventPackages = () => {
               </div>
             </div>
 
-            {/* Desktop Filters */}
             <div className="hidden lg:flex items-center space-x-6">
               <div className="flex items-center space-x-2">
                 <Icon name="Filter" size={20} className="text-text-secondary" strokeWidth={2} />
@@ -292,7 +282,6 @@ const EventPackages = () => {
               )}
             </div>
 
-            {/* Sort and Results */}
             <div className="flex items-center justify-between lg:justify-end space-x-4">
               <span className="text-text-secondary text-sm">
                 {filteredPackages.length} packages found
@@ -313,7 +302,6 @@ const EventPackages = () => {
         </div>
       </div>
 
-      {/* Comparison Bar */}
       {selectedPackages.length > 0 && (
         <div className="sticky top-32 z-30 bg-primary text-white py-3 shadow-accent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -337,9 +325,7 @@ const EventPackages = () => {
         </div>
       )}
 
-      {/* Packages Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Loading and No Events States */}
         {loading ? (
           <div className="text-center py-16 text-xl text-text-secondary">Loading event packages...</div>
         ) : filteredPackages.length === 0 ? (
@@ -361,7 +347,6 @@ const EventPackages = () => {
         )}
       </div>
 
-      {/* Mobile Filter Panel */}
       {showFilters && (
         <FilterPanel
           filters={filters}

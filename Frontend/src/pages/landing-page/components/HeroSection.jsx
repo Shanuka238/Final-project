@@ -31,7 +31,6 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-surface to-accent-50">
-      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-accent rounded-full blur-3xl"></div>
@@ -40,7 +39,6 @@ const HeroSection = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -100,7 +98,6 @@ const HeroSection = () => {
               </Link>
             </motion.div>
 
-            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -120,7 +117,6 @@ const HeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Content - Hero Image */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -137,7 +133,6 @@ const HeroSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
 
-              {/* Floating Cards */}
               <motion.div
                 initial={{ opacity: 1, scale: 1, y: 0 }}
                 animate={isLoggedIn ? { y: [0, -12, 0] } : { y: 0 }}
@@ -173,17 +168,14 @@ const HeroSection = () => {
                   </div>
                 </div>
               </motion.div>
-
             </div>
 
-            {/* Background Decorative Elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-200 rounded-full blur-2xl opacity-60"></div>
             <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-accent-200 rounded-full blur-2xl opacity-60"></div>
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
+      
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

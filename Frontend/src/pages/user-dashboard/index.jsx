@@ -11,7 +11,6 @@ import { fetchUserProfile } from 'api/profile';
 import { getToken } from 'utils/auth';
 
 import WelcomeSection from './components/WelcomeSection';
-// import UserSentMessages removed
 import UpcomingEvents from './components/UpcomingEvents';
 import BookingManagement from './components/BookingManagement';
 import FavoritesSection from './components/FavoritesSection';
@@ -23,7 +22,6 @@ import RecentActivity from './components/RecentActivity';
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
-  // Use real logged-in user from AuthContext
   const { user } = useAuth();
   const isLoaded = !!user;
   const [stats, setStats] = useState({ events: 0, bookings: 0, favorites: 0, packages: 0 });
@@ -51,7 +49,6 @@ const UserDashboard = () => {
     }
   }, [isLoaded, user]);
 
-  // Mock dashboard stats
   const dashboardStats = [
     {
       id: 1,
@@ -80,7 +77,7 @@ const UserDashboard = () => {
     {
       id: 4,
       label: "Selected packages",
-      value: stats.packages, // Show number of booked packages only
+      value: stats.packages, 
       icon: "Package",
       color: "text-accent",
       bgColor: "bg-accent-50"
@@ -95,9 +92,6 @@ const UserDashboard = () => {
     { id: 'my-packages', label: 'My Packages', icon: 'Package' }
   ];
 
-  // Prepare user data for dashboard
-
-  // Always fetch latest user profile from backend
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -141,7 +135,6 @@ const UserDashboard = () => {
         return (
           <div className="space-y-8">
             <WelcomeSection user={dashboardUser} setUser={setDashboardUser} stats={dashboardStats} />
-            {/* UserSentMessages removed */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <UpcomingEvents user={dashboardUser} setActiveTab={setActiveTab} />
@@ -176,7 +169,6 @@ const UserDashboard = () => {
       className="min-h-screen bg-background"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="mb-4 sm:mb-0">
@@ -206,7 +198,6 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
         <div className="mb-8">
           <div className="border-b border-border">
             <nav className="flex space-x-8 overflow-x-auto">
@@ -227,7 +218,6 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Tab Content */}
         <div className="animate-fade-in">
           {renderTabContent()}
         </div>

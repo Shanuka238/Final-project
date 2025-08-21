@@ -135,7 +135,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Custom Budget Input */}
       <div className="space-y-6">
         <h4 className="font-heading text-lg font-semibold text-text-primary">
           Custom Budget
@@ -143,7 +142,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
         
         <div className="bg-surface border border-border rounded-xl p-6">
           <div className="space-y-6">
-            {/* Budget Slider */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-text-primary">
@@ -195,7 +193,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
               </div>
             </div>
 
-            {/* Direct Input */}
             <div className="flex items-center space-x-4">
               <label className="text-sm font-medium text-text-primary whitespace-nowrap">
                 Or enter exact amount:
@@ -213,9 +210,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
                 />
               </div>
             </div>
-
-            {/* Per Guest Cost */}
-            {/* Per Guest Cost section removed as requested */}
           </div>
         </div>
 
@@ -224,7 +218,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
         )}
       </div>
 
-      {/* Package Recommendation */}
       <div className="bg-accent-50 p-6 rounded-xl">
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-heading text-lg font-semibold text-accent-800">
@@ -274,7 +267,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
         )}
       </div>
 
-      {/* Budget Tips */}
       <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-start space-x-3">
           <Icon name="Lightbulb" size={20} className="text-primary mt-1" strokeWidth={2} />
@@ -291,7 +283,6 @@ const BudgetEstimation = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Budget Comparison */}
       <div className="bg-primary-50 p-6 rounded-xl">
         <h4 className="font-heading text-lg font-semibold text-primary mb-4">
           How Your Budget Compares

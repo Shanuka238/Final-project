@@ -31,7 +31,6 @@ const features = [
   },
 ];
 
-// Custom animation for wiggle
 const style = `
 @keyframes wiggle {
   0%, 100% { transform: rotate(-8deg); }

@@ -6,7 +6,6 @@ import { fetchStaffServices } from 'api/staff';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import PaymentModal from './PaymentModal';
 
-// Simple Review Modal with saving message
 const ReviewModal = ({ open, booking, onSubmit, onClose }) => {
   const [review, setReview] = React.useState('');
   const [rating, setRating] = React.useState(5);
@@ -69,7 +68,6 @@ const BookingManagement = ({ user }) => {
   const [paymentModal, setPaymentModal] = useState({ open: false, booking: null });
   const [reviewModal, setReviewModal] = useState({ open: false, booking: null });
   const [allServices, setAllServices] = useState([]);
-  // Save review to backend
   const handleReviewSubmit = async ({ review, rating, bookingId }) => {
     try {
       await saveBookingReview(bookingId, review, rating);
@@ -189,14 +187,22 @@ const BookingManagement = ({ user }) => {
     return <div className="text-center py-12">Loading bookings...</div>;
   }
 
-  const filteredBookings = activeFilter === 'all'
+  function isUpcomingOrToday(eventDate) {
+    if (!eventDate) return false;
+    const today = new Date();
+    const event = new Date(eventDate.split('T')[0]);
+    today.setHours(0,0,0,0);
+    event.setHours(0,0,0,0);
+    return event >= today;
+  }
+
+  const filteredBookings = (activeFilter === 'all'
     ? bookings
     : activeFilter === 'partial'
       ? bookings.filter(isPartial)
-      : bookings.filter(booking => booking.status === activeFilter);
+      : bookings.filter(booking => booking.status === activeFilter)
+  ).filter(b => isUpcomingOrToday(b.eventDate));
 
-
-      // Format time string (e.g., '13:00') to AM/PM
   function formatTimeAMPM(time24) {
   if (!time24) return '';
   const [hourStr, minuteStr] = time24.split(":");
@@ -207,7 +213,7 @@ const BookingManagement = ({ user }) => {
   if (hour === 0) hour = 12;
   return `${hour}:${minute.toString().padStart(2, '0')} ${ampm}`;
 }
-// Event type color mapping (should match event booking form)
+
   const EVENT_TYPE_COLORS = {
   wedding: 'from-pink-500 to-rose-500',
   birthday: 'from-blue-500 to-cyan-500',
@@ -216,7 +222,7 @@ const BookingManagement = ({ user }) => {
   graduation: 'from-yellow-500 to-orange-500',
   custom: 'from-indigo-500 to-purple-500',
 };
-// Event type icon mapping (should match event booking form)
+
   const EVENT_TYPE_ICONS = {
   wedding: 'Heart',
   birthday: 'Gift',
@@ -225,17 +231,15 @@ const BookingManagement = ({ user }) => {
   graduation: 'Award',
   custom: 'Sparkles',
 };
-// Format a date string (YYYY-MM-DD or ISO) to local YYYY-MM-DD (no timezone shift)
+
 function formatLocalDate(dateStr) {
   if (!dateStr) return '';
-  // Handles both 'YYYY-MM-DD' and ISO strings
   const [yyyy, mm, dd] = dateStr.split('T')[0].split('-');
   return `${yyyy}-${mm}-${dd}`;
 }
 
   return (
   <div className="space-y-6">
-      {/* Filter Tabs */}
       <div className="card">
         <div className="flex flex-wrap gap-2">
           {filterOptions.map((option) => (
@@ -258,11 +262,11 @@ function formatLocalDate(dateStr) {
           ))}
         </div>
       </div>
-      {/* Bookings List */}
+
       <div className="space-y-6">
         {filteredBookings.map((booking) => (
           <div key={booking._id} className="card">
-            {/* Booking Header */}
+
             <div className="flex justify-between items-center mb-2">
               <div>
                 <div className="flex items-center space-x-3 mb-2">
@@ -297,20 +301,17 @@ function formatLocalDate(dateStr) {
                   <Icon name="Star" size={16} strokeWidth={2} />
                   <span>Add Reviews</span>
                 </button>
-                <button className="flex items-center space-x-1 px-3 py-2 text-sm text-text-secondary hover:bg-surface-secondary rounded-lg transition-colors duration-200">
-                  <Icon name="Edit" size={16} strokeWidth={2} />
-                  <span>Modify</span>
-                </button>
                 <button
                   onClick={() => handleDeleteBooking(booking._id)}
-                  className="btn-secondary text-error ml-2"
+                  className={`btn-secondary text-error ml-2 ${Number(booking.paidAmount) > 0 ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                   title="Delete Booking"
+                  disabled={Number(booking.paidAmount) > 0}
                 >
                   <Icon name="Trash" size={18} strokeWidth={2} />
                 </button>
                 <button
                   onClick={() => handleOpenPayment(booking)}
-                  className="btn-primary ml-2 flex items-center space-x-1 px-3 py-2 text-sm"
+                  className={`btn-primary ml-2 flex items-center space-x-1 px-3 py-2 text-sm ${booking.dueAmount <= 0 ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                   title="Pay Now"
                   disabled={booking.dueAmount <= 0}
                 >
@@ -321,13 +322,12 @@ function formatLocalDate(dateStr) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Payment Schedule */}
               <div className="lg:col-span-2 xl:col-span-2 min-w-0 xl:min-w-[480px]">
                 <h5 className="font-semibold text-text-primary mb-4 flex items-center space-x-2">
                   <Icon name="CreditCard" size={18} strokeWidth={2} />
                   <span>Payment Schedule</span>
                 </h5>
-                {/* Payment Summary */}
+
                 <div className="bg-surface-secondary rounded-lg p-4 mb-4">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
@@ -350,7 +350,6 @@ function formatLocalDate(dateStr) {
                     </div>
                   </div>
                 </div>
-                {/* Payment Items */}
                 <div className="space-y-3">
                   {booking.paymentSchedule?.map((payment, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg">
@@ -381,7 +380,6 @@ function formatLocalDate(dateStr) {
                 </div>
               </div>
 
-              {/* Booking Details */}
               <div className="lg:col-span-1">
                 <h5 className="font-semibold text-text-primary mb-4 flex items-center space-x-2">
                   <Icon name="Info" size={18} strokeWidth={2} />

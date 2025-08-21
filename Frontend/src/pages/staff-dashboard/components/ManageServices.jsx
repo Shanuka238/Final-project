@@ -16,7 +16,6 @@ export default function ManageServices() {
   const [showForm, setShowForm] = useState(false);
   const [editingService, setEditingService] = useState(null);
 
-  // Fetch all services
   useEffect(() => {
     fetchStaffServices()
       .then(data => {
@@ -29,7 +28,6 @@ export default function ManageServices() {
       });
   }, []);
 
-  // Add or update service in list
   const handleServiceAdded = (service) => {
     if (editingService) {
       setServices(services.map(s => s._id === service._id ? service : s));
@@ -40,7 +38,6 @@ export default function ManageServices() {
     setShowForm(false);
   };
 
-  // Delete service
   const [deleteId, setDeleteId] = useState(null);
   const [popupMessage, setPopupMessage] = useState('');
   const handleDelete = (id) => {

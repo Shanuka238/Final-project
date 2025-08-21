@@ -27,10 +27,9 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
   };
 
   const getCostEstimate = () => {
-    const basePrice = 20; // Base price per guest
+    const basePrice = 20; 
     let multiplier = 1;
     
-    // Adjust pricing based on guest count
     if (formData.guestCount <= 25) multiplier = 1.2;
     else if (formData.guestCount <= 50) multiplier = 1.1;
     else if (formData.guestCount <= 100) multiplier = 1.0;
@@ -65,7 +64,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         </p>
       </div>
 
-      {/* Quick Range Selection */}
       <div className="space-y-4">
         <h4 className="font-heading text-lg font-semibold text-text-primary">
           Quick Selection
@@ -98,7 +96,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Precise Guest Count */}
       <div className="space-y-6">
         <h4 className="font-heading text-lg font-semibold text-text-primary">
           Exact Guest Count
@@ -106,7 +103,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         
         <div className="bg-surface border border-border rounded-xl p-6">
           <div className="space-y-6">
-            {/* Slider */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-text-primary">
@@ -155,7 +151,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
               </div>
             </div>
 
-            {/* Direct Input */}
             <div className="flex items-center space-x-4">
               <label className="text-sm font-medium text-text-primary whitespace-nowrap">
                 Or enter exact number:
@@ -174,7 +169,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Cost Estimate */}
       <div className="bg-primary-50 p-6 rounded-xl">
         <div className="flex items-center justify-between mb-4">
           <h4 className="font-heading text-lg font-semibold text-primary">
@@ -209,7 +203,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Venue Recommendations */}
       <div className="bg-accent-50 p-6 rounded-xl">
         <div className="flex items-start space-x-3">
           <Icon name="MapPin" size={20} className="text-accent-600 mt-1" strokeWidth={2} />
@@ -231,7 +224,6 @@ const GuestCountSelection = ({ formData, updateFormData, errors }) => {
         </div>
       </div>
 
-      {/* Additional Information */}
       <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex items-start space-x-3">
           <Icon name="Info" size={20} className="text-primary mt-1" strokeWidth={2} />
