@@ -1,6 +1,6 @@
 const Package = require('../../models/Package');
 
-// Add a package
+
 exports.addPackage = async (req, res) => {
   try {
     const pkg = await Package.create(req.body);
@@ -10,7 +10,6 @@ exports.addPackage = async (req, res) => {
   }
 };
 
-// Delete a package
 exports.deletePackage = async (req, res) => {
   try {
     const deleted = await Package.findByIdAndDelete(req.params.packageId);
@@ -23,7 +22,6 @@ exports.deletePackage = async (req, res) => {
   }
 };
 
-// Edit a package
 exports.editPackage = async (req, res) => {
   try {
     const updated = await Package.findByIdAndUpdate(

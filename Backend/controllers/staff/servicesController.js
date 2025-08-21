@@ -1,6 +1,5 @@
 const Service = require('../../models/Service');
 
-// Add a new service
 exports.addService = async (req, res) => {
   try {
     const { name, type, description, imageUrl, details, photographer, keyFeatures } = req.body;
@@ -21,7 +20,7 @@ exports.addService = async (req, res) => {
   }
 };
 
-// Delete a service
+
 exports.deleteService = async (req, res) => {
   try {
     const deleted = await Service.findByIdAndDelete(req.params.serviceId);
@@ -34,7 +33,6 @@ exports.deleteService = async (req, res) => {
   }
 };
 
-// Edit a service
 exports.editService = async (req, res) => {
   try {
     const updateData = { ...req.body };
@@ -55,7 +53,6 @@ exports.editService = async (req, res) => {
   }
 };
 
-// Get a single service by ID
 exports.getServiceById = async (req, res) => {
   try {
     const service = await Service.findById(req.params.serviceId);
@@ -65,7 +62,7 @@ exports.getServiceById = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch service' });
   }
 };
-// Get all services
+
 exports.getAllServices = async (req, res) => {
   try {
     const services = await Service.find();
