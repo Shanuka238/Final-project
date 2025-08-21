@@ -3,7 +3,6 @@ import { getToken } from '../utils/auth';
 
 const API_BASE = 'http://localhost:5000/api';
 
-// Axios instance with JWT
 const api = axios.create();
 api.interceptors.request.use((config) => {
   const token = getToken();
@@ -12,7 +11,6 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
 
 export const fetchStaffServices = async () => {
   const res = await api.get(`${API_BASE}/staff/services`);

@@ -7,22 +7,20 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Google OAuth session and passport setup
 const session = require('express-session');
 app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
 const passport = require('./auth/google');
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://Fp:0x800@finalproject.cicv4nv.mongodb.net/?retryWrites=true&w=majority&appName=Finalproject', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-// Auth route
+
 app.use('/api/auth', require('./routes/auth'));
-// User routes
+
 app.use('/api/events', require('./routes/user/events'));
 app.use('/api/bookings', require('./routes/user/bookings'));
 app.use('/api/favorites', require('./routes/user/favorites'));
@@ -32,10 +30,9 @@ app.use('/api/event-types', require('./routes/user/eventTypes'));
 app.use('/api/payments', require('./routes/user/payments'));
 app.use('/api/user/profile', require('./routes/user/profile'));
 
-// Admin routes
 app.use('/api/admin', require('./routes/admin/admin'));
 app.use('/api/admin', require('./routes/admin/admin-messages'));
-// Staff routes
+
 app.use('/api/staff/packages', require('./routes/staff/packages'));
 app.use('/api/staff/services', require('./routes/staff/services'));
 app.use('/api/user-messages', require('./routes/user-messages'));
