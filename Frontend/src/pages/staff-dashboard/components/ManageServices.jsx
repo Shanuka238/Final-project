@@ -4,6 +4,7 @@ import CenterPopup from 'components/CenterPopup';
 import AddServiceForm from './AddServiceForm';
 import {
   fetchStaffServices,
+  fetchStaffService,
   addStaffService,
   updateStaffService,
   deleteStaffService
@@ -117,8 +118,14 @@ export default function ManageServices() {
                       const latest = await fetchStaffService(service._id);
                       setEditingService(latest);
                       setShowForm(true);
-                    } catch {
-                      alert('Failed to fetch service details.');
+                    } catch (err) {
+                      let msg = 'Failed to fetch service details.';
+                      if (err && err.response && err.response.data && err.response.data.error) {
+                        msg += ' ' + err.response.data.error;
+                      } else if (err && err.message) {
+                        msg += ' ' + err.message;
+                      }
+                      setPopupMessage(msg);
                     }
                   }}
                 >

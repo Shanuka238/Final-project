@@ -223,11 +223,15 @@ const AdminDashboard = () => {
 	const initials = adminName.split(' ').map((n) => n[0]).join('');
 
 	const handleReply = async (msgId) => {
-		if (!replyContent.trim()) return;
-		await sendAdminReply(msgId, replyContent);
-		setReplyContent('');
-		setReplyingId(null);
-		fetchUserMessages().then(setUserMessages).catch(() => setUserMessages([]));
+			if (!replyContent.trim()) return;
+			await sendAdminReply(msgId, replyContent);
+			setReplyContent('');
+			setReplyingId(null);
+			fetchUserMessages().then(msgs => {
+				setUserMessages(
+					showOnlyUnreplied ? msgs.filter(m => !m.replies || m.replies.length === 0) : msgs
+				);
+			}).catch(() => setUserMessages([]));
 	};
 
 	return (
