@@ -1,7 +1,6 @@
 const User = require('../../models/User');
 const bcrypt = require('bcryptjs');
 
-// Update user profile (username, email, password)
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -26,7 +25,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// Get current user profile
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');

@@ -1,6 +1,5 @@
 const User = require('../../models/User');
 
-// Get all users (optionally filter by role)
 exports.getAllUsers = async (req, res) => {
   try {
     const { role } = req.query;

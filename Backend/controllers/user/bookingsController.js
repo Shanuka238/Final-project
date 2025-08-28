@@ -51,7 +51,6 @@ exports.getUserBookings = async (req, res) => {
 exports.bookEvent = async (req, res) => {
   try {
   const { userId, eventData, bookingData } = req.body;
-  // Ensure services are included if sent
   const services = bookingData.services || [];
   const event = await Event.create({ ...eventData, userId });
   const booking = await Booking.create({ ...bookingData, userId, services });
@@ -114,7 +113,6 @@ exports.payBooking = async (req, res) => {
   }
 };
 
-// Get all reviews from the new Review collection
 exports.getAllStoredReviews = async (req, res) => {
   try {
     const Review = require('../../models/Review');
@@ -124,7 +122,7 @@ exports.getAllStoredReviews = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// Get all reviews from all bookings
+
 exports.getAllReviews = async (req, res) => {
   try {
     const bookings = await Booking.find({}, 'reviews eventTitle package userId');
@@ -139,7 +137,7 @@ exports.getAllReviews = async (req, res) => {
     users.forEach(u => {
       userMap[String(u._id)] = u;
     });
-    // Flatten all reviews and add event info and user details
+
     const allReviews = bookings.flatMap(booking =>
       (booking.reviews || []).map(r => ({
         ...r,

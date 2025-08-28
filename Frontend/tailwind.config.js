@@ -7,70 +7,64 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary Colors
-        'primary': '#8B5FBF', // Sophisticated purple - purple-600
-        'primary-50': '#F8F5FF', // Lightest purple tint - purple-50
-        'primary-100': '#F4F1FF', // Soft purple tint - purple-100
-        'primary-200': '#E9E1FF', // Light purple - purple-200
-        'primary-300': '#D4C2FF', // Medium light purple - purple-300
-        'primary-400': '#B491E5', // Medium purple - purple-400
-        'primary-500': '#9B6FD4', // Medium purple - purple-500
-        'primary-600': '#8B5FBF', // Primary sophisticated purple - purple-600
-        'primary-700': '#7A4FA8', // Dark purple - purple-700
-        'primary-800': '#693F91', // Darker purple - purple-800
-        'primary-900': '#2D1B3D', // Deepest purple for text - purple-900
 
-        // Secondary Colors
-        'secondary': '#F4F1FF', // Soft purple tint - purple-100
-        'secondary-50': '#FEFEFE', // Warm white background - gray-50
-        'secondary-100': '#F4F1FF', // Soft purple tint - purple-100
-        'secondary-200': '#E9E1FF', // Light purple secondary - purple-200
+        'primary': '#8B5FBF', 
+        'primary-50': '#F8F5FF', 
+        'primary-100': '#F4F1FF', 
+        'primary-200': '#E9E1FF',
+        'primary-300': '#D4C2FF', 
+        'primary-400': '#B491E5', 
+        'primary-500': '#9B6FD4',
+        'primary-600': '#8B5FBF', 
+        'primary-700': '#7A4FA8', 
+        'primary-800': '#693F91', 
+        'primary-900': '#2D1B3D', 
 
-        // Accent Colors
-        'accent': '#D4AF37', // Classic gold accent - yellow-600
-        'accent-50': '#FFFBEB', // Light gold tint - yellow-50
-        'accent-100': '#FEF3C7', // Soft gold - yellow-100
-        'accent-200': '#FDE68A', // Light gold - yellow-200
-        'accent-300': '#FCD34D', // Medium light gold - yellow-300
-        'accent-400': '#FBBF24', // Medium gold - yellow-400
-        'accent-500': '#F59E0B', // Warm amber - yellow-500
-        'accent-600': '#D4AF37', // Classic gold accent - yellow-600
-        'accent-700': '#B45309', // Dark gold - yellow-700
-        'accent-800': '#92400E', // Darker gold - yellow-800
+        'secondary': '#F4F1FF', 
+        'secondary-50': '#FEFEFE', 
+        'secondary-100': '#F4F1FF', 
+        'secondary-200': '#E9E1FF', 
 
-        // Background Colors
-        'background': '#FEFEFE', // Warm white background - gray-50
-        'surface': '#FFFFFF', // Pure white surface - white
-        'surface-secondary': '#F4F1FF', // Soft purple surface - purple-100
+        'accent': '#D4AF37', 
+        'accent-50': '#FFFBEB', 
+        'accent-100': '#FEF3C7', 
+        'accent-200': '#FDE68A', 
+        'accent-300': '#FCD34D', 
+        'accent-400': '#FBBF24',
+        'accent-500': '#F59E0B',
+        'accent-600': '#D4AF37', 
+        'accent-700': '#B45309', 
+        'accent-800': '#92400E', 
 
-        // Text Colors
-        'text-primary': '#2D1B3D', // Deep purple-tinted dark - gray-900
-        'text-secondary': '#6B5B73', // Muted purple-gray - gray-600
-        'text-tertiary': '#9CA3AF', // Light gray text - gray-400
-        'text-inverse': '#FFFFFF', // White text for dark backgrounds - white
+        'background': '#FEFEFE', 
+        'surface': '#FFFFFF', 
+        'surface-secondary': '#F4F1FF', 
 
-        // Status Colors
-        'success': '#10B981', // Fresh green - emerald-500
-        'success-50': '#ECFDF5', // Light success background - emerald-50
-        'success-100': '#D1FAE5', // Soft success - emerald-100
-        'success-600': '#10B981', // Success green - emerald-500
-        'success-700': '#047857', // Dark success - emerald-700
+        'text-primary': '#2D1B3D', 
+        'text-secondary': '#6B5B73', 
+        'text-tertiary': '#9CA3AF', 
+        'text-inverse': '#FFFFFF', 
 
-        'warning': '#F59E0B', // Warm amber - amber-500
-        'warning-50': '#FFFBEB', // Light warning background - amber-50
-        'warning-100': '#FEF3C7', // Soft warning - amber-100
-        'warning-500': '#F59E0B', // Warning amber - amber-500
-        'warning-600': '#D97706', // Dark warning - amber-600
+        'success': '#10B981', 
+        'success-50': '#ECFDF5', 
+        'success-100': '#D1FAE5', 
+        'success-600': '#10B981', 
+        'success-700': '#047857', 
 
-        'error': '#EF4444', // Clear red - red-500
-        'error-50': '#FEF2F2', // Light error background - red-50
-        'error-100': '#FEE2E2', // Soft error - red-100
-        'error-500': '#EF4444', // Error red - red-500
-        'error-600': '#DC2626', // Dark error - red-600
+        'warning': '#F59E0B', 
+        'warning-50': '#FFFBEB', 
+        'warning-100': '#FEF3C7', 
+        'warning-500': '#F59E0B', 
+        'warning-600': '#D97706', 
 
-        // Border Colors
-        'border': '#F4F1FF', // Soft purple border - purple-100
-        'border-secondary': '#E9E1FF', // Light purple border - purple-200
+        'error': '#EF4444', 
+        'error-50': '#FEF2F2', 
+        'error-100': '#FEE2E2', 
+        'error-500': '#EF4444', 
+        'error-600': '#DC2626',
+
+        'border': '#F4F1FF', 
+        'border-secondary': '#E9E1FF', 
       },
       fontFamily: {
         'heading': ['Playfair Display', 'serif'],

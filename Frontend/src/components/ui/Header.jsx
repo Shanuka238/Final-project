@@ -6,11 +6,9 @@ import { useAuth } from 'contexts/AuthContext';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  // Auth context
   const { user, logout } = useAuth();
   const isLoggedIn = !!user;
 
-  // Navigation items for all users
   const baseNavigation = [
     { label: 'Home', path: '/landing-page', icon: 'Home' },
     { label: 'Book Event', path: '/event-booking-form', icon: 'Calendar' },
@@ -19,7 +17,6 @@ const Header = () => {
     { label: 'About', path: '/about', icon: 'Info' }
   ];
 
-  // Add dashboard links based on user role
   let navigationItems = [...baseNavigation];
   if (isLoggedIn) {
     if (user.role === 'admin') {
@@ -69,7 +66,6 @@ const Header = () => {
           <div className="flex justify-between items-center h-16">
             <Logo />
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {navigationItems.map((item) => (
                 <Link
@@ -83,10 +79,8 @@ const Header = () => {
                   <span>{item.label}</span>
                 </Link>
               ))}
-              {/* All navigation items shown for all users */}
             </div>
 
-            {/* Auth Buttons */}
             <div className="hidden md:flex items-center space-x-4">
               {!isLoggedIn && (
                 <>
@@ -99,7 +93,6 @@ const Header = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={handleMenuToggle}
               className="md:hidden p-2 rounded-lg hover:bg-primary-50 transition-colors duration-200"
@@ -116,7 +109,6 @@ const Header = () => {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={handleMenuToggle} />
@@ -144,8 +136,7 @@ const Header = () => {
                   <span className="font-medium">{item.label}</span>
                 </Link>
               ))}
-              {/* All navigation items shown for all users */}
-              {/* Auth Buttons for mobile */}
+
               <div className="pt-4 border-t border-border">
                 {!isLoggedIn && (
                   <>

@@ -17,7 +17,6 @@ const CalendarWidget = ({ user }) => {
         .catch(() => setEvents([]))
         .finally(() => setLoading(false));
     } else {
-      // If no user, load all events (for admin dashboard)
       fetchAllEvents()
         .then((data) => setEvents(data))
         .catch(() => setEvents([]))

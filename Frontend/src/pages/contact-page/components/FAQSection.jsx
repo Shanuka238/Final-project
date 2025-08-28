@@ -86,34 +86,6 @@ const FAQSection = () => {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8">
-            <Icon name="HelpCircle" size={48} className="text-primary mx-auto mb-4" strokeWidth={1.5} />
-            <h3 className="font-heading text-2xl font-bold text-text-primary mb-4">
-              Still Have Questions?
-            </h3>
-            <p className="text-text-secondary mb-6 max-w-2xl mx-auto">
-              Can't find the answer you're looking for? Our friendly team is here to help. 
-              Reach out to us directly and we'll get back to you as soon as possible.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="tel:+1-555-PARTY-01"
-                className="btn-primary flex items-center justify-center space-x-2"
-              >
-                <Icon name="Phone" size={20} strokeWidth={2} />
-                <span>Call Us Now</span>
-              </a>
-              <a
-                href="mailto:hello@partynest.com"
-                className="btn-secondary flex items-center justify-center space-x-2"
-              >
-                <Icon name="Mail" size={20} strokeWidth={2} />
-                <span>Send Email</span>
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

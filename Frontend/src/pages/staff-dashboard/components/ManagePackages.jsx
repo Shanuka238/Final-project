@@ -7,7 +7,6 @@ export default function ManagePackages({ packages, setPackages }) {
   const [form, setForm] = useState({
     title: '',
     type: '',
-  // priceRange removed
   price: '',
   image: '',
   availability: '',
@@ -19,8 +18,8 @@ export default function ManagePackages({ packages, setPackages }) {
   const [editingId, setEditingId] = useState(null);
   const [featureInputs, setFeatureInputs] = useState(['', '', '', '']);
   const [deleteId, setDeleteId] = useState(null);
-  const [popupMessage, setPopupMessage] = useState(''); // for add/edit
-  const [deletePopupMessage, setDeletePopupMessage] = useState(''); // for delete
+  const [popupMessage, setPopupMessage] = useState('');
+  const [deletePopupMessage, setDeletePopupMessage] = useState(''); 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

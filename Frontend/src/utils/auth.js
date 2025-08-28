@@ -1,5 +1,3 @@
-// Utility functions for JWT auth
-
 export function setToken(token) {
   localStorage.setItem('token', token);
 }
@@ -18,7 +16,7 @@ export function isLoggedIn() {
   if (!token) return false;
   const payload = parseJwt(token);
   if (!payload) return false;
-  // Check for expiration (exp is in seconds)
+  
   if (payload.exp && Date.now() >= payload.exp * 1000) {
     removeToken();
     return false;
@@ -29,7 +27,6 @@ export function isLoggedIn() {
 export function parseJwt(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    // Optionally, check for exp here and return null if expired
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       return null;
     }
