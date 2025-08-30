@@ -57,7 +57,7 @@ export default function ManageServices() {
     }
   };
   const handlePopupClose = () => {
-    // Only close if not a confirm dialog
+
     if (!deleteId) setPopupMessage('');
   };
 
