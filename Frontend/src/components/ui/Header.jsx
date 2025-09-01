@@ -44,7 +44,7 @@ const Header = () => {
   };
 
   const Logo = () => (
-    <Link to="/landing-page" className="flex items-center space-x-2 group">
+    <Link to className="flex items-center space-x-2 group">
       <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center shadow-primary transition-transform duration-200 group-hover:scale-105">
         <Icon name="Sparkles" size={26} color="white" strokeWidth={2} />
       </div>

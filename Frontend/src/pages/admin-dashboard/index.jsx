@@ -602,15 +602,17 @@ const AdminDashboard = () => {
 						  </button>
 						</td>
 
-	  {viewMessagesStaff && (
-		<StaffMessagesModal staff={viewMessagesStaff} onClose={() => setViewMessagesStaff(null)} />
-	  )}
 					  </tr>
 					  ))}
 					</tbody>
 				  </table>
 				</div>
 			  )}
+
+			  {viewMessagesStaff && (
+			  <StaffMessagesModal staff={viewMessagesStaff} onClose={() => setViewMessagesStaff(null)} />
+			  )}
+			  
 			  {showAddStaff && (
 		<AddStaffMember onClose={() => setShowAddStaff(false)} onAdd={() => {
 		  loadStaff();
