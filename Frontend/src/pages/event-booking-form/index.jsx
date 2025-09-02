@@ -527,15 +527,6 @@ const EventBookingForm = () => {
                 </button>
 
                 <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => {
-                      localStorage.setItem('eventBookingForm', JSON.stringify(formData));
-                      alert('Draft saved successfully!');
-                    }}
-                    className="px-4 py-2 text-text-secondary hover:text-primary transition-colors duration-200"
-                  >
-                    Save Draft
-                  </button>
 
                   {currentStep === steps.length ? (
                     <button
