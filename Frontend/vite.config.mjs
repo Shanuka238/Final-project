@@ -6,7 +6,7 @@ import tagger from "@dhiwise/component-tagger";
 export default defineConfig({
 
   build: {
-    outDir: "build",
+    outDir: "dist",
     chunkSizeWarningLimit: 2000,
   },
   plugins: [tsconfigPaths(), react(), tagger()],
