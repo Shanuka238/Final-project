@@ -145,8 +145,8 @@ const HeroSection = () => {
                     <Icon name="CheckCircle" size={20} className="text-success" strokeWidth={2} />
                   </div>
                   <div>
-                    <div className="font-semibold text-text-primary text-sm">Event Confirmed</div>
-                    <div className="text-xs text-text-secondary">Wedding - Dec 25</div>
+                    <div className="font-semibold text-text-primary text-sm">Customize/Create</div>
+                    <div className="text-xs text-text-secondary">Your events</div>
                   </div>
                 </div>
               </motion.div>
