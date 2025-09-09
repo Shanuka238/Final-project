@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from '../utils/auth';
 
-const API_BASE = 'http://localhost:5000/api/admin';
+const API_BASE = 'https://party-nest.vercel.app/api/admin';
 
 const api = axios.create();
 api.interceptors.request.use((config) => {

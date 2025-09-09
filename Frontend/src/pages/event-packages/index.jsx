@@ -33,7 +33,7 @@ const EventPackages = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:5000/api/packages')
+  fetch('https://party-nest.vercel.app/api/packages')
       .then(res => res.json())
       .then(data => {
         setPackages(data);

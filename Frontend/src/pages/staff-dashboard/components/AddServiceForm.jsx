@@ -87,7 +87,7 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
           body: JSON.stringify(body)
         });
       } else {
-        res = await fetch('http://localhost:5000/api/staff/services', {
+  res = await fetch('https://party-nest.vercel.app/api/staff/services', {
           method: 'POST',
           headers,
           body: JSON.stringify(body)
