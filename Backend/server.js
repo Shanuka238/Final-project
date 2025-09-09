@@ -4,19 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors({
-  origin: [
-    'http://localhost:4028',
-    'https://party-nest-event-mangement-system-c.vercel.app'
-  ],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
-// Root route for Vercel
-app.get('/', (req, res) => {
-  res.send('API is running');
-});
 
 const session = require('express-session');
 app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
@@ -48,5 +37,5 @@ app.use('/api/staff/packages', require('./routes/staff/packages'));
 app.use('/api/staff/services', require('./routes/staff/services'));
 app.use('/api/user-messages', require('./routes/user-messages'));
 
-
-module.exports = app;
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -38,7 +38,7 @@ const ServiceOptions = ({ type, selected, setSelected }) => {
       setError(null);
       try {
         const token = getToken();
-  const res = await fetch('https://party-nest.vercel.app/api/staff/services', {
+        const res = await fetch('http://localhost:5000/api/staff/services', {
           headers: {
             'Authorization': token ? `Bearer ${token}` : ''
           }

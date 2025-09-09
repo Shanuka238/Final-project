@@ -6,7 +6,7 @@ const UserServices = ({ selectedServices, setSelectedServices }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-  fetch('https://party-nest.vercel.app/api/admin/services')
+    fetch('http://localhost:5000/api/admin/services')
       .then(res => res.json())
       .then(data => {
         setServices(data);

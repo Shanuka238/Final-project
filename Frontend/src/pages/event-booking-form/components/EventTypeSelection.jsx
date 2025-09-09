@@ -6,7 +6,7 @@ const EventTypeSelection = ({ formData, updateFormData, errors }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  fetch('https://party-nest.vercel.app/api/event-types')
+    fetch('http://localhost:5000/api/event-types')
       .then(res => res.json())
       .then(data => {
         setEventTypes(data);

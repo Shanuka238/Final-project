@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from 'utils/auth';
 
-const API_BASE = 'https://party-nest.vercel.app/api/user-messages';
+const API_BASE = 'http://localhost:5000/api/user-messages';
 
 export const sendUserMessage = async (data) => {
   const res = await axios.post(API_BASE, data);
