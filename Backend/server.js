@@ -37,5 +37,5 @@ app.use('/api/staff/packages', require('./routes/staff/packages'));
 app.use('/api/staff/services', require('./routes/staff/services'));
 app.use('/api/user-messages', require('./routes/user-messages'));
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
