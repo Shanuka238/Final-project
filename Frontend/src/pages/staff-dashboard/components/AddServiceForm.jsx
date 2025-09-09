@@ -81,7 +81,7 @@ const AddServiceForm = ({ onServiceAdded, service }) => {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
       if (service && service._id) {
-        res = await fetch(`http://localhost:5000/api/staff/services/${service._id}`, {
+  res = await fetch(`https://party-nest.vercel.app/api/staff/services/${service._id}`, {
           method: 'PUT',
           headers,
           body: JSON.stringify(body)

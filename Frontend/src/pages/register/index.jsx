@@ -17,7 +17,7 @@ const Register = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch('/api/auth/register', {
+  const res = await fetch('https://party-nest.vercel.app/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -104,7 +104,7 @@ const Register = () => {
         <button
           type="button"
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mt-4"
-          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+          onClick={() => window.location.href = 'https://party-nest.vercel.app/api/auth/google'}
         >
           <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
           Continue with Google
