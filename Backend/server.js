@@ -7,6 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Root route for Vercel
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
 const session = require('express-session');
 app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }));
 const passport = require('./auth/google');
