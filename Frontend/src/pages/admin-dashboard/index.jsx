@@ -354,7 +354,6 @@ const AdminDashboard = () => {
 				  <tr className="bg-purple-50">
 					<th className="py-2 px-4">Event Title</th>
 					<th className="py-2 px-4">User ID</th>
-					<th className="py-2 px-4">Package</th>
 					<th className="py-2 px-4">Status</th>
 					<th className="py-2 px-4">Event Date</th>
 				  </tr>
@@ -364,7 +363,6 @@ const AdminDashboard = () => {
 					<tr key={booking._id || idx} className="border-t">
 					  <td className="py-2 px-4">{booking.eventTitle}</td>
 					  <td className="py-2 px-4">{booking.userId}</td>
-					  <td className="py-2 px-4">{booking.package}</td>
 					  <td className="py-2 px-4">{booking.status}</td>
 					  <td className="py-2 px-4">{booking.eventDate}</td>
 					</tr>
