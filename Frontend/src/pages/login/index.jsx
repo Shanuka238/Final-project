@@ -101,7 +101,7 @@ const Login = () => {
         <button
           type="button"
           className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition mt-4"
-          onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}
+          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/google`}
         >
           <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5" />
           Continue with Google
