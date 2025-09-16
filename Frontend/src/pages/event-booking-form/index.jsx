@@ -76,7 +76,7 @@ const EventBookingForm = () => {
   }, [formData, currentStep]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/events/booked-slots/all')
+    fetch(`${import.meta.env.VITE_API_URL}/api/events/booked-slots/all`)
       .then(res => res.json())
       .then(data => setBookedSlots(data))
       .catch(() => setBookedSlots([]));
