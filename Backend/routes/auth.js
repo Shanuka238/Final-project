@@ -9,7 +9,8 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', session: false }), (req, res) => {
 
   const token = jwt.sign({ id: req.user._id, username: req.user.username, email: req.user.email, role: req.user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-  res.redirect(`http://localhost:4028/login?token=${token}`);
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4028';
+  res.redirect(`${frontendUrl}/login?token=${token}`);
 });
 
 router.post('/register', async (req, res) => {
